@@ -1,0 +1,29 @@
+{
+  "name": "Nujum Al-Huda Institute Center",
+  "short_name": "Nujum Institute",
+  "description": "Institut franco-anglo-arabe d'enseignement du Coran et de l'éducation islamique à Dakar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2dac07",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "dir": "auto",
+  "icons": [
+    {
+      "src": "/images/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["education", "lifestyle"],
+  "scope": "/",
+  "screenshots": []
+}

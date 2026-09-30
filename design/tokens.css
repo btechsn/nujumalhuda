@@ -1,0 +1,264 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Nujum Al-Huda Center — Jetons de design
+   ──────────────────────────────────────────────────────────────────────────
+   SOURCE UNIQUE DE VÉRITÉ pour la couleur, la typographie, les rayons,
+   les ombres et l'échelle typographique.
+
+   Ce fichier est importé par les DEUX interfaces :
+
+     frontend/src/app/globals.css                  → site public, Next.js
+     backend/resources/css/filament/admin/theme.css → back-office Filament
+
+   La marque n'est donc pas « reproduite » dans le back-office : c'est
+   littéralement le même fichier. Un changement de vert se propage aux
+   deux interfaces en une seule édition, et une divergence devient
+   impossible par construction.
+
+   Ne jamais écrire de couleur en dur ailleurs que dans ce fichier.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* La palette Tailwind par défaut est effacée : écrire bg-blue-500 ne
+     produit aucune classe. La contrainte est structurelle, pas déclarative. */
+  --color-*: initial;
+
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ── Vert Nujum — couleur primaire de la charte (#2DAC07) ─────────── */
+  --color-brand-50: #f0fef4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-300: #86efac;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #2dac07;
+  --color-brand-600: #228a06;
+  --color-brand-700: #1b6b05;
+  --color-brand-800: #165504;
+  --color-brand-900: #114503;
+  --color-brand-950: #0a2802;
+
+  /* ── Or — accent exclusivement, deux nuances de la charte ─────────────
+     Lumière (#F9CC57) pour accents clairs, Profond (#BA8128) pour texte */
+  --color-gold-50: #fefce8;
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #f9cc57;
+  --color-gold-400: #f4b825;
+  --color-gold-500: #e4a008;
+  --color-gold-600: #ca8a04;
+  --color-gold-700: #ba8128;
+  --color-gold-800: #854d0e;
+  --color-gold-900: #713f12;
+  --color-gold-950: #422006;
+
+  /* ── Neutres — selon la charte (Anthracite + Gris clair) ──────────────
+     Anthracite #1D1D1D pour le texte, gris clair #F5F5F5 pour les fonds */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #1d1d1d;
+  --color-neutral-950: #0a0a0a;
+
+  /* ── Encre — fonds du mode sombre, teintés de vert Nujum ─────────────
+     Basé sur le vert #2DAC07 pour maintenir la cohérence de marque */
+  --color-ink-500: #1a3d12;
+  --color-ink-600: #14320e;
+  --color-ink-700: #0f260b;
+  --color-ink-800: #0b1a08;
+  --color-ink-900: #071206;
+  --color-ink-950: #040a03;
+
+  /* ── États — sobres, jamais vifs ─────────────────────────────────────── */
+  --color-success-500: #0f6d41;
+  --color-success-300: #76be95;
+  --color-warning-500: #b45309;
+  --color-warning-300: #fbbf24;
+  --color-danger-500: #b42318;
+  --color-danger-300: #f97066;
+  --color-info-500: #175cd3;
+  --color-info-300: #84adff;
+
+  /* ── Rayons ──────────────────────────────────────────────────────────
+     Jamais au-delà de 8px sur un rectangle : au-delà, l'élément cesse
+     d'être institutionnel. La seule forme expressive du système est
+     l'arc, obtenu par clip-path. */
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* ── Ombres — deux, et aucune sur un élément statique ────────────────── */
+  --shadow-*: initial;
+  --shadow-overlay: 0 4px 16px -4px rgb(26 24 21 / 0.14), 0 1px 3px rgb(26 24 21 / 0.08);
+  --shadow-modal: 0 16px 48px -12px rgb(26 24 21 / 0.28);
+
+  --container-content: 68rem;
+  --container-wide: 82rem;
+
+  /* ── Échelle typographique fluide ─────────────────────────────────────
+     Tout est en rem : un multiplicateur sur la taille racine suffit donc
+     à servir la préférence d'agrandissement de texte. */
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.7;
+  --text-h4: clamp(1.0625rem, 0.4vw + 1rem, 1.25rem);
+  --text-h4--line-height: 1.4;
+  --text-h3: clamp(1.3125rem, 0.9vw + 1.1rem, 1.625rem);
+  --text-h3--line-height: 1.32;
+  --text-h2: clamp(1.625rem, 1.6vw + 1.2rem, 2.125rem);
+  --text-h2--line-height: 1.22;
+  --text-h1: clamp(2rem, 2.8vw + 1.3rem, 2.75rem);
+  --text-h1--line-height: 1.14;
+  --text-display: clamp(2.5rem, 5vw + 1rem, 4rem);
+  --text-display--line-height: 1.06;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   JETONS SÉMANTIQUES
+   Les composants n'utilisent QUE ces noms. Les échelles ci-dessus sont
+   réservées à ce fichier. On écrit bg-surface, jamais bg-white.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  --color-canvas: var(--nh-canvas);
+  --color-surface: var(--nh-surface);
+  --color-surface-2: var(--nh-surface-2);
+  --color-muted: var(--nh-muted);
+  --color-inverse: var(--nh-inverse);
+
+  --color-content: var(--nh-content);
+  --color-content-secondary: var(--nh-content-secondary);
+  --color-content-muted: var(--nh-content-muted);
+  --color-content-accent: var(--nh-content-accent);
+  --color-on-inverse: var(--nh-on-inverse);
+  --color-on-primary: var(--nh-on-primary);
+
+  --color-line: var(--nh-line);
+  --color-line-strong: var(--nh-line-strong);
+  --color-line-accent: var(--nh-line-accent);
+
+  --color-primary: var(--nh-primary);
+  --color-primary-hover: var(--nh-primary-hover);
+  --color-primary-active: var(--nh-primary-active);
+  --color-primary-subtle: var(--nh-primary-subtle);
+
+  --color-accent: var(--nh-accent);
+  --color-accent-subtle: var(--nh-accent-subtle);
+  --color-ring: var(--nh-ring);
+
+  --color-success: var(--nh-success);
+  --color-warning: var(--nh-warning);
+  --color-danger: var(--nh-danger);
+  --color-info: var(--nh-info);
+
+  /* Polices. Le site public les injecte par next/font, Filament les sert
+     depuis backend/public/fonts. Les noms de variables sont identiques
+     dans les deux cas, donc rien ne diverge en aval. */
+  --font-sans: var(--nh-font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--nh-font-serif), ui-serif, Georgia, serif;
+  --font-arabic: var(--nh-font-arabic), var(--nh-font-sans), sans-serif;
+  --font-quran: var(--nh-font-quran), var(--nh-font-arabic), serif;
+}
+
+:root {
+  --nh-canvas: var(--color-neutral-50);
+  --nh-surface: #ffffff;
+  --nh-surface-2: var(--color-neutral-100);
+  --nh-muted: var(--color-neutral-200);
+  --nh-inverse: var(--color-brand-700);
+
+  --nh-content: var(--color-neutral-900);
+  --nh-content-secondary: var(--color-neutral-700);
+  --nh-content-muted: var(--color-neutral-600);
+  --nh-content-accent: var(--color-gold-700);
+  --nh-on-inverse: #ffffff;
+  --nh-on-primary: #ffffff;
+
+  --nh-line: var(--color-neutral-300);
+  --nh-line-strong: var(--color-neutral-400);
+  --nh-line-accent: var(--color-gold-300);
+
+  --nh-primary: var(--color-brand-500);
+  --nh-primary-hover: var(--color-brand-600);
+  --nh-primary-active: var(--color-brand-700);
+  --nh-primary-subtle: var(--color-brand-50);
+
+  --nh-accent: var(--color-gold-300);
+  --nh-accent-subtle: var(--color-gold-50);
+  --nh-ring: var(--color-brand-500);
+
+  --nh-success: var(--color-success-500);
+  --nh-warning: var(--color-warning-500);
+  --nh-danger: var(--color-danger-500);
+  --nh-info: var(--color-info-500);
+
+  color-scheme: light;
+}
+
+.dark {
+  --nh-canvas: var(--color-ink-950);
+  --nh-surface: var(--color-ink-900);
+  --nh-surface-2: var(--color-ink-800);
+  --nh-muted: var(--color-ink-700);
+  --nh-inverse: var(--color-brand-800);
+
+  --nh-content: var(--color-neutral-100);
+  --nh-content-secondary: var(--color-neutral-300);
+  --nh-content-muted: var(--color-neutral-500);
+  /* L'or devient enfin lisible en texte : en mode sombre il peut être
+     un peu plus présent qu'en mode clair. */
+  --nh-content-accent: var(--color-gold-300);
+  --nh-on-inverse: #ffffff;
+  --nh-on-primary: #ffffff;
+
+  --nh-line: var(--color-ink-700);
+  --nh-line-strong: var(--color-ink-600);
+  --nh-line-accent: var(--color-gold-500);
+
+  --nh-primary: var(--color-brand-500);
+  --nh-primary-hover: var(--color-brand-400);
+  --nh-primary-active: var(--color-brand-300);
+  --nh-primary-subtle: var(--color-ink-800);
+
+  --nh-accent: var(--color-gold-300);
+  --nh-accent-subtle: var(--color-ink-800);
+  --nh-ring: var(--color-brand-400);
+
+  --nh-success: var(--color-success-300);
+  --nh-warning: var(--color-warning-300);
+  --nh-danger: var(--color-danger-300);
+  --nh-info: var(--color-info-300);
+
+  color-scheme: dark;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TRAME GÉOMÉTRIQUE
+   Étoile à huit branches (khātam), reprise du logo, en tracé seul.
+   Employée par les deux interfaces : fonds verts du site public, et
+   page de connexion du back-office.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --nh-pattern-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%232dac07' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3Ccircle cx='24' cy='24' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  --nh-pattern-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23f9cc57' stroke-opacity='0.08' stroke-width='1'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3Ccircle cx='24' cy='24' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}

@@ -1,0 +1,71 @@
+# compose.prod.yml
+# Surcharges spécifiques à la production
+# Usage : docker-compose -f docker-compose.yml -f compose.prod.yml up -d
+
+version: '3.9'
+
+services:
+  nginx:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  app:
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+
+  queue:
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+
+  scheduler:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  reverb:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  next:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  db:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  redis:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  mediamtx:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G

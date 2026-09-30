@@ -1,0 +1,49 @@
+# MediaMTX — Nujum Al-Huda
+# RTMP (OBS) → HLS + WHEP. Le secret est injecté au démarrage par entrypoint.sh.
+
+logLevel: info
+logDestinations: [stdout]
+
+api: yes
+apiAddress: :9997
+
+metrics: yes
+metricsAddress: :9998
+
+rtmp: yes
+rtmpAddress: :1935
+
+hls: yes
+hlsAddress: :8888
+hlsAllowOrigin: "*"
+hlsVariant: lowLatency
+hlsSegmentCount: 7
+hlsSegmentDuration: 1s
+hlsPartDuration: 200ms
+
+webrtc: yes
+webrtcAddress: :8889
+webrtcAllowOrigin: "*"
+webrtcICEServers2:
+  - url: stun:stun.l.google.com:19302
+
+# Chaque publish/read est validé par Laravel (clé de flux).
+# L'API interne reste locale : pas d'appel HTTP pour action=api.
+authMethod: http
+authHTTPAddress: http://nginx/api/v1/webhooks/mediamtx/auth?secret=__WEBHOOK_SECRET__
+authHTTPExclude:
+  - action: api
+  - action: metrics
+  - action: pprof
+
+pathDefaults:
+  source: publisher
+  record: yes
+  recordFormat: fmp4
+  recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S
+  runOnReady: /hooks/notify.sh publish
+  runOnNotReady: /hooks/notify.sh publishDone
+
+paths:
+  # Chemin libre : main/{publish_key}, recitation/{publish_key}, audio/{publish_key}
+  all_others: {}

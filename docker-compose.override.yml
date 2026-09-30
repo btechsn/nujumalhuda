@@ -1,0 +1,50 @@
+# docker-compose.override.yml
+# Surcharges pour l'environnement de développement local
+# Ce fichier est chargé automatiquement par docker-compose
+
+version: '3.9'
+
+services:
+  app:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - ./backend:/var/www/backend:cached
+
+  queue:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - ./backend:/var/www/backend:cached
+
+  scheduler:
+    environment:
+      - APP_ENV=local
+    volumes:
+      - ./backend:/var/www/backend:cached
+
+  reverb:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - ./backend:/var/www/backend:cached
+
+  next:
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+      - /app/.next
+
+  db:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"

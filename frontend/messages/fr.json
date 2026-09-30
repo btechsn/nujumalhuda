@@ -1,0 +1,1233 @@
+{
+  "common": {
+    "appName": "Nujum Al-Huda Institute",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "learnMore": "En savoir plus",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "home": "Accueil",
+    "logout": "Déconnexion",
+    "changeLanguage": "Changer de langue"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "programs": "Programmes",
+    "mosque": "Mosquée",
+    "live": "Direct",
+    "news": "Actualités",
+    "contact": "Contact",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "phone": "Téléphone",
+    "password": "Mot de passe",
+    "passwordConfirmation": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "loginSuccess": "Connexion réussie",
+    "logoutSuccess": "Déconnexion réussie",
+    "registerSuccess": "Inscription réussie"
+  },
+  "announcements": {
+    "title": "Annonces",
+    "communique": "Communiqué",
+    "noAnnouncements": "Aucune annonce pour le moment",
+    "markAsRead": "Marquer comme lu",
+    "category": {
+      "center": "Centre",
+      "community": "Communauté",
+      "urgent": "Urgent",
+      "event": "Événement"
+    }
+  },
+  "prayer": {
+    "times": "Horaires de prière",
+    "nextPrayer": "Prochaine prière",
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "jummah": "Jumu'ah"
+  },
+  "footer": {
+    "about": "À propos de l'Institut Nujum Al-Huda",
+    "contact": "Contact",
+    "socialMedia": "Réseaux sociaux",
+    "allRightsReserved": "Tous droits réservés"
+  },
+  "splash": {
+    "arabicName": "نجوم الهدى",
+    "name": "Nujum Al-Huda Institute Center",
+    "place": "Institut · Dakar",
+    "wordmark": "NUJUM AL-HUDA",
+    "verse": "وَقُل رَّبِّ زِدْنِي عِلْمًا",
+    "verseRef": "Taha, 114",
+    "lead": "La lumière du savoir, à Dakar",
+    "enter": "Entrer",
+    "centre": {
+      "kicker": "Mosquée et vie du lieu",
+      "title": "Centre",
+      "text": "Les prières, la maison et le rythme du centre à Dakar."
+    },
+    "academics": {
+      "kicker": "Étude et transmission",
+      "title": "Académique",
+      "text": "Les programmes, les enseignants et le parcours des élèves."
+    },
+    "news": {
+      "kicker": "Ce qui se passe",
+      "title": "Actualités",
+      "text": "Les annonces, les enseignements et la vie de l'institut."
+    },
+    "live": {
+      "kicker": "Studio",
+      "title": "Direct",
+      "text": "Les cours et les prières diffusés en direct."
+    }
+  },
+  "doors": {
+    "back": "Accueil",
+    "centre": {
+      "eyebrow": "Dakar",
+      "title": "Le centre",
+      "lede": "La maison de l'institut : les horaires de prière et le lieu, au cœur de Dakar.",
+      "prayerTitle": "Horaires de prière",
+      "prayerText": "Les cinq prières du jour, et l'iqama annoncée pour la mosquée.",
+      "placeTitle": "Nujum Al-Huda",
+      "placeText": "Institut franco-anglo-arabe. Dakar, Sénégal.",
+      "languagesTitle": "Trois langues",
+      "languagesText": "Le centre s'adresse en français, en anglais et en arabe.",
+      "teachTitle": "Ce qui s'enseigne",
+      "teachText": "Le Coran, la langue arabe, les sciences islamiques et les œuvres de Cheikh Ibrahim Niasse.",
+      "servicesTitle": "Nujum Al-Huda Institute Center",
+      "missionsTitle": "Nos missions",
+      "missionsLede": "Ce que le centre, la zawiya et les services portent au quotidien.",
+      "missions": {
+        "centre": {
+          "title": "Le centre",
+          "text": "Offrir une maison d’étude et de prière à Dakar, ouverte en français, anglais et arabe."
+        },
+        "zawiya": {
+          "title": "La zawiya",
+          "text": "Tenir les cinq prières, l’iqama et la khutba du vendredi dans la mosquée du centre."
+        },
+        "academics": {
+          "title": "L’académique",
+          "text": "Transmettre le Coran, la langue arabe, les sciences islamiques et l’héritage de Cheikh Ibrahim Niasse."
+        },
+        "community": {
+          "title": "La communauté",
+          "text": "Rassembler familles, élèves et dahiras autour du service, de l’entraide et de la vie du centre."
+        },
+        "live": {
+          "title": "La diffusion",
+          "text": "Porter les directs, khutbas et enseignements au-delà des murs, pour ceux qui ne peuvent pas venir."
+        },
+        "welcome": {
+          "title": "L’accueil",
+          "text": "Accompagner les inscriptions, les visiteurs et les demandes du secrétariat avec clarté."
+        }
+      },
+      "testimonialsTitle": "Témoignages",
+      "testimonialsLede": "Ce que disent les familles et les élèves du centre.",
+      "partnersTitle": "Partenaires",
+      "partnersLede": "Institutions et associations qui marchent avec le centre.",
+      "partnerVisit": "Visiter le site",
+      "relations": {
+        "parent": "Parent",
+        "student": "Élève",
+        "teacher": "Enseignant",
+        "alumni": "Ancien élève",
+        "member": "Membre"
+      }
+    },
+    "academics": {
+      "eyebrow": "Parcours",
+      "title": "Académique",
+      "lede": "Le Coran, la langue arabe et les sciences, avec les enseignants du centre.",
+      "programsTitle": "Programmes",
+      "programsText": "Mémorisation, arabe, sciences islamiques et œuvres de Cheikh Ibrahim Niasse.",
+      "teachersTitle": "Enseignants",
+      "teachersText": "Celles et ceux qui transmettent, et leurs spécialités.",
+      "servicesTitle": "Le parcours"
+    }
+  },
+  "news": {
+    "errors": { "loading": "Les actualités n'ont pas pu être chargées." },
+    "eyebrow": "Institut",
+    "title": "Actualités",
+    "lede": "Les annonces, les enseignements et la vie de l'institut Nujum Al-Huda.",
+    "featured": "À la une",
+    "latestArticles": "Derniers articles",
+    "resultsCount": "{count} articles",
+    "noArticles": "Aucun article ne correspond à votre recherche.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {current} sur {total}",
+    "categories": "Catégories",
+    "allCategories": "Toutes les catégories",
+    "searchTitle": "Rechercher",
+    "searchPlaceholder": "Rechercher une actualité…",
+    "searchSubmit": "Rechercher",
+    "filterTitle": "Filtrer",
+    "clearFilters": "Effacer les filtres",
+    "readMore": "Lire la suite",
+    "by": "Par",
+    "detail": {
+      "back": "Retour aux actualités",
+      "notFound": "Cette actualité est introuvable."
+    }
+  },
+  "live": {
+    "errors": { "loading": "Les directs n'ont pas pu être chargés." },
+    "liveNow": "En direct maintenant",
+    "listTitle": "Les émissions",
+    "resultsCount": "{count} résultats",
+    "empty": "Aucun direct pour le moment.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {current} sur {total}",
+    "searchTitle": "Rechercher",
+    "searchPlaceholder": "Rechercher un direct…",
+    "searchSubmit": "Rechercher",
+    "filterTitle": "Filtrer",
+    "filterStatus": "Statut",
+    "filterType": "Type",
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "clearFilters": "Effacer les filtres",
+    "view": "Voir",
+    "socialTitle": "Nous suivre en direct",
+    "socialLede": "YouTube et Facebook s’ouvrent ici. Instagram et TikTok s’ouvrent sur l’application.",
+    "socialWatch": "Regarder",
+    "socialOpen": "Ouvrir",
+    "socialClose": "Fermer",
+    "socialNoEmbed": "Impossible d’afficher ce flux ici. Ouvrez la plateforme.",
+    "socialSidebarEyebrow": "Réseaux",
+    "socialSidebarTitle": "Directs sociaux",
+    "socialSidebarLede": "Accédez rapidement à nos chaînes et pages.",
+    "platforms": {
+      "youtube": "YouTube",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "instagram": "Instagram"
+    },
+    "statuses": {
+      "live": "En direct",
+      "scheduled": "À venir",
+      "ended": "Terminé",
+      "archived": "Archivé"
+    },
+    "types": {
+      "lecture": "Cours",
+      "khutba": "Khutba",
+      "recitation": "Récitation",
+      "event": "Événement",
+      "general": "Général"
+    },
+    "detail": {
+      "back": "Retour aux directs",
+      "notFound": "Ce direct est introuvable.",
+      "playerHint": "Le flux s'affiche si le studio émet (HLS).",
+      "scheduledHint": "Cette émission est planifiée. Revenez à l'heure indiquée.",
+      "openReplay": "Voir le replay"
+    }
+  },
+  "replay": {
+    "errors": { "loading": "Les replays n'ont pas pu être chargés." },
+    "listTitle": "Les replays",
+    "resultsCount": "{count} résultats",
+    "empty": "Aucun replay publié pour le moment.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {current} sur {total}",
+    "searchTitle": "Rechercher",
+    "searchPlaceholder": "Rechercher un replay…",
+    "searchSubmit": "Rechercher",
+    "filterTitle": "Filtrer",
+    "filterHint": "Utilisez la recherche pour trouver une séance enregistrée.",
+    "clearFilters": "Effacer les filtres",
+    "watch": "Regarder",
+    "badge": "Replay",
+    "detail": {
+      "back": "Retour aux replays",
+      "notFound": "Ce replay est introuvable."
+    }
+  },
+  "recitations": {
+    "errors": { "loading": "Les récitations n'ont pas pu être chargées." },
+    "listTitle": "Bibliothèque de récitations",
+    "resultsCount": "{count} récitations",
+    "empty": "Aucune récitation publique pour le moment.",
+    "searchTitle": "Rechercher",
+    "searchPlaceholder": "Sourate ou récitant…",
+    "searchSubmit": "Rechercher",
+    "filterTitle": "Filtrer",
+    "filterReciter": "Récitant",
+    "filterSurah": "Sourate",
+    "allReciters": "Tous les récitants",
+    "allSurahs": "Toutes les sourates",
+    "clearFilters": "Effacer les filtres",
+    "listen": "Écouter",
+    "playing": "En lecture",
+    "loading": "Chargement…",
+    "nowPlaying": "En cours"
+  },
+  "library": {
+    "errors": { "loading": "La bibliothèque n'a pas pu être chargée." },
+    "empty": "Aucun ouvrage ne correspond à votre recherche.",
+    "searchPlaceholder": "Rechercher un ouvrage…",
+    "searchSubmit": "Rechercher",
+    "filterTitle": "Filtrer",
+    "filterTradition": "Tradition",
+    "filterKind": "Type",
+    "allTraditions": "Toutes les traditions",
+    "allKinds": "Tous les types",
+    "clearFilters": "Effacer les filtres",
+    "popular": "Populaires",
+    "rowBaye": "Voie Baye Niasse",
+    "rowSunnite": "Classiques sunnites",
+    "bestTitle": "Les plus consultés",
+    "resultsCount": "{count} ouvrages",
+    "open": "Ouvrir",
+    "consult": "Consulter",
+    "loading": "Chargement…",
+    "noFile": "Le fichier n'est pas encore déposé. Contactez le centre.",
+    "traditions": {
+      "baye_niasse": "Baye Niasse",
+      "sunnite": "Sunnite"
+    },
+    "kinds": {
+      "pdf": "PDF",
+      "audio": "Audio"
+    },
+    "detail": {
+      "back": "Retour à la bibliothèque",
+      "notFound": "Cet ouvrage est introuvable."
+    }
+  },
+  "media": {
+    "errors": { "loading": "La médiathèque n'a pas pu être chargée." },
+    "empty": "Aucun média publié pour le moment.",
+    "noMatch": "Aucun média pour cette recherche.",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher par nom d'événement…",
+    "filters": {
+      "all": "Tous",
+      "photo": "Photos",
+      "video": "Vidéos"
+    },
+    "untitledEvent": "Événement",
+    "openVideo": "Ouvrir la vidéo",
+    "close": "Fermer",
+    "resultsCount": "{count} médias",
+    "pageOf": "Page {page} / {pages}",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "zakat": {
+    "errors": {
+      "loading": "Les paramètres de zakat n'ont pas pu être chargés.",
+      "calculate": "Le calcul n'a pas pu aboutir. Vérifiez vos saisies."
+    },
+    "cta": "Commencer le calcul",
+    "formTitle": "Déclarer les biens",
+    "formLede": "Montants en francs CFA. Les bijoux portés à titre personnel ne sont pas inclus.",
+    "fields": {
+      "cash": "Liquidités",
+      "tradeGoods": "Marchandises commerciales",
+      "receivables": "Créances",
+      "debts": "Dettes exigibles",
+      "gold": "Or thésaurisé",
+      "silver": "Argent thésaurisé",
+      "hawl": "Le hawl d'un an lunaire est accompli"
+    },
+    "hints": {
+      "currency": "Montant en {currency}",
+      "grams": "Quantité en grammes",
+      "hawl": "Sans hawl accompli, aucune zakat n'est due sur ce calcul."
+    },
+    "submit": "Calculer",
+    "reset": "Réinitialiser",
+    "loading": "Calcul…",
+    "madhhabs": {
+      "maliki": "Malikite"
+    },
+    "bases": {
+      "gold": "Or",
+      "silver": "Argent"
+    },
+    "sidebar": {
+      "params": "Paramètres",
+      "madhhab": "École",
+      "nisabBasis": "Base du nisab",
+      "nisabGrams": "Nisab (g)",
+      "nisabAmount": "Nisab (valeur)",
+      "rate": "Taux",
+      "pricesAsOf": "Cours au",
+      "unavailable": "Paramètres indisponibles.",
+      "indicative": "Les cours affichés sont indicatifs. Le centre peut les préciser.",
+      "source": "Référence",
+      "sourceFallback": "École malikite. Référence : al-Mudawwana.",
+      "excluded": "Hors périmètre"
+    },
+    "excluded": {
+      "jewelry": "Bijoux d'usage personnel (malikite)",
+      "crops": "Récoltes (ushr)",
+      "livestock": "Bétail"
+    },
+    "result": {
+      "title": "Zakat estimée",
+      "none": "Aucune zakat due",
+      "needHawl": "Le hawl n'est pas encore accompli.",
+      "belowNisab": "Le seuil du nisab n'est pas atteint.",
+      "dueHint": "Estimation selon les règles enregistrées.",
+      "net": "Patrimoine net",
+      "nisab": "Nisab",
+      "cash": "Liquidités",
+      "trade": "Commerce",
+      "disclaimer": "Aide au calcul. Pour une décision, rapprochez-vous du centre."
+    }
+  },
+  "muud": {
+    "errors": {
+      "loading": "Le barème du muud n'a pas pu être chargé.",
+      "calculate": "Le calcul n'a pas pu aboutir.",
+      "persons": "Indiquez un nombre de personnes valide."
+    },
+    "cta": "Estimer mon muud",
+    "formTitle": "Foyer à couvrir",
+    "formLede": "Comptez chaque personne à votre charge, y compris vous-même.",
+    "fields": {
+      "persons": "Nombre de personnes"
+    },
+    "hints": {
+      "persons": "De 1 à 200 personnes",
+      "unit": "Barème actuel : {amount} par personne"
+    },
+    "submit": "Calculer",
+    "reset": "Réinitialiser",
+    "loading": "Calcul…",
+    "madhhabs": {
+      "maliki": "Malikite"
+    },
+    "staples": {
+      "rice": "Riz",
+      "millet": "Mil",
+      "wheat": "Blé",
+      "dates": "Dattes"
+    },
+    "sidebar": {
+      "params": "Barème",
+      "year": "Année hégirienne",
+      "madhhab": "École",
+      "staple": "Nourriture",
+      "perPerson": "Par personne",
+      "sa": "Saʿ",
+      "pricesAsOf": "Annoncé le",
+      "unavailable": "Barème indisponible.",
+      "indicative": "Montant indicatif. Le centre peut le préciser.",
+      "source": "Référence",
+      "sourceFallback": "École malikite. Zakat al-fitr d’un saʿ par personne."
+    },
+    "result": {
+      "title": "Total estimé",
+      "detail": "{persons} personne(s) × {unit}",
+      "disclaimer": "Aide au calcul de la zakat al-fitr. Pour le versement, rapprochez-vous du centre."
+    }
+  },
+  "community": {
+    "errors": { "loading": "La communauté n'a pas pu être chargée." },
+    "discussionsTitle": "Discussions récentes",
+    "groupsTitle": "Cercles & dahiras",
+    "seeMore": "Voir tout",
+    "pageOf": "Page {page} / {pages}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "replies": "{count} réponses",
+    "answered": "Répondu",
+    "members": "{count} membres",
+    "joinGroup": "Rejoindre",
+    "emptyDiscussions": "Aucune discussion publique pour le moment.",
+    "emptyGroups": "Aucun cercle publié pour le moment.",
+    "eventEyebrow": "Prochaine rencontre",
+    "saveSeat": "Réserver ma place",
+    "register": {
+      "lede": "Indiquez vos coordonnées pour confirmer votre présence.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "submit": "Confirmer",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "loading": "Envoi…",
+      "success": "Présence enregistrée. À bientôt à la zawiya.",
+      "error": "L'inscription n'a pas abouti. Réessayez."
+    },
+    "topicsTitle": "Sujets suivis",
+    "peopleTitle": "Enseignants à suivre",
+    "follow": "Voir",
+    "detail": {
+      "back": "Retour à la communauté",
+      "notFound": "Cette discussion est introuvable.",
+      "answer": "Réponse du centre",
+      "pending": "La réponse n'est pas encore publiée."
+    },
+    "topics": {
+      "ramadan": "Ramadan",
+      "priere": "Prière",
+      "famille": "Famille",
+      "zakat": "Zakat",
+      "fiqh": "Fiqh",
+      "inscription": "Inscription",
+      "programmes": "Programmes",
+      "dahira": "Dahira",
+      "communaute": "Communauté"
+    }
+  },
+  "dahira": {
+    "errors": { "loading": "Les dahiras n'ont pas pu être chargés." },
+    "groupsTitle": "Les dahiras",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher un dahira…",
+    "noMatch": "Aucun dahira pour cette recherche.",
+    "communityLink": "Communauté",
+    "members": "{count} membres",
+    "joinGroup": "Rejoindre",
+    "emptyGroups": "Aucun dahira publié pour le moment.",
+    "sidebarEyebrow": "Espace membre",
+    "sidebarTitle": "Réunions et cotisations",
+    "sidebarLede": "Une fois accepté, chaque membre retrouve les réunions, la cotisation et les échanges dans son propre dahira.",
+    "aboutTitle": "Comment ça marche",
+    "circleFallback": "Dahira",
+    "join": {
+      "lede": "Remplissez vos coordonnées. Le secrétariat du dahira validera votre demande.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "message": "Message (optionnel)",
+      "submit": "Envoyer la demande",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "loading": "Envoi…",
+      "success": "Demande envoyée. Le secrétariat vous contactera après validation.",
+      "error": "La demande n'a pas abouti. Réessayez."
+    },
+    "weekdays": {
+      "sun": "Dimanche",
+      "mon": "Lundi",
+      "tue": "Mardi",
+      "wed": "Mercredi",
+      "thu": "Jeudi",
+      "fri": "Vendredi",
+      "sat": "Samedi"
+    }
+  },
+  "contact": {
+    "infoTitle": "Coordonnées",
+    "infoLede": "Le secrétariat répond aux inscriptions, aux questions sur les programmes et à la vie du centre.",
+    "hours": "Lundi – Vendredi, 9h00 – 18h00 (Dakar)",
+    "mapTitle": "Localisation du centre",
+    "openMap": "Ouvrir la carte",
+    "formTitle": "Envoyer un message",
+    "formLede": "Remplissez le formulaire : le secrétariat vous répond sous 24 heures.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "subject": "Sujet",
+    "message": "Message",
+    "firstNamePh": "Votre prénom",
+    "lastNamePh": "Votre nom",
+    "emailPh": "Votre email",
+    "phonePh": "Votre téléphone",
+    "subjectPh": "Objet du message",
+    "messagePh": "Écrivez ici…",
+    "submit": "Envoyer le message",
+    "loading": "Envoi…",
+    "success": "Message envoyé. Le secrétariat vous répondra bientôt.",
+    "another": "Nouveau message",
+    "error": "L'envoi n'a pas abouti. Indiquez un email ou un téléphone, puis réessayez."
+  },
+  "enroll": {
+    "infoTitle": "Le dossier",
+    "infoLede": "Choisissez une promotion ouverte, puis déposez votre demande. Le secrétariat valide ensuite votre place.",
+    "selectedEyebrow": "Promotion choisie",
+    "year": "Année",
+    "seats": "places",
+    "hintEyebrow": "Conseil",
+    "hintLede": "Parcourez d’abord les programmes pour comparer les parcours, puis revenez déposer votre dossier.",
+    "seePrograms": "Voir les programmes",
+    "formTitle": "Demande d’inscription",
+    "formLede": "Remplissez le formulaire. Une fois envoyé, le secrétariat traite la demande.",
+    "noOpen": "Aucune promotion n’est ouverte aux inscriptions pour le moment.",
+    "program": "Programme",
+    "programPh": "Choisir un programme",
+    "promotion": "Promotion",
+    "promotionPh": "Choisir une promotion",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "email": "Email",
+    "firstNamePh": "Prénom de l’élève",
+    "lastNamePh": "Nom de l’élève",
+    "phonePh": "Téléphone",
+    "emailPh": "Email (optionnel)",
+    "motivation": "Motivation",
+    "motivationPh": "Pourquoi souhaitez-vous rejoindre ce programme ?",
+    "motivationHint": "{count} / 50 caractères minimum",
+    "previous": "Parcours antérieur",
+    "previousPh": "Études ou expérience précédente (optionnel)",
+    "emergencyTitle": "Contact d’urgence",
+    "emergencyName": "Nom du contact",
+    "emergencyNamePh": "Nom complet",
+    "emergencyPhone": "Téléphone",
+    "emergencyPhonePh": "Numéro joignable",
+    "emergencyRelation": "Lien",
+    "emergencyRelationPh": "Parent, tuteur…",
+    "hasQuran": "Je connais déjà le Coran",
+    "quranLevel": "Niveau Coran",
+    "arabicLevel": "Niveau arabe",
+    "levels": {
+      "none": "Aucun",
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "submit": "Envoyer la demande",
+    "loading": "Envoi…",
+    "success": "Demande envoyée. Le secrétariat vous contactera après examen du dossier.",
+    "another": "Nouvelle demande",
+    "errors": {
+      "promotion": "Choisissez une promotion ouverte.",
+      "send": "L’inscription n’a pas abouti. Vérifiez les champs et réessayez."
+    }
+  },
+  "programs": {
+    "featured": "À la une",
+    "allPrograms": "Tous les programmes",
+    "noPrograms": "Aucun programme pour le moment.",
+    "weeks": "semaines",
+    "week": "sem.",
+    "years": "ans",
+    "tuition": "Scolarité",
+    "registration": "inscription",
+    "viewDetails": "Voir le détail",
+    "backToList": "Retour aux programmes",
+    "objectives": "Objectifs",
+    "about": "Présentation",
+    "summary": "En bref",
+    "duration": "Durée",
+    "rhythm": "Rythme",
+    "age": "Âge",
+    "registrationFee": "Inscription",
+    "prerequisite": "Prérequis",
+    "openPromotions": "Promotions ouvertes",
+    "enrollmentOpen": "Inscriptions ouvertes",
+    "enrollCta": "S'inscrire",
+    "contactCta": "Nous contacter",
+    "searchBy": "Recherchez par :",
+    "filterType": "Parcours",
+    "clearFilters": "Effacer les filtres",
+    "searchPlaceholder": "Entrez vos mots clés",
+    "resultsCount": "Total {count} résultats trouvés",
+    "types": {
+      "coran": "Coran",
+      "arabe": "Arabe",
+      "baye_niasse": "Baye Niasse",
+      "sunnite": "Sciences islamiques",
+      "autre": "Autre"
+    },
+    "levels": {
+      "debutant": "Débutant",
+      "intermediaire": "Intermédiaire",
+      "avance": "Avancé"
+    },
+    "errors": {
+      "loading": "Les programmes n'ont pas pu être chargés.",
+      "notFound": "Ce programme est introuvable."
+    }
+  },
+  "aiSupport": {
+    "title": "Babacar",
+    "subtitle": "Assistant Nujum Al-Huda",
+    "welcome": "Bonjour. Posez votre question sur les programmes, les horaires ou le centre. L'assistant sera branché prochainement.",
+    "placeholderReply": "Merci pour votre message. Babacar sera branché dès que la clé API sera configurée.",
+    "inputPlaceholder": "Écrivez votre message…",
+    "send": "Envoyer",
+    "close": "Fermer"
+  },
+  "quizzes": {
+    "errors": {
+      "loading": "Les quizz n'ont pas pu être chargés.",
+      "notFound": "Ce quizz est introuvable."
+    },
+    "empty": "Aucun quizz pour le moment.",
+    "listTitle": "Nos quizz",
+    "resultsCount": "{count} résultats",
+    "searchPlaceholder": "Rechercher un quizz…",
+    "filterTopic": "Filtrer par parcours",
+    "allTopics": "Tous les parcours",
+    "clearFilters": "Effacer les filtres",
+    "noMatch": "Aucun quizz ne correspond à votre recherche.",
+    "questionsCount": "{count} questions",
+    "start": "Commencer",
+    "takeQuiz": "Passer le quizz",
+    "question": "Question {number}",
+    "submit": "Valider mes réponses",
+    "retry": "Recommencer",
+    "passed": "Bravo, quizz réussi",
+    "failed": "À revoir — continuez",
+    "scoreHint": "Il faut au moins 60 % pour réussir.",
+    "topics": {
+      "tajwid": "Tajwid",
+      "coran": "Coran",
+      "arabe": "Arabe",
+      "fiqh": "Fiqh & foi",
+      "baye_niasse": "Baye Niasse"
+    }
+  },
+  "certificates": {
+    "errors": {
+      "loading": "Les certificats n'ont pas pu être chargés."
+    },
+    "empty": "Aucun certifié pour le moment.",
+    "listTitle": "Les certifiés",
+    "resultsCount": "{count} résultats",
+    "searchPlaceholder": "Rechercher un certifié…",
+    "noMatch": "Aucun certifié ne correspond à votre recherche.",
+    "pageOf": "Page {page} / {pages}",
+    "attestation": "Attestation",
+    "viewCertificate": "Voir le certificat",
+    "documentTitle": "Attestation",
+    "documentSubtitle": "de niveau",
+    "documentBody": "L'institut Nujum Al-Huda atteste que le titulaire ci-dessous a suivi et validé le parcours indiqué.",
+    "levelLabel": "Palier atteint",
+    "notIjaza": "Ce document est une attestation de suivi. Il ne constitue pas une ijaza et ne remplace pas la chaîne de transmission.",
+    "seal": "Sceau",
+    "issuedOn": "Délivrée le",
+    "verificationCode": "Code de vérification"
+  },
+  "ijazas": {
+    "errors": {
+      "loading": "Les ijazas n'ont pas pu être chargées."
+    },
+    "empty": "Aucune ijaza publique pour le moment.",
+    "listTitle": "Les ijazas",
+    "resultsCount": "{count} résultats",
+    "searchPlaceholder": "Rechercher une ijaza…",
+    "noMatch": "Aucune ijaza ne correspond à votre recherche.",
+    "pageOf": "Page {page} / {pages}",
+    "badge": "Ijaza",
+    "viewIjaza": "Voir l'ijaza",
+    "teacher": "Enseignant",
+    "documentTitle": "Ijaza",
+    "documentSubtitle": "acte de transmission",
+    "documentBody": "Par le présent acte, l'enseignant atteste avoir transmis à l'élève l'autorisation dans le périmètre indiqué, avec sa chaîne.",
+    "scopeLabel": "Portée",
+    "sanadLabel": "Chaîne de transmission (sanad)",
+    "signedAct": "L'ijaza est un acte signé par le maître. Elle n'est jamais produite automatiquement.",
+    "seal": "Sceau",
+    "signedOn": "Signée le",
+    "verificationCode": "Code de vérification",
+    "verify": {
+      "title": "Vérifier une ijaza",
+      "lede": "Saisissez le code figurant sur le document pour confirmer son authenticité.",
+      "placeholder": "Code de vérification",
+      "submit": "Vérifier",
+      "checking": "Vérification…",
+      "notFound": "Aucune ijaza ne correspond à ce code.",
+      "error": "La vérification a échoué. Réessayez."
+    }
+  },
+  "promotions": {
+    "errors": { "loading": "Les promotions n'ont pas pu être chargées." },
+    "empty": "Aucune promotion pour le moment.",
+    "yourClasses": "Nos promotions",
+    "count": "{count} promotions",
+    "resultsCount": "{count} résultats",
+    "searchPlaceholder": "Rechercher une promotion…",
+    "filterProgram": "Filtrer par programme",
+    "allPrograms": "Tous les programmes",
+    "clearFilters": "Effacer les filtres",
+    "noMatch": "Aucune promotion ne correspond à votre recherche.",
+    "details": "Détail de la promotion",
+    "schedule": "Emploi du temps",
+    "noSchedule": "Aucun créneau publié pour cette promotion.",
+    "nextSession": "Prochain créneau",
+    "teacher": "Enseignant référent",
+    "students": "{count} élèves",
+    "weeks": "semaines",
+    "week": "sem.",
+    "viewProgram": "Voir le programme",
+    "enroll": "S'inscrire",
+    "enrollCta": "S'inscrire à cette promotion",
+    "contactCta": "Nous contacter",
+    "seeTeachers": "Voir les enseignants",
+    "open": "Inscriptions ouvertes",
+    "period": "Du {from} au {to}",
+    "periodLabel": "Période",
+    "program": "Programme",
+    "fill": "Remplissage",
+    "year": "Année",
+    "howToJoin": "Comment profiter de cette promotion ?",
+    "howToJoinText": "Pour rejoindre ce groupe, déposez une demande d'inscription. Le secrétariat confirme ensuite votre place selon les places disponibles.",
+    "howToJoinStep1": "Ouvrez le formulaire d'inscription et choisissez ce programme.",
+    "howToJoinStep2": "Déposez les pièces demandées par le secrétariat.",
+    "howToJoinStep3": "Attendez la confirmation : vous rejoindrez alors la promotion.",
+    "status": {
+      "draft": "Brouillon",
+      "upcoming": "À venir",
+      "ongoing": "En cours",
+      "completed": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "types": {
+      "coran": "Coran",
+      "arabe": "Arabe",
+      "baye_niasse": "Baye Niasse",
+      "sunnite": "Sciences islamiques",
+      "autre": "Autre"
+    },
+    "levels": {
+      "debutant": "Débutant",
+      "intermediaire": "Intermédiaire",
+      "avance": "Avancé"
+    }
+  },
+  "teachers": {
+    "errors": { "loading": "Les enseignants n'ont pas pu être chargés." },
+    "featured": "Enseignants mis en avant",
+    "allTeachers": "Tous les enseignants",
+    "noTeachers": "Aucun enseignant pour le moment.",
+    "search": "Rechercher",
+    "searchPlaceholder": "Nom ou prénom…",
+    "clearSearch": "Effacer",
+    "resultsCount": "{count} enseignants",
+    "noMatch": "Aucun enseignant ne correspond à cette recherche.",
+    "specialties": "Spécialités",
+    "qualifications": "Parcours",
+    "experiences": "Expériences & parcours",
+    "bio": "Présentation",
+    "ijaza": "Ijaza",
+    "ijazaBadge": "Ijaza",
+    "ijazaIssuer": "Délivrée par",
+    "ijazaYear": "Année",
+    "ijazaDomain": "Domaine",
+    "sanad": "Sanad",
+    "sanadHint": "Chaîne de transmission reliant l'enseignant à ses maîtres.",
+    "viewProfile": "Voir la fiche",
+    "statsStudents": "Élèves",
+    "statsCourses": "Cours",
+    "statsSessions": "Sessions",
+    "available": "Disponible",
+    "unavailable": "Indisponible"
+  },
+  "mosque": {
+    "meta": {
+      "title": "Horaires de prière",
+      "description": "Horaires de prière de la mosquée Nujum Al-Huda à Dakar."
+    },
+    "errors": { "loadingPrayerTimes": "Les horaires n'ont pas pu être chargés." },
+    "prayerTimes": "Horaires de prière",
+    "nextPrayer": "Prochaine prière",
+    "inMinutes": "Dans {minutes} minutes",
+    "manual": "Manuel",
+    "iqama": "Iqama",
+    "jummuah": "Vendredi — prière de Jumu'ah",
+    "names": {
+      "fajr": "Fajr",
+      "dhuhr": "Dhuhr",
+      "asr": "Asr",
+      "maghrib": "Maghrib",
+      "isha": "Isha"
+    }
+  },
+  "menu": {
+    "open": "Menu",
+    "close": "Fermer",
+    "label": "Navigation",
+    "brand": "Nujum Al-Huda Institute Center",
+    "quranic": "Institut coranique",
+    "footer": "Institut franco-anglo-arabe · Dakar",
+    "footerBlurb": "Institut franco-anglo-arabe à Dakar. Le Coran, la langue arabe, les sciences islamiques et les œuvres de Cheikh Ibrahim Niasse.",
+    "footerUseful": "Liens utiles",
+    "footerOther": "Autres liens",
+    "footerContact": "Nous contacter",
+    "footerPhone": "Téléphone",
+    "footerMail": "Mail",
+    "footerAddress": "Adresse",
+    "footerDeveloped": "Développé par",
+    "footerNewsletter": "Newsletter",
+    "footerEmail": "Votre e-mail",
+    "footerSubscribe": "S'abonner",
+    "footerSubscribed": "Inscription enregistrée.",
+    "footerSubscribeError": "L'inscription n'a pas abouti.",
+    "groups": {
+      "centre": "Centre",
+      "academics": "Académique",
+      "news": "Actualités",
+      "live": "Direct",
+      "resources": "Ressources",
+      "community": "Communauté"
+    },
+    "items": {
+      "centreHome": "Le centre",
+      "zawiya": "Zawiya",
+      "parcours": "Parcours",
+      "prayers": "Horaires de prière",
+      "about": "À propos",
+      "calendar": "Calendrier hégirien",
+      "location": "Localisation",
+      "khutbas": "Khutbas",
+      "events": "Événements",
+      "announcements": "Annonces",
+      "academicsHome": "Le parcours",
+      "programs": "Programmes",
+      "teachers": "Enseignants",
+      "enroll": "Inscription",
+      "promotions": "Promotions",
+      "quiz": "Quizz",
+      "certificates": "Certificats",
+      "ijaza": "Ijaza",
+      "articles": "Articles",
+      "live": "En direct",
+      "replay": "Replay",
+      "recitations": "Récitations",
+      "library": "Bibliothèque",
+      "media": "Médiathèque",
+      "daily": "Du jour",
+      "zakat": "Zakat",
+      "muud": "Muud Ramadan",
+      "community": "Communauté",
+      "dahira": "Dahiras",
+      "contact": "Contact"
+    },
+    "indicators": {
+      "teachers": "Enseignants",
+      "graduates": "Diplômés",
+      "programs": "Parcours",
+      "khutbas": "Khutbas",
+      "recitations": "Récitals"
+    }
+  },
+  "pages": {
+    "prayers": { "lede": "Les cinq prières du jour, et l'iqama annoncée pour la mosquée." },
+    "programs": {
+      "eyebrow": "Parcours",
+      "title": "Programmes",
+      "lede": "L'éducation va au-delà des manuels et des salles de classe. Nous croyons qu'il est essentiel de permettre aux étudiants d'explorer leurs passions et de remettre en question les idées établies."
+    },
+    "teachers": {
+      "eyebrow": "Transmission",
+      "title": "Enseignants",
+      "lede": "Celles et ceux qui transmettent le Coran, l'arabe et les sciences islamiques au centre."
+    },
+    "calendar": {
+      "eyebrow": "Sénégal",
+      "title": "Calendrier hégirien",
+      "lede": "Les dates suivent l'observation annoncée au Sénégal. L'administration les enregistre ; sinon le calendrier tabulaire reste affiché.",
+      "points": [
+        "Début du Ramadan, Aïd el-Fitr, Aïd el-Adha et nouvel an hégirien.",
+        "Une date publiée par le centre remplace le calcul tabulaire.",
+        "Retirer la date publiée rétablit le calendrier tabulaire."
+      ],
+      "today": "Aujourd'hui",
+      "untilRamadan": "Jours avant le Ramadan",
+      "ramadan": "Début du Ramadan",
+      "fitr": "Aïd el-Fitr",
+      "adha": "Aïd el-Adha",
+      "newYear": "Nouvel an hégirien"
+    },
+    "khutbas": {
+      "eyebrow": "Vendredi",
+      "title": "Khutbas",
+      "lede": "Les prêches du vendredi donnés au centre, à relire après la prière.",
+      "search": "Rechercher",
+      "from": "Du",
+      "to": "Au",
+      "speaker": "Orateur",
+      "all": "Tous",
+      "empty": "Aucune khutba pour cette recherche.",
+      "detail": {
+        "back": "Retour aux khutbas",
+        "notFound": "Cette khutba est introuvable.",
+        "noVideo": "Aucune vidéo n'est encore associée à cette khutba.",
+        "relatedLive": "Direct associé",
+        "openLive": "Voir le direct",
+        "openReplay": "Voir le replay",
+        "audio": "Audio",
+        "keyPoints": "Points clés"
+      },
+      "points": [
+        "Le prêche du vendredi de la mosquée.",
+        "Le texte reste disponible après la prière.",
+        "Chaque khutba est celle du centre, à Dakar."
+      ]
+    },
+    "events": {
+      "eyebrow": "Agenda",
+      "title": "Événements",
+      "lede": "Les journées, les cercles et les rendez-vous annoncés par le centre.",
+      "participate": "Participer",
+      "learnMore": "En savoir plus",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Numéro de téléphone",
+      "submit": "Envoyer",
+      "cancel": "Annuler",
+      "registered": "Inscription enregistrée.",
+      "registerError": "L'inscription n'a pas abouti.",
+      "search": "Rechercher un événement…",
+      "searchTitle": "Rechercher",
+      "searchSubmit": "Rechercher",
+      "filterTitle": "Filtrer",
+      "listTitle": "À venir",
+      "resultsCount": "{count} événements",
+      "dateRange": "Période",
+      "clearFilters": "Effacer les filtres",
+      "from": "Du",
+      "to": "Au",
+      "type": "Type",
+      "allTypes": "Tous les types",
+      "noMatch": "Aucun événement pour cette recherche.",
+      "empty": "Aucun événement annoncé pour le moment.",
+      "pageOf": "Page {page} / {pages}",
+      "types": {
+        "lecture": "Conférence",
+        "conference": "Séminaire",
+        "special_prayer": "Prière spéciale",
+        "fundraising": "Collecte",
+        "community": "Communauté",
+        "gamou": "Gamou",
+        "workshop": "Atelier",
+        "other": "Autre"
+      },
+      "points": [
+        "Cercles, journées et rencontres du centre.",
+        "La date, le lieu et le public concerné.",
+        "L'inscription se fait quand l'événement l'ouvre."
+      ]
+    },
+    "announcements": {
+      "eyebrow": "Messages",
+      "title": "Annonces",
+      "lede": "Les messages du centre, de la communauté, et ceux qui ne peuvent pas attendre.",
+      "searchTitle": "Recherche",
+      "searchPlaceholder": "Rechercher une annonce...",
+      "search": "Rechercher",
+      "reset": "Réinitialiser",
+      "viewLink": "Voir le lien",
+      "contactsTitle": "Nous contacter",
+      "empty": "Aucune annonce pour le moment.",
+      "noMatch": "Aucune annonce pour cette recherche.",
+      "pageOf": "Page {page} sur {pages}",
+      "categories": {
+        "center": "Centre",
+        "community": "Communauté",
+        "urgent": "Urgent",
+        "event": "Événement"
+      },
+      "points": [
+        "Annonces du centre et de la vie commune.",
+        "Les messages urgents sont signalés.",
+        "Une annonce lue peut être marquée comme telle."
+      ]
+    },
+    "enroll": {
+      "eyebrow": "Dossier",
+      "title": "Inscription",
+      "lede": "Déposez une demande pour une promotion ouverte. Le secrétariat confirme ensuite votre place.",
+      "points": [
+        "Choisir le programme et la promotion ouverte.",
+        "Renseigner l’élève et le contact d’urgence.",
+        "Le secrétariat valide la demande."
+      ]
+    },
+    "promotions": {
+      "eyebrow": "Élèves",
+      "title": "Promotions",
+      "lede": "Les groupes d'élèves, par programme et par année."
+    },
+    "quiz": {
+      "eyebrow": "Évaluation",
+      "title": "Quizz",
+      "lede": "Les évaluations du parcours, pour mesurer ce qui a été retenu."
+    },
+    "certificates": {
+      "eyebrow": "Attestation",
+      "title": "Certificats",
+      "lede": "Les attestations de suivi. Elles ne remplacent pas l'ijaza.",
+      "points": [
+        "Une attestation constate un parcours suivi.",
+        "Elle se distingue de l'ijaza.",
+        "Elle est délivrée par le centre."
+      ]
+    },
+    "ijaza": {
+      "eyebrow": "Transmission",
+      "title": "Ijaza",
+      "lede": "L'ijaza est un acte signé par l'enseignant, avec sa chaîne de transmission. Elle n'est pas produite automatiquement.",
+      "points": [
+        "L'enseignant signe, et indique sa chaîne.",
+        "Sans enseignant et sans signature, il n'y a pas d'ijaza.",
+        "Le document reste un acte du maître, pas une formalité."
+      ]
+    },
+    "live": {
+      "eyebrow": "Studio",
+      "title": "En direct",
+      "lede": "Les cours et les prières diffusés quand le studio du centre est ouvert.",
+      "points": [
+        "Le direct s'ouvre lorsque le studio émet.",
+        "Le tchat accompagne la séance en cours.",
+        "Sans émission, la page reste au calme."
+      ]
+    },
+    "replay": {
+      "eyebrow": "Archives",
+      "title": "Replay",
+      "lede": "Les séances enregistrées, à revoir après le direct.",
+      "points": [
+        "Une séance publiée reste disponible.",
+        "Le replay reprend le cours ou la prière passés.",
+        "Seules les séances déposées par le centre apparaissent."
+      ]
+    },
+    "recitations": {
+      "eyebrow": "Voix",
+      "title": "Récitations",
+      "lede": "Bibliothèque sonore du centre : sourates et récitants, à écouter librement.",
+      "points": [
+        "Chaque piste est liée à une sourate et un récitant.",
+        "La lecture est libre, sans compte.",
+        "Les dépôts passent par le centre."
+      ]
+    },
+    "library": {
+      "eyebrow": "Ouvrages",
+      "title": "Bibliothèque",
+      "lede": "La bibliothèque accueille les ouvrages du centre — voie Baye Niasse et classiques sunnites — pour lire, écouter et transmettre.",
+      "points": [
+        "Livres, cours et documents du centre.",
+        "Chaque pièce indique son auteur et son sujet.",
+        "La consultation suit les droits déposés."
+      ]
+    },
+    "media": {
+      "eyebrow": "Galerie",
+      "title": "Médiathèque",
+      "lede": "Photos et vidéos des événements du centre : filtrez par type et recherchez par nom d'événement.",
+      "points": [
+        "Photos et vidéos publiques du centre.",
+        "Filtrez par photos ou vidéos.",
+        "Recherchez par nom d'événement."
+      ]
+    },
+    "daily": {
+      "eyebrow": "Rappel",
+      "title": "Du jour",
+      "lede": "Le verset, le hadith ou le rappel choisi pour la journée.",
+      "points": [
+        "Un contenu par jour.",
+        "Verset, hadith ou rappel du centre.",
+        "Il change avec la journée."
+      ]
+    },
+    "zakat": {
+      "eyebrow": "Calcul",
+      "title": "Zakat",
+      "lede": "Estimez la zakat al-mal selon l’école malikite, à partir des biens que vous déclarez.",
+      "points": [
+        "Vous indiquez les biens concernés.",
+        "Le calcul suit les règles enregistrées.",
+        "Le résultat reste une aide, le centre peut le préciser."
+      ]
+    },
+    "muud": {
+      "eyebrow": "Ramadan",
+      "title": "Muud Ramadan",
+      "lede": "Estimez la zakat al-fitr pour votre foyer selon le barème annoncé par le centre.",
+      "points": [
+        "Indiquez le nombre de personnes à charge.",
+        "Le montant suit le muud fixé pour l’année.",
+        "Le résultat reste une aide ; le centre peut le préciser."
+      ]
+    },
+    "discussions": {
+      "eyebrow": "Familles",
+      "title": "Discussions",
+      "lede": "Toutes les discussions publiques de la communauté, des plus récentes aux plus anciennes."
+    },
+    "community": {
+      "eyebrow": "Familles",
+      "title": "Communauté",
+      "lede": "Discussions, dahiras et rencontres des familles et des élèves du centre.",
+      "points": [
+        "Les échanges de la communauté.",
+        "Les cercles et dahiras du centre.",
+        "Les prochaines rencontres annoncées."
+      ]
+    },
+    "location": {
+      "title": "Localisation",
+      "open": "S'y rendre"
+    },
+    "zawiya": {
+      "eyebrow": "Mosquée",
+      "title": "Zawiya",
+      "lede": "La mosquée du centre à Dakar.",
+      "about": "La zawiya est la mosquée du Nujum Al-Huda Institute Center, au 28M Cité des Magistrats, Sud Foire, à Dakar. Les cinq prières s'y tiennent, et la khutba du vendredi y est prononcée.",
+      "founderEyebrow": "À propos",
+      "founderTitle": "Mot du fondateur",
+      "founderName": "Le fondateur",
+      "founderP1": "C’est avec un grand plaisir que je vous souhaite la bienvenue sur cet espace du Nujum Al-Huda Institute Center. La zawiya est le lieu où nous nous rassemblons pour la prière, l’écoute et la fraternité.",
+      "founderP2": "Que vous veniez pour les cinq prières, la khutba du vendredi, un enseignement ou simplement pour vous recueillir, vous êtes chez vous ici, à Dakar.",
+      "founderP3": "Puisse ce site vous rapprocher du centre, de ses horaires, de ses annonces et de sa communauté. Qu’Allah accepte de nous et de vous.",
+      "points": [
+        "Les cinq prières et l'iqama s'y tiennent.",
+        "Les khutbas du vendredi y sont prononcées.",
+        "Les horaires suivent ce que le centre annonce."
+      ]
+    },
+    "dahira": {
+      "eyebrow": "Cercles",
+      "title": "Dahiras",
+      "lede": "Découvrez les dahiras du centre et demandez à rejoindre celui qui vous correspond.",
+      "points": [
+        "Choisissez un dahira et envoyez une demande.",
+        "Le secrétariat accepte ou refuse la demande.",
+        "Réunions et cotisations se gèrent ensuite dans chaque dahira."
+      ]
+    },
+    "contact": {
+      "eyebrow": "Dakar",
+      "title": "Contact",
+      "lede": "Écrire au secrétariat du Nujum Al-Huda Center, à Dakar.",
+      "points": [
+        "Institut franco-anglo-arabe.",
+        "Dakar, Sénégal.",
+        "Le secrétariat répond aux demandes d'inscription et aux questions sur le centre."
+      ]
+    }
+  }
+}

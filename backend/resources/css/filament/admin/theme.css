@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@config "tailwind.config.js";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Thème Filament — Nujum Al-Huda Center
+   ──────────────────────────────────────────────────────────────────────────
+   Le back-office partage LE MÊME fichier de jetons que le site public.
+   La marque n'y est pas reproduite, elle y est importée : un changement
+   de vert dans design/tokens.css se propage aux deux interfaces.
+
+   Ce que le thème aligne intégralement :
+     · palette, y compris les onze nuances de chaque échelle
+     · typographie, dont la fonte arabe pour l'interface en RTL
+     · mode sombre, sur les fonds teintés de vert du site
+     · rayons et ombres, selon les règles du design system
+     · logo, favicon, trame géométrique de la page de connexion
+
+   Ce que le thème ne cherche pas à aligner :
+     · la géométrie interne des composants Filament (structure des
+       tableaux, des champs, des panneaux latéraux). Les forcer au pixel
+       obligerait à surcharger le balisage de Filament, donc à reprendre
+       ces surcharges à chaque montée de version. Le rapport entre le
+       coût et le bénéfice ne le justifie pas sur une interface interne.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@import "../../../../../design/tokens.css";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Polices. Servies en local depuis backend/public/fonts plutôt que par un
+   CDN : le back-office est utilisé depuis Dakar, souvent sur connexion
+   contrainte, et les mêmes fichiers servent déjà le site public.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --nh-font-sans: "IBM Plex Sans";
+  --nh-font-serif: "IBM Plex Serif";
+  --nh-font-arabic: "IBM Plex Sans Arabic";
+  --nh-font-quran: "Amiri";
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Alignement géométrique sur le design system.
+
+   Filament emploie par défaut des rayons plus généreux et des ombres
+   portées sur des éléments statiques. Les deux contredisent les règles du
+   système, et se corrigent ici sans toucher au balisage de Filament.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.fi {
+  /* Aucune ombre sur un élément statique : la hiérarchie passe par le
+     filet d'un pixel, comme sur le site public. */
+  --fi-panel-shadow: none;
+}
+
+.fi-section,
+.fi-wi,
+.fi-ta-ctn,
+.fi-fo-component-ctn {
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  border: 1px solid var(--nh-line);
+}
+
+.fi-btn,
+.fi-input,
+.fi-select-input,
+.fi-badge {
+  border-radius: var(--radius-sm);
+}
+
+.fi-modal-window,
+.fi-dropdown-panel {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-overlay);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   L'or, selon les règles du système : filets et accents, jamais un aplat.
+   Ici, il souligne l'élément de navigation actif — exactement comme
+   l'onglet actif du site public.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.fi-sidebar-item-active .fi-sidebar-item-button {
+  border-inline-start: 2px solid var(--nh-line-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+[dir="rtl"] .fi-sidebar-item-active .fi-sidebar-item-button {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.fi-topbar {
+  border-block-end: 1px solid var(--nh-line);
+  box-shadow: none;
+}
+
+/* Page de connexion : fond vert et trame géométrique, comme le bandeau
+   d'annonces du site public. C'est le seul écran du back-office qu'un
+   visiteur peut atteindre, donc le seul qui doive porter la marque
+   pleinement. */
+.fi-simple-layout {
+  background-color: var(--nh-inverse);
+  background-image: var(--nh-pattern-dark);
+  background-size: 48px 48px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Arabe. Les mêmes règles non négociables que sur le site public :
+   interlettrage nul sous peine de détruire les ligatures, interligne
+   élargi, aucune graisse ni italique synthétique.
+   ───────────────────────────────────────────────────────────────────────── */
+
+[dir="rtl"],
+:lang(ar) {
+  font-family: var(--font-arabic);
+  line-height: 1.9;
+  letter-spacing: 0 !important;
+  font-synthesis: none;
+}
+
+/* Les valeurs numériques restent isolées du contexte bidirectionnel :
+   sans cela, un horaire ou un montant se réordonne à l'affichage dans une
+   interface arabe. */
+.fi-ta-text-item-label:has(> time),
+.fi-in-text-item-label:has(> time),
+.nh-numeric {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}

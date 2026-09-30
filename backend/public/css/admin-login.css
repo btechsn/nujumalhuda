@@ -1,0 +1,214 @@
+html:has(.nh-login),
+body:has(.nh-login) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.nh-login {
+  position: relative;
+  display: flex;
+  height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.nh-login-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.nh-login-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 90, 49, 0.82);
+}
+
+.nh-login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 24rem;
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: #fff;
+  padding: 1.35rem 1.35rem 1.15rem;
+  color: #10281b;
+  box-shadow: 0 24px 60px rgba(3, 28, 15, 0.28);
+}
+
+.nh-login-logo {
+  display: block;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto 0.7rem;
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: center 28%;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px #e3c86d;
+}
+
+.nh-login-eyebrow {
+  margin: 0;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c8971f;
+}
+
+.nh-login-title {
+  margin: 0.2rem 0 0;
+  text-align: center;
+  font-size: 1.65rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0b5a31;
+}
+
+.nh-login-rule {
+  display: block;
+  width: 2.75rem;
+  height: 2px;
+  margin: 0.55rem auto 0;
+  background: #e3c86d;
+}
+
+.nh-login-lede {
+  margin: 0.55rem 0 0.9rem;
+  text-align: center;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: #5c6b62;
+}
+
+.nh-login .fi-fo-field-wrp {
+  margin: 0;
+}
+
+.nh-login .fi-fo-field-wrp > .grid {
+  gap: 0.35rem;
+}
+
+.nh-login .fi-fo-field-wrp-label,
+.nh-login .fi-fo-field-wrp-label span {
+  color: #10281b;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.nh-login .fi-fo-field-wrp > .grid > .flex {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.nh-login .fi-input-wrp {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 2.6rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+  overflow: hidden;
+}
+
+.nh-login .fi-input-wrp-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nh-login .fi-input {
+  display: block;
+  width: 100%;
+  height: 2.6rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 1rem;
+  color: #10281b;
+  font-size: 0.92rem;
+}
+
+.nh-login .fi-input-wrp-suffix {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding-inline-end: 0.35rem;
+}
+
+.nh-login .fi-input-wrp-suffix .fi-icon,
+.nh-login .fi-input-wrp-suffix svg,
+.nh-login .fi-input-wrp-suffix button {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.nh-login .fi-input-wrp-suffix button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #5c6b62;
+}
+
+.nh-login .fi-form-actions {
+  margin-top: 0.85rem;
+}
+
+.nh-login .fi-ac {
+  display: grid;
+  width: 100%;
+}
+
+.nh-login .fi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 2.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: #e3c86d;
+  color: #1a1406;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+.nh-login .fi-btn:hover {
+  background: #f0d98a;
+}
+
+.nh-login .fi-link {
+  color: #0b5a31;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.nh-login .fi-fo-field-wrp:has(input[type="checkbox"]) {
+  margin-top: 0.65rem;
+}
+
+.fi-body:has(.nh-login) {
+  background: #0b5a31;
+}
