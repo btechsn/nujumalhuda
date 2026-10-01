@@ -28,6 +28,8 @@ export type SiteSettings = {
   newsletterEnabled: boolean;
   newsletterPlaceholder: LocalizedText;
   newsletterButton: LocalizedText;
+  centreImageUrl: string;
+  founderImageUrl: string;
 };
 
 const USEFUL_LINKS: FooterLink[] = [
@@ -76,6 +78,8 @@ export const SITE_SETTINGS_FALLBACK: SiteSettings = {
   newsletterEnabled: true,
   newsletterPlaceholder: { fr: "Votre e-mail", en: "Your email", ar: "بريدك" },
   newsletterButton: { fr: "S'abonner", en: "Subscribe", ar: "اشترك" },
+  centreImageUrl: "",
+  founderImageUrl: "",
 };
 
 export function localized(text: LocalizedText, locale: string): string {
@@ -132,6 +136,8 @@ export function normalizeSiteSettings(body: unknown): SiteSettings {
     newsletterEnabled: data.newsletter_enabled !== false,
     newsletterPlaceholder: readLocalized(data.newsletter_placeholder, SITE_SETTINGS_FALLBACK.newsletterPlaceholder),
     newsletterButton: readLocalized(data.newsletter_button, SITE_SETTINGS_FALLBACK.newsletterButton),
+    centreImageUrl: typeof data.centre_image_url === "string" ? data.centre_image_url : "",
+    founderImageUrl: typeof data.founder_image_url === "string" ? data.founder_image_url : "",
   };
 }
 

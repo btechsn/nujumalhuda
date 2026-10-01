@@ -7,6 +7,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Models\User;
 use Modules\Mosque\Filament\Resources\EventResource\Pages;
 use Modules\Mosque\Filament\Resources\EventResource\RelationManagers;
 use Modules\Mosque\Models\MosqueEvent;
@@ -105,8 +107,12 @@ class EventResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('speaker_id')
                             ->label('Intervenant (enseignant)')
-                            ->relationship('speaker', 'name')
-                            ->searchable()
+                            ->relationship(
+                                name: 'speaker',
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('last_name')->orderBy('first_name'),
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->fullName())
+                            ->searchable(['first_name', 'last_name'])
                             ->preload(),
                         
                         Forms\Components\TextInput::make('speaker_name')
@@ -135,7 +141,7 @@ class EventResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('image_media_id')
                             ->label('Image de couverture')
-                            ->relationship('image', 'filename')
+                            ->relationship('image', 'file_name')
                             ->searchable()
                             ->preload(),
                         Forms\Components\TextInput::make('youtube_url')

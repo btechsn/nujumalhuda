@@ -32,9 +32,10 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
   const [page, setPage] = useState(0);
 
   const filtered = useMemo(() => {
+    const ordered = [...items].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     const needle = query.trim().toLocaleLowerCase(locale);
-    if (!needle) return items;
-    return items.filter((item) => {
+    if (!needle) return ordered;
+    return ordered.filter((item) => {
       const haystack = `${item.title} ${item.message}`.toLocaleLowerCase(locale);
       return haystack.includes(needle);
     });
@@ -95,6 +96,7 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
           <>
             {visible.map((item) => {
               const isFocused = item.id === focusedId;
+              const link = linkOf(item.actionUrl, locale);
               return (
                 <article
                   key={item.id}
@@ -119,9 +121,18 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
                     {formatDay(item.date, locale)}
                   </p>
                   <p className="mt-3 text-small text-content-secondary">{item.message}</p>
-                  {item.actionUrl ? (
+                  {link?.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`nh-event-more mt-5 inline-flex rounded-full px-5 py-2 text-xs font-semibold ${labelClass}`}
+                    >
+                      {t("viewLink")}
+                    </a>
+                  ) : link ? (
                     <Link
-                      href={item.actionUrl}
+                      href={link.href}
                       className={`nh-event-more mt-5 inline-flex rounded-full px-5 py-2 text-xs font-semibold ${labelClass}`}
                     >
                       {t("viewLink")}
@@ -219,6 +230,40 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
       </aside>
     </div>
   );
+}
+
+function linkOf(url: string, locale: string): { href: string; external: boolean } | null {
+  const value = url.trim();
+  if (!value) return null;
+  if (/^(mailto:|tel:)/i.test(value)) return { href: value, external: true };
+
+  const absolute = /^www\./i.test(value) ? `https://${value}` : value;
+  if (/^https?:\/\//i.test(absolute)) {
+    try {
+      const parsed = new URL(absolute);
+      if (/^(localhost|127\.0\.0\.1)$/i.test(parsed.hostname)) {
+        return internalPath(`${parsed.pathname}${parsed.search}${parsed.hash}`, locale);
+      }
+    } catch {
+      return { href: absolute, external: true };
+    }
+
+    return { href: absolute, external: true };
+  }
+
+  const host = value.split(/[/?#]/)[0] ?? "";
+  if (host.includes(".")) return { href: `https://${value}`, external: true };
+
+  return internalPath(value.startsWith("/") ? value : `/${value}`, locale);
+}
+
+function internalPath(path: string, locale: string): { href: string; external: boolean } {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  if (normalized === `/${locale}` || normalized.startsWith(`/${locale}/`)) {
+    return { href: normalized, external: false };
+  }
+
+  return { href: `/${locale}${normalized}`, external: false };
 }
 
 function formatDay(iso: string, locale: string) {

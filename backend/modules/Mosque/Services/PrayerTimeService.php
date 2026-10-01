@@ -114,6 +114,14 @@ class PrayerTimeService
     }
 
     /**
+     * Recalculer l'iqama après un override ou un retour au calcul automatique.
+     */
+    public function refreshIqama(PrayerTime $prayerTime): void
+    {
+        $this->calculateIqama($prayerTime, $prayerTime->date->format('Y-m-d'));
+    }
+
+    /**
      * Calculer l'heure d'iqama avec décalage
      */
     private function calculateIqama(PrayerTime $prayerTime, string $date): void

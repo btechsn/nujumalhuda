@@ -28,15 +28,8 @@ class AnnouncementController extends Controller
             ->active()
             ->visibleBy($request->user());
 
-        // Tri par priorité puis date
-        $announcements = $query->orderByRaw("
-                CASE priority 
-                    WHEN 'high' THEN 1 
-                    WHEN 'normal' THEN 2 
-                    WHEN 'low' THEN 3 
-                END
-            ")
-            ->latest()
+        $announcements = $query
+            ->orderByRaw('COALESCE(starts_at, created_at) DESC')
             ->get();
 
         return ApiResponse::success(AnnouncementResource::collection($announcements));

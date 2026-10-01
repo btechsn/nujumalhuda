@@ -91,7 +91,7 @@ class MosqueEvent extends Model
     public function scopePublicList($query)
     {
         return $query->whereIn('status', ['upcoming', 'ongoing', 'completed'])
-            ->orderByDesc('start_at');
+            ->orderBy('start_at');
     }
 
     public function isFinished(): bool

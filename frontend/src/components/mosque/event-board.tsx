@@ -40,6 +40,13 @@ const TYPE_KEYS = [
 
 const PER_PAGE = 5;
 
+function bySoonest(a: EventCard, b: EventCard) {
+  if (a.isFinished !== b.isFinished) return a.isFinished ? 1 : -1;
+  const left = a.startAt || "";
+  const right = b.startAt || "";
+  return a.isFinished ? right.localeCompare(left) : left.localeCompare(right);
+}
+
 export function EventBoard({ items }: { items: EventCard[] }) {
   const locale = useLocale();
   const t = useTranslations("pages.events");
@@ -64,7 +71,7 @@ export function EventBoard({ items }: { items: EventCard[] }) {
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase(locale);
-    return items.filter((item) => {
+    return [...items].sort(bySoonest).filter((item) => {
       const day = item.startAt.slice(0, 10);
       if (from && day && day < from) return false;
       if (to && day && day > to) return false;
@@ -353,7 +360,7 @@ export function EventBoard({ items }: { items: EventCard[] }) {
             <h3 id="event-register-title" className="font-sans text-xl font-extrabold text-content">
               {active.title}
             </h3>
-            <p className="mt-1 text-small text-content-secondary">{t("participate")}</p>
+            <p className="mt-1 text-small text-content-secondary">{t("participant")}</p>
             {status === "ok" ? (
               <div className="mt-6">
                 <p className="text-content">{t("registered")}</p>

@@ -10,6 +10,7 @@ import { MissionsSection } from "@/components/layout/missions-section";
 import { PartnersMarquee } from "@/components/layout/partners-marquee";
 import { TestimonialsCarousel } from "@/components/layout/testimonials-carousel";
 import { serverApiFetch } from "@/lib/server-api";
+import { normalizeSiteSettings } from "@/lib/site-settings";
 
 type IndicatorKey = "teachers" | "graduates" | "programs" | "khutbas" | "recitations";
 
@@ -117,6 +118,11 @@ async function loadIndicators(): Promise<Record<IndicatorKey, number> | null> {
   return body?.data ?? null;
 }
 
+async function loadCentreImage(): Promise<string> {
+  const body = await serverApiFetch("/settings/public");
+  return normalizeSiteSettings(body).centreImageUrl || "/brand/intro-lecon.jpg";
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -146,12 +152,13 @@ export default async function CentrePage({
     getTranslations("announcements"),
   ]);
 
-  const [indicators, testimonials, partners, communiques, featuredSlidesRaw] = await Promise.all([
+  const [indicators, testimonials, partners, communiques, featuredSlidesRaw, centreImage] = await Promise.all([
     loadIndicators(),
     loadTestimonials(locale),
     loadPartners(locale),
     loadCommuniques(locale),
     loadFeaturedSlides(locale, { eyebrow: news("featured") }),
+    loadCentreImage(),
   ]);
 
   const featuredSlides = featuredSlidesRaw;
@@ -226,7 +233,7 @@ export default async function CentrePage({
           </Link>
         </div>
         <div className="relative min-h-72 overflow-hidden rounded-lg">
-          <Image src="/brand/intro-lecon.jpg" alt="" fill sizes="640px" className="object-cover object-[center_40%]" />
+          <Image src={centreImage} alt={t("centre.title")} fill sizes="640px" className="object-cover object-[center_40%]" />
         </div>
       </section>
 

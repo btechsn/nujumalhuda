@@ -145,7 +145,7 @@ export default async function ZawiyaPage({
             <div className="relative overflow-hidden rounded-sm bg-white p-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:p-4">
               <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-2">
                 <Image
-                  src="/brand/fondateur.jpg"
+                  src={place.founderImageUrl || "/brand/fondateur.jpg"}
                   alt={pages("zawiya.founderName")}
                   fill
                   sizes="(min-width: 64rem) 28vw, 80vw"
@@ -166,6 +166,9 @@ export default async function ZawiyaPage({
               <p>{pages("zawiya.founderP2")}</p>
               <p>{pages("zawiya.founderP3")}</p>
             </div>
+            <p className={`mt-8 text-end text-xl text-content-accent ${locale === "ar" ? "font-arabic" : "italic"}`}>
+              {pages("zawiya.founderName")}
+            </p>
           </div>
         </div>
       </section>

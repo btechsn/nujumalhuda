@@ -246,6 +246,9 @@ final class SiteSettings
             'newsletter_enabled' => self::boolValue('footer.newsletter_enabled', true),
             'newsletter_placeholder' => self::localeTrio('footer.newsletter_placeholder'),
             'newsletter_button' => self::localeTrio('footer.newsletter_button'),
+            'page_copy' => PlatformPages::publicCopy(),
+            'centre_image_url' => PlatformPages::imageUrl('centre'),
+            'founder_image_url' => PlatformPages::imageUrl('zawiya', 'founder_image'),
         ];
     }
 

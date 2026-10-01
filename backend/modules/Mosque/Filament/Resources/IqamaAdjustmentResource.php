@@ -109,7 +109,7 @@ class IqamaAdjustmentResource extends Resource
                 Tables\Columns\TextColumn::make('valid_to')
                     ->label('Au')
                     ->date('d/m/Y')
-                    ->default('Indéfini')
+                    ->placeholder('Indéfini')
                     ->sortable(),
                 
                 Tables\Columns\TextColumn::make('description')

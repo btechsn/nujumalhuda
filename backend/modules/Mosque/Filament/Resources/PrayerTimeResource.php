@@ -64,7 +64,8 @@ class PrayerTimeResource extends Resource
                     ->schema([
                         Forms\Components\TimePicker::make('manual_time')
                             ->label('Heure manuelle (override)')
-                            ->helperText('Laissez vide pour utiliser le calcul automatique'),
+                            ->seconds(false)
+                            ->helperText('Saisissez l’heure, puis cliquez sur Enregistrer. Laissez vide pour garder le calcul automatique.'),
                         
                         Forms\Components\Textarea::make('override_reason')
                             ->label('Raison de l\'override')
@@ -120,7 +121,7 @@ class PrayerTimeResource extends Resource
                 Tables\Columns\TextColumn::make('manual_time')
                     ->label('Manuel')
                     ->time('H:i')
-                    ->default('-'),
+                    ->placeholder('–'),
                 
                 Tables\Columns\IconColumn::make('is_overridden')
                     ->label('Override')
@@ -134,7 +135,7 @@ class PrayerTimeResource extends Resource
                 
                 Tables\Columns\TextColumn::make('overriddenBy.name')
                     ->label('Overridé par')
-                    ->default('-')
+                    ->placeholder('–')
                     ->limit(20),
             ])
             ->filters([

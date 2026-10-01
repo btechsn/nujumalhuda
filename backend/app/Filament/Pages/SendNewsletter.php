@@ -151,12 +151,14 @@ class SendNewsletter extends Page implements HasForms, HasTable
             Action::make('send')
                 ->label('Envoyer')
                 ->submit('send')
+                ->button()
                 ->requiresConfirmation()
                 ->modalHeading('Envoyer la newsletter')
                 ->modalDescription(fn (): string => 'Le message sera envoyé à '.NewsletterSubscriber::query()->count().' abonné(s).'),
             Action::make('saveSettings')
                 ->label('Enregistrer le formulaire')
                 ->submit('saveSettings')
+                ->button()
                 ->color('gray'),
         ];
     }

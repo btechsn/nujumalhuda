@@ -20,6 +20,9 @@ export function CommuniqueBar({
 }) {
   if (items.length === 0) return null;
 
+  const characters = items.reduce((total, item) => total + item.text.length, 0);
+  const durationSeconds = Math.min(180, Math.max(80, Math.round(characters * 0.28)));
+
   return (
     <div className="absolute inset-x-0 top-3 z-30 flex items-center gap-3 px-4 sm:px-8">
       <Link
@@ -32,7 +35,7 @@ export function CommuniqueBar({
         <div
           aria-hidden="true"
           className="nh-marquee-track"
-          style={{ "--nh-marquee-duration": "32s" } as React.CSSProperties}
+          style={{ "--nh-marquee-duration": `${durationSeconds}s` } as React.CSSProperties}
         >
           <CommuniqueRun items={items} />
           <CommuniqueRun items={items} />

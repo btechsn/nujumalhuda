@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Database\PostgresConnection;
+use Filament\Actions\Action;
+use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
@@ -76,5 +79,29 @@ class AppServiceProvider extends ServiceProvider
         });
 
         SiteSettings::apply();
+
+        Action::configureUsing(function (Action $action): void {
+            if ($action::class === Action::class) {
+                return;
+            }
+
+            $action->iconButton();
+
+            if (blank($action->getIcon()) && filled($icon = $action->getGroupedIcon())) {
+                $action->icon($icon);
+            }
+        }, isImportant: true);
+
+        TableAction::configureUsing(function (TableAction $action): void {
+            if ($action instanceof BulkAction) {
+                return;
+            }
+
+            $action->iconButton();
+
+            if (blank($action->getIcon()) && filled($icon = $action->getGroupedIcon())) {
+                $action->icon($icon);
+            }
+        }, isImportant: true);
     }
 }

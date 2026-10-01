@@ -7,6 +7,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Models\User;
 use Modules\Mosque\Models\Khutba;
 
 class KhutbaResource extends Resource
@@ -43,8 +45,12 @@ class KhutbaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('speaker_id')
                             ->label('Orateur (enseignant)')
-                            ->relationship('speaker', 'name')
-                            ->searchable()
+                            ->relationship(
+                                name: 'speaker',
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('last_name')->orderBy('first_name'),
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->fullName())
+                            ->searchable(['first_name', 'last_name'])
                             ->preload(),
                         
                         Forms\Components\TextInput::make('speaker_name')
@@ -104,13 +110,13 @@ class KhutbaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('audio_media_id')
                             ->label('Audio')
-                            ->relationship('audio', 'filename')
+                            ->relationship('audio', 'file_name')
                             ->searchable()
                             ->preload(),
                         
                         Forms\Components\Select::make('video_media_id')
                             ->label('Vidéo')
-                            ->relationship('video', 'filename')
+                            ->relationship('video', 'file_name')
                             ->searchable()
                             ->preload(),
                         

@@ -58,6 +58,7 @@ final class AdminPanelProvider extends PanelProvider
                 \App\Filament\Pages\Settings\WaveSettingsPage::class,
                 \App\Filament\Pages\Settings\OrangeMoneySettingsPage::class,
                 \App\Filament\Pages\ManageSettings::class,
+                ...\Modules\Core\Support\PlatformPages::pageClasses(),
             ])
             ->discoverWidgets(
                 in: app_path('Filament/Widgets'),
@@ -85,7 +86,7 @@ final class AdminPanelProvider extends PanelProvider
                         .fi-sidebar-header .fi-icon-btn { display: none !important; }
                         .fi-sidebar-group-icon { color: rgb(var(--gray-600)); }
                         .fi-sidebar-nav-groups { flex: 1; }
-                        .fi-sidebar-group[data-group-label="Paramètres"] { margin-top: auto; }
+                        .fi-sidebar-group[data-group-label="Pages"] { margin-top: auto; }
                         .fi-sidebar:not(.fi-sidebar-open) .fi-sidebar-header {
                             justify-content: center;
                             padding-inline: 0;
@@ -182,6 +183,7 @@ final class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Communauté')->icon('heroicon-o-chat-bubble-left-right'),
                 NavigationGroup::make('Dahira')->icon('heroicon-o-user-group'),
                 NavigationGroup::make('Ressources')->icon('heroicon-o-book-open'),
+                NavigationGroup::make('Pages')->icon('heroicon-o-document-text')->collapsible(),
                 NavigationGroup::make('Paramètres')->icon('heroicon-o-cog-6-tooth')->collapsible(),
             ])
 

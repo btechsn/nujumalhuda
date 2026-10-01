@@ -185,7 +185,7 @@ async function loadAnnouncements(locale: string): Promise<AnnouncementCard[]> {
     title: item.title ?? "",
     message: item.message ?? "",
     category: item.category?.value ?? "center",
-    actionUrl: item.action_url ? `/${locale}${item.action_url}` : "",
+    actionUrl: item.action_url ?? "",
     date: item.starts_at || item.created_at || "",
   }));
 }

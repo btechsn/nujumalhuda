@@ -27,7 +27,7 @@ class EventResource extends JsonResource
             'can_register' => $this->canRegister(),
             'is_finished' => $this->isFinished(),
             'is_full' => $this->isFull(),
-            'image_url' => $this->image?->url,
+            'image_url' => $this->image?->url(),
             'youtube_url' => $this->youtube_url,
             'status' => $this->status,
             'is_featured' => $this->is_featured,

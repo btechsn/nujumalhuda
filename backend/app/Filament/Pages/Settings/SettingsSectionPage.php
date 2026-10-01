@@ -109,7 +109,8 @@ abstract class SettingsSectionPage extends Page implements HasForms
         return [
             Action::make('save')
                 ->label('Enregistrer')
-                ->submit('save'),
+                ->submit('save')
+                ->button(),
         ];
     }
 

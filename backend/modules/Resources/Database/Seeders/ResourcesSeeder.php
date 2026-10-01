@@ -7,7 +7,6 @@ use Modules\Resources\Models\AudioRecitation;
 use Modules\Resources\Models\DailyContent;
 use Modules\Resources\Models\LibraryResource;
 use Modules\Resources\Models\MuudRamadanRate;
-use Modules\Resources\Models\MuudRamadanRate;
 use Modules\Resources\Models\ZakatRate;
 
 class ResourcesSeeder extends Seeder
