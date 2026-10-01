@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use Filament\Enums\ThemeMode;
+use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -45,6 +46,23 @@ final class AdminPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->passwordReset()
             ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
+            ->pages([
+                \App\Filament\Pages\Dashboard::class,
+                \App\Filament\Pages\Settings\ContactSettingsPage::class,
+                \App\Filament\Pages\Settings\FooterSettingsPage::class,
+                \App\Filament\Pages\Settings\LinksSettingsPage::class,
+                \App\Filament\Pages\SendNewsletter::class,
+                \App\Filament\Pages\Settings\AnalyticsSettingsPage::class,
+                \App\Filament\Pages\Settings\MailSettingsPage::class,
+                \App\Filament\Pages\Settings\SmsSettingsPage::class,
+                \App\Filament\Pages\Settings\WaveSettingsPage::class,
+                \App\Filament\Pages\Settings\OrangeMoneySettingsPage::class,
+                \App\Filament\Pages\ManageSettings::class,
+            ])
+            ->discoverWidgets(
+                in: app_path('Filament/Widgets'),
+                for: 'App\\Filament\\Widgets',
+            )
 
             /* ── Identité ────────────────────────────────────────────── */
             ->brandName('Nujum Al-Huda')
@@ -65,6 +83,26 @@ final class AdminPanelProvider extends PanelProvider
                         .nh-brand-copy span { font-size: .68rem; font-weight: 600; opacity: .72; }
                         .fi-user-avatar { width: 2.25rem; height: 2.25rem; object-fit: cover; }
                         .fi-sidebar-header .fi-icon-btn { display: none !important; }
+                        .fi-sidebar-group-icon { color: rgb(var(--gray-600)); }
+                        .fi-sidebar-nav-groups { flex: 1; }
+                        .fi-sidebar-group[data-group-label="Paramètres"] { margin-top: auto; }
+                        .fi-sidebar:not(.fi-sidebar-open) .fi-sidebar-header {
+                            justify-content: center;
+                            padding-inline: 0;
+                        }
+                        .fi-sidebar:not(.fi-sidebar-open) .fi-sidebar-header > div {
+                            display: flex !important;
+                            opacity: 1 !important;
+                            width: 100%;
+                            justify-content: center;
+                        }
+                        .fi-sidebar:not(.fi-sidebar-open) .nh-brand {
+                            justify-content: center;
+                            gap: 0;
+                        }
+                        .fi-sidebar:not(.fi-sidebar-open) .nh-brand-copy {
+                            display: none !important;
+                        }
                     </style>
                 HTML),
             )
@@ -135,15 +173,16 @@ final class AdminPanelProvider extends PanelProvider
              * structure.
              */
             ->navigationGroups([
-                'Communication',
-                'Enseignement',
-                'Suivi pédagogique',
-                'Mosquée',
-                'Ressources',
-                'Direct & Médias',
-                'Communauté',
-                'Dahira',
-                'Administration',
+                NavigationGroup::make('Éducation')->icon('heroicon-o-academic-cap'),
+                NavigationGroup::make('Suivi pédagogique')->icon('heroicon-o-bookmark'),
+                NavigationGroup::make('Zawiya')->icon('heroicon-o-building-library'),
+                NavigationGroup::make('Live Streaming')->icon('heroicon-o-video-camera'),
+                NavigationGroup::make('Live réseaux sociaux')->icon('heroicon-o-share'),
+                NavigationGroup::make('Actualités')->icon('heroicon-o-newspaper'),
+                NavigationGroup::make('Communauté')->icon('heroicon-o-chat-bubble-left-right'),
+                NavigationGroup::make('Dahira')->icon('heroicon-o-user-group'),
+                NavigationGroup::make('Ressources')->icon('heroicon-o-book-open'),
+                NavigationGroup::make('Paramètres')->icon('heroicon-o-cog-6-tooth')->collapsible(),
             ])
 
             ->middleware([

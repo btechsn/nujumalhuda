@@ -16,7 +16,7 @@ class SocialAccountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-link';
 
-    protected static ?string $navigationGroup = 'Direct & Médias';
+    protected static ?string $navigationGroup = 'Live réseaux sociaux';
 
     protected static ?string $navigationLabel = 'Comptes sociaux';
 

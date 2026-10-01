@@ -14,7 +14,7 @@ class IqamaAdjustmentResource extends Resource
     protected static ?string $model = IqamaAdjustment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
     protected static ?string $navigationLabel = 'Décalages Iqama';
     protected static ?int $navigationSort = 2;
 

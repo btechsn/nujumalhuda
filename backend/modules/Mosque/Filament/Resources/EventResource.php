@@ -16,7 +16,7 @@ class EventResource extends Resource
     protected static ?string $model = MosqueEvent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
     protected static ?string $navigationLabel = 'Événements';
     protected static ?int $navigationSort = 4;
 

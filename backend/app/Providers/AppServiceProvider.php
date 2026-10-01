@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Support\SiteSettings;
 use Modules\Academics\AcademicsServiceProvider;
 use Modules\Announcements\Providers\AnnouncementsServiceProvider;
 use Modules\Community\CommunityServiceProvider;
@@ -73,5 +74,7 @@ class AppServiceProvider extends ServiceProvider
                 $expression
             );
         });
+
+        SiteSettings::apply();
     }
 }

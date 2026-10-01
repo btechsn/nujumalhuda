@@ -16,7 +16,7 @@ class PrayerTimeResource extends Resource
     protected static ?string $model = PrayerTime::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
     protected static ?string $navigationLabel = 'Horaires de prière';
     protected static ?int $navigationSort = 1;
 

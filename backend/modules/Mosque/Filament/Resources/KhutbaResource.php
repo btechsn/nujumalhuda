@@ -14,7 +14,7 @@ class KhutbaResource extends Resource
     protected static ?string $model = Khutba::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
     protected static ?string $navigationLabel = 'Khutbas';
     protected static ?int $navigationSort = 3;
 

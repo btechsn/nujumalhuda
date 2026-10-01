@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -9,6 +10,8 @@ import { usePathname } from "next/navigation";
 import { AiSupportFab } from "@/components/layout/ai-support-fab";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { PLATFORM_NAV } from "@/config/platform-nav";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { localized, mapsSearchUrl, phoneHref, type FooterLink } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,10 +22,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("menu");
+  const settings = useSiteSettings();
   const [open, setOpen] = useState(false);
   const [groupId, setGroupId] = useState<string | null>(null);
 
   const hrefOf = (path: string) => `/${locale}${path}`;
+  const logoSrc = settings.logoUrl || "/brand/logo.jpeg";
   const submenuOf = (groupId: string, items: readonly { href: string; key: string }[]) =>
     items.filter((item) => {
       if (item.key === "enroll") return false;
@@ -44,17 +49,17 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           <div className="nh-container flex h-9 items-center justify-between gap-4 text-caption">
             <div className="flex items-center gap-4">
               <a
-                href="https://www.google.com/maps/search/?api=1&query=14.7437965,-17.4674915"
+                href={mapsSearchUrl(settings)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 hover:text-gold-300"
               >
                 <PinIcon />
-                28M Cité des Magistrats, Sud Foire
+                {settings.address}
               </a>
-              <a href="tel:+221771234567" className="inline-flex items-center gap-1.5 hover:text-gold-300">
+              <a href={phoneHref(settings.phone)} className="inline-flex items-center gap-1.5 hover:text-gold-300">
                 <PhoneIcon />
-                <span className="nh-numeric">+221 77 123 45 67</span>
+                <span className="nh-numeric">{settings.phone}</span>
               </a>
             </div>
             <div className="flex items-center gap-4">
@@ -71,7 +76,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           <div className="nh-container flex h-16 items-center justify-between gap-4">
             <Link href={hrefOf("")} className="flex min-w-0 items-center gap-3">
               <span className="relative size-11 shrink-0 overflow-hidden rounded-full border border-gold-300 bg-white">
-                <Image src="/brand/logo.jpeg" alt="" fill sizes="44px" className="object-cover object-[center_28%]" />
+                <Image src={logoSrc} alt="" fill sizes="44px" className="object-cover object-[center_28%]" />
               </span>
               <span className="hidden min-w-0 flex-col leading-none sm:flex">
                 <span className="font-sans text-sm font-extrabold tracking-tight">Nujum Al-Huda</span>
@@ -146,8 +151,8 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             <nav id="platform-menu" aria-label={t("label")} className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-surface lg:hidden">
               <div className="nh-container flex flex-col gap-5 py-4">
                 <div className="flex items-center justify-between gap-3 sm:hidden">
-                  <a href="tel:+221771234567" className="nh-numeric text-small text-content">
-                    +221 77 123 45 67
+                  <a href={phoneHref(settings.phone)} className="nh-numeric text-small text-content">
+                    {settings.phone}
                   </a>
                   <LocaleSwitcher />
                 </div>
@@ -184,50 +189,62 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
       <AiSupportFab />
 
+      {settings.analyticsId ? (
+        <>
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.analyticsId}`} strategy="afterInteractive" />
+          <Script id="nh-analytics" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.analyticsId}');`}
+          </Script>
+        </>
+      ) : null}
+
       <footer className="bg-brand-950 text-white">
         <div className="nh-container grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <span className="relative block size-16 overflow-hidden rounded-full border border-gold-300 bg-white">
-              <Image src="/brand/logo.jpeg" alt={t("brand")} fill sizes="64px" className="object-cover object-[center_28%]" />
+              <Image src={logoSrc} alt={localized(settings.footerTitle, locale)} fill sizes="64px" className="object-cover object-[center_28%]" />
             </span>
-            <p className="mt-4 font-sans text-lg font-extrabold">{t("brand")}</p>
-            <p className="mt-3 max-w-xs text-small leading-relaxed text-white/75">{t("footerBlurb")}</p>
+            <p className="mt-4 font-sans text-lg font-extrabold">{localized(settings.footerTitle, locale)}</p>
+            <p className="mt-3 max-w-xs text-small leading-relaxed text-white/75">{localized(settings.footerBlurb, locale)}</p>
           </div>
-          <FooterColumn title={t("footerUseful")} items={PLATFORM_NAV[0].items} hrefOf={hrefOf} labelOf={(key) => t(`items.${key}`)} />
-          <FooterColumn
-            title={t("footerOther")}
-            items={PLATFORM_NAV[1].items.filter((item) => item.key !== "quiz")}
-            hrefOf={hrefOf}
-            labelOf={(key) => t(`items.${key}`)}
-          />
+          <FooterColumn title={localized(settings.usefulTitle, locale)} links={settings.usefulLinks} locale={locale} />
+          <FooterColumn title={localized(settings.otherTitle, locale)} links={settings.otherLinks} locale={locale} />
           <div>
             <p className="text-small font-semibold uppercase tracking-wide">{t("footerContact")}</p>
             <span className="mt-2 block h-0.5 w-8 bg-gold-300" />
             <ul className="mt-3 space-y-2 text-small text-white/80">
               <li>
                 <span className="font-semibold text-white">{t("footerPhone")} : </span>
-                <a href="tel:+221771234567" className="nh-numeric hover:text-gold-300">
-                  +221 77 123 45 67
+                <a href={phoneHref(settings.phone)} className="nh-numeric hover:text-gold-300">
+                  {settings.phone}
                 </a>
               </li>
               <li>
                 <span className="font-semibold text-white">{t("footerMail")} : </span>
-                <a href="mailto:contact@nujumalhuda.com" className="hover:text-gold-300">
-                  contact@nujumalhuda.com
+                <a href={`mailto:${settings.email}`} className="hover:text-gold-300">
+                  {settings.email}
                 </a>
               </li>
               <li>
                 <span className="font-semibold text-white">{t("footerAddress")} : </span>
-                28M Cité des Magistrats, Sud Foire
+                <a href={mapsSearchUrl(settings)} target="_blank" rel="noreferrer" className="hover:text-gold-300">
+                  {settings.address}
+                </a>
               </li>
+              {settings.footerNote ? <li className="text-white/70">{settings.footerNote}</li> : null}
             </ul>
             <SocialRow />
-            <NewsletterForm />
+            {settings.newsletterEnabled ? (
+              <NewsletterForm
+                placeholder={localized(settings.newsletterPlaceholder, locale)}
+                button={localized(settings.newsletterButton, locale)}
+              />
+            ) : null}
           </div>
         </div>
         <div className="bg-neutral-100 py-4 text-center text-caption text-content">
           <p>
-            © {new Date().getFullYear()} {t("brand")}
+            © {new Date().getFullYear()} {localized(settings.footerTitle, locale)}
             <span className="px-2" aria-hidden="true">
               –
             </span>
@@ -249,7 +266,7 @@ const SOCIALS = [
   { platform: "tiktok", label: "TikTok", icon: TikTokIcon },
 ] as const;
 
-function NewsletterForm() {
+function NewsletterForm({ placeholder, button }: { placeholder: string; button: string }) {
   const locale = useLocale();
   const t = useTranslations("menu");
   const [email, setEmail] = useState("");
@@ -287,15 +304,15 @@ function NewsletterForm() {
             setEmail(event.target.value);
             setStatus("idle");
           }}
-          placeholder={t("footerEmail")}
-          aria-label={t("footerEmail")}
+          placeholder={placeholder}
+          aria-label={placeholder}
           className="min-w-0 flex-1 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-small text-white outline-none placeholder:text-white/50"
         />
         <button
           type="submit"
           className={`shrink-0 rounded-full bg-gold-300 px-4 py-2 text-small font-semibold text-neutral-900 ${locale === "ar" ? "font-arabic" : ""}`}
         >
-          {t("footerSubscribe")}
+          {button}
         </button>
       </div>
       {status === "ok" ? <p className="mt-2 text-small text-gold-300">{t("footerSubscribed")}</p> : null}
@@ -394,26 +411,22 @@ function TikTokIcon() {
   );
 }
 
-function FooterColumn({
-  title,
-  items,
-  hrefOf,
-  labelOf,
-}: {
-  title: string;
-  items: readonly { href: string; key: string }[];
-  hrefOf: (path: string) => string;
-  labelOf: (key: string) => string;
-}) {
+function FooterColumn({ title, links, locale }: { title: string; links: FooterLink[]; locale: string }) {
+  const hrefOf = (href: string) => (/^https?:\/\//i.test(href) ? href : `/${locale}${href.startsWith("/") ? href : `/${href}`}`);
+
   return (
     <div>
       <p className="text-small font-semibold uppercase tracking-wide">{title}</p>
       <span className="mt-2 block h-0.5 w-8 bg-gold-300" />
       <ul className="mt-3 space-y-2">
-        {items.map((item) => (
-          <li key={item.href}>
-            <Link href={hrefOf(item.href)} className="text-small text-white/80 hover:text-gold-300">
-              {labelOf(item.key)}
+        {links.map((link) => (
+          <li key={`${link.href}-${localized(link.label, locale)}`}>
+            <Link
+              href={hrefOf(link.href)}
+              className="text-small text-white/80 hover:text-gold-300"
+              {...(/^https?:\/\//i.test(link.href) ? { target: "_blank", rel: "noreferrer" } : {})}
+            >
+              {localized(link.label, locale)}
             </Link>
           </li>
         ))}

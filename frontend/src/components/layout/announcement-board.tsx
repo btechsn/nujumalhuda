@@ -5,6 +5,9 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { mapsSearchUrl, phoneHref } from "@/lib/site-settings";
+
 export type AnnouncementCard = {
   id: string;
   title: string;
@@ -23,6 +26,7 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
   const t = useTranslations("pages.announcements");
   const common = useTranslations("common");
   const menu = useTranslations("menu");
+  const settings = useSiteSettings();
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(0);
@@ -194,19 +198,21 @@ export function AnnouncementBoard({ items }: { items: AnnouncementCard[] }) {
           <ul className="mt-3 space-y-2 text-small text-content-secondary">
             <li>
               <span className="font-semibold text-content">{menu("footerPhone")} : </span>
-              <a href="tel:+221771234567" className="nh-numeric hover:text-primary">
-                +221 77 123 45 67
+              <a href={phoneHref(settings.phone)} className="nh-numeric hover:text-primary">
+                {settings.phone}
               </a>
             </li>
             <li>
               <span className="font-semibold text-content">{menu("footerMail")} : </span>
-              <a href="mailto:contact@nujumalhuda.com" className="hover:text-primary">
-                contact@nujumalhuda.com
+              <a href={`mailto:${settings.email}`} className="hover:text-primary">
+                {settings.email}
               </a>
             </li>
             <li>
               <span className="font-semibold text-content">{menu("footerAddress")} : </span>
-              28M Cité des Magistrats, Sud Foire
+              <a href={mapsSearchUrl(settings)} target="_blank" rel="noreferrer" className="hover:text-primary">
+                {settings.address}
+              </a>
             </li>
           </ul>
         </section>

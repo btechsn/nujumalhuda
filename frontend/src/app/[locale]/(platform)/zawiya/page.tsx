@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ZawiyaSlider } from "@/components/layout/zawiya-slider";
 import { KhutbaDeck, type KhutbaCard } from "@/components/mosque/khutba-deck";
 import { serverApiFetch } from "@/lib/server-api";
+import { fullAddress, mapsDirectionsUrl, normalizeSiteSettings } from "@/lib/site-settings";
 
 type HijriDay = {
   day?: string;
@@ -65,12 +66,6 @@ const JUMPS = [
   { href: "#localisation", key: "location" },
 ] as const;
 
-const PLACE = {
-  label: "28M Cité des Magistrats, Sud Foire, Dakar",
-  lat: 14.7437965,
-  lng: -17.4674915,
-};
-
 const ZAWIYA_SLIDES = [
   "/brand/slide-priere.jpg",
   "/brand/slide-zawiya-cour.png",
@@ -88,7 +83,12 @@ export default async function ZawiyaPage({
   const mosque = await getTranslations("mosque");
   const pages = await getTranslations("pages");
   const calendar = await getTranslations("pages.calendar");
-  const [prayers, khutbas, data] = await Promise.all([loadPrayers(), loadKhutbas(), loadCalendar()]);
+  const [prayers, khutbas, data, place] = await Promise.all([
+    loadPrayers(),
+    loadKhutbas(),
+    loadCalendar(),
+    loadPlace(),
+  ]);
   const month = data?.today?.month?.[locale as "fr" | "en" | "ar"] || data?.today?.month?.ar || "";
   const todayLabel = data?.today ? `${data.today.day} ${month} ${data.today.year}` : data?.today?.formatted;
   const todayGregorianRaw = new Intl.DateTimeFormat(locale, {
@@ -255,17 +255,17 @@ export default async function ZawiyaPage({
       <section id="localisation" className="scroll-mt-24 bg-white py-14">
         <div className="nh-container">
           <h2 className="font-sans text-3xl font-extrabold text-primary">{pages("location.title")}</h2>
-          <p className="mt-3 text-content">{PLACE.label}</p>
+          <p className="mt-3 text-content">{fullAddress(place)}</p>
           <div className="mt-6 overflow-hidden rounded-lg border border-line">
             <iframe
               title={pages("location.title")}
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${PLACE.lng - 0.012}%2C${PLACE.lat - 0.008}%2C${PLACE.lng + 0.012}%2C${PLACE.lat + 0.008}&layer=mapnik&marker=${PLACE.lat}%2C${PLACE.lng}`}
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.012}%2C${place.latitude - 0.008}%2C${place.longitude + 0.012}%2C${place.latitude + 0.008}&layer=mapnik&marker=${place.latitude}%2C${place.longitude}`}
               className="h-[28rem] w-full"
               loading="lazy"
             />
           </div>
           <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${PLACE.lat},${PLACE.lng}`}
+            href={mapsDirectionsUrl(place)}
             target="_blank"
             rel="noreferrer"
             className="mx-auto mt-4 flex w-fit rounded-full bg-gold-300 px-5 py-2.5 text-small font-semibold text-neutral-900 transition hover:bg-gold-200"
@@ -326,6 +326,12 @@ async function loadJson<T>(path: string): Promise<T | null> {
 
 function loadCalendar() {
   return loadJson<CalendarPayload>("/mosque/calendar");
+}
+
+function loadPlace() {
+  return serverApiFetch<Record<string, unknown>>("/settings/public", { revalidate: 60 }).then((body) =>
+    normalizeSiteSettings(body),
+  );
 }
 
 async function loadPrayers() {

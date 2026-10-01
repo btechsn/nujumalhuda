@@ -18,7 +18,7 @@ class EventRegistrationResource extends Resource
 
     protected static ?string $navigationLabel = 'Inscriptions événements';
 
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
 
     protected static ?int $navigationSort = 5;
 

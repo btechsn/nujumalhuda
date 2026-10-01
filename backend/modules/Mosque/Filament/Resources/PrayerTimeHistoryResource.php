@@ -17,7 +17,7 @@ class PrayerTimeHistoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Historique horaires';
 
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
 
     protected static ?int $navigationSort = 3;
 

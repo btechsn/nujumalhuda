@@ -4,17 +4,10 @@ import { FormEvent, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { PageHeading } from "@/components/layout/page-heading";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { fetchApiJson } from "@/lib/api-fetch";
+import { fullAddress, mapsDirectionsUrl, mapsSearchUrl, phoneHref } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
-
-const PLACE = {
-  label: "28M Cité des Magistrats, Sud Foire, Dakar",
-  lat: 14.7437965,
-  lng: -17.4674915,
-  phone: "+221 77 123 45 67",
-  phoneHref: "tel:+221771234567",
-  email: "contact@nujumalhuda.com",
-};
 
 const FIELD =
   "h-11 w-full rounded-xl border border-black/10 bg-[#f8f9fa] px-3 text-sm text-content outline-none transition placeholder:text-content-secondary/70 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-gold-300/50";
@@ -23,6 +16,7 @@ export function ContactBoard() {
   const locale = useLocale();
   const t = useTranslations("contact");
   const pages = useTranslations("pages.contact");
+  const place = useSiteSettings();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -95,16 +89,16 @@ export function ContactBoard() {
                     <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-800">
                       <PhoneIcon />
                     </span>
-                    <a href={PLACE.phoneHref} className="nh-numeric pt-1.5 text-sm font-semibold text-content hover:text-brand-700">
-                      {PLACE.phone}
+                    <a href={phoneHref(place.phone)} className="nh-numeric pt-1.5 text-sm font-semibold text-content hover:text-brand-700">
+                      {place.phone}
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-800">
                       <MailIcon />
                     </span>
-                    <a href={`mailto:${PLACE.email}`} className="pt-1.5 text-sm font-semibold text-content hover:text-brand-700">
-                      {PLACE.email}
+                    <a href={`mailto:${place.email}`} className="pt-1.5 text-sm font-semibold text-content hover:text-brand-700">
+                      {place.email}
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
@@ -112,12 +106,12 @@ export function ContactBoard() {
                       <PinIcon />
                     </span>
                     <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${PLACE.lat},${PLACE.lng}`}
+                      href={mapsDirectionsUrl(place)}
                       target="_blank"
                       rel="noreferrer"
                       className="pt-1.5 text-sm font-semibold text-content hover:text-brand-700"
                     >
-                      {PLACE.label}
+                      {fullAddress(place)}
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
@@ -134,10 +128,10 @@ export function ContactBoard() {
                     className="h-56 w-full border-0 sm:h-64"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${PLACE.lng - 0.012}%2C${PLACE.lat - 0.008}%2C${PLACE.lng + 0.012}%2C${PLACE.lat + 0.008}&layer=mapnik&marker=${PLACE.lat}%2C${PLACE.lng}`}
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.012}%2C${place.latitude - 0.008}%2C${place.longitude + 0.012}%2C${place.latitude + 0.008}&layer=mapnik&marker=${place.latitude}%2C${place.longitude}`}
                   />
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${PLACE.lat},${PLACE.lng}`}
+                    href={mapsSearchUrl(place)}
                     target="_blank"
                     rel="noreferrer"
                     className="block bg-[#f8f9fa] px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-brand-800 hover:bg-brand-50"

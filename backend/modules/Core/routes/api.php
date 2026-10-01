@@ -8,6 +8,7 @@ use Modules\Core\Http\Controllers\Api\V1\MediaController;
 use Modules\Core\Http\Controllers\Api\V1\NotificationController;
 use Modules\Core\Http\Controllers\Api\V1\OrganizationController;
 use Modules\Core\Http\Controllers\Api\V1\PaymentWebhookController;
+use Modules\Core\Http\Controllers\Api\V1\PublicSettingController;
 use Modules\Core\Http\Controllers\Api\V1\PushSubscriptionController;
 use Modules\Core\Http\Controllers\Api\V1\UserController;
 
@@ -28,6 +29,7 @@ Route::prefix('api/v1/auth')->name('auth.')->group(function () {
 });
 
 Route::prefix('api/v1')->group(function () {
+    Route::get('settings/public', PublicSettingController::class);
     Route::post('payments/wave/webhook', [PaymentWebhookController::class, 'wave']);
     Route::post('payments/orange-money/webhook', [PaymentWebhookController::class, 'orangeMoney']);
 });

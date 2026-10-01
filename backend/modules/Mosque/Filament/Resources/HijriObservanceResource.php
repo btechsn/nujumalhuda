@@ -16,7 +16,7 @@ class HijriObservanceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'Mosquée';
+    protected static ?string $navigationGroup = 'Zawiya';
 
     protected static ?string $navigationLabel = 'Calendrier hégirien';
 
