@@ -13,7 +13,7 @@ const DOORS = [
 
 /**
  * Intro plein écran.
- * Photo libre d'une leçon de Coran (Unsplash) voilée par le vert de la charte.
+ * Photo libre d'une leçon de Coran, sous un voile vert uniforme.
  * Quatre boutons séparés : Centre, Académique, Actualités et Live.
  */
 export async function SplashScreen({ locale }: { locale: string }) {
@@ -29,11 +29,7 @@ export async function SplashScreen({ locale }: { locale: string }) {
         sizes="100vw"
         className="pointer-events-none object-cover object-center"
       />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-brand-950/75" />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-950/65 via-brand-950/40 to-brand-950/85"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-brand-950/84" />
       <span aria-hidden="true" className="absolute inset-x-0 top-0 z-20 h-px bg-gold-300/70" />
 
       <header className="absolute end-0 top-0 z-20 px-5 py-5 sm:px-8">
