@@ -8,7 +8,7 @@ import Pusher from 'pusher-js';
 declare global {
   interface Window {
     Pusher: typeof Pusher;
-    Echo: Echo | undefined;
+    Echo: Echo<'reverb'> | undefined;
   }
 }
 
@@ -20,9 +20,9 @@ if (typeof window !== 'undefined') {
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost/ws';
 const REVERB_APP_KEY = process.env.NEXT_PUBLIC_REVERB_APP_KEY || 'nujumalhuda';
 
-let echoInstance: Echo | null = null;
+let echoInstance: Echo<'reverb'> | null = null;
 
-export function initializeEcho(): Echo {
+export function initializeEcho(): Echo<'reverb'> {
   if (echoInstance) {
     return echoInstance;
   }
@@ -50,7 +50,7 @@ export function initializeEcho(): Echo {
   return echoInstance;
 }
 
-export function getEcho(): Echo {
+export function getEcho(): Echo<'reverb'> {
   if (!echoInstance) {
     return initializeEcho();
   }

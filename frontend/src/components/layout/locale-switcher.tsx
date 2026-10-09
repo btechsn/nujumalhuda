@@ -98,7 +98,7 @@ export function LocaleSwitcher({
                 dir={item.dir}
                 onClick={() => {
                   setOpen(false);
-                  router.replace(pathname, { locale: item.code });
+                  router.replace(pathname as never, { locale: item.code });
                 }}
                 className={cn(
                   "flex w-full items-center justify-between gap-3 px-3 py-2 text-start text-small transition-colors",

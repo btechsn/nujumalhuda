@@ -99,13 +99,13 @@ export function ArticleDetail() {
             ) : null}
           </div>
 
-          <div className="relative mt-8 overflow-hidden rounded-2xl bg-brand-900">
+          <div className="relative mt-8 overflow-hidden rounded-2xl bg-brand-500/10">
             {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={imageUrl} alt="" className="aspect-video w-full object-cover" />
             ) : (
-              <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-brand-800 to-brand-950">
-                <Image src="/brand/logo.jpeg" alt="" width={96} height={96} className="rounded-full opacity-35" />
+              <div className="flex aspect-video items-center justify-center bg-brand-500/10">
+                <Image src="/brand/logo.jpeg" alt="" width={96} height={96} className="rounded-full opacity-80" />
               </div>
             )}
           </div>

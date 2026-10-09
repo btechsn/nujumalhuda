@@ -1,5 +1,5 @@
 # Dockerfile — PHP 8.3 FPM avec extensions pour Laravel
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Variables d'environnement
 ENV PHPIZE_DEPS \
@@ -16,7 +16,9 @@ ENV PHPIZE_DEPS \
 # Installation des dépendances système
 RUN apk add --no-cache \
     curl \
+    dpkg \
     git \
+    netcat-openbsd \
     zip \
     unzip \
     libpng-dev \
@@ -69,8 +71,6 @@ RUN chown -R www-data:www-data /var/www
 # Script d'entrée personnalisé
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-USER www-data
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]

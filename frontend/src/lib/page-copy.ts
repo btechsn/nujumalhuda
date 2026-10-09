@@ -1,3 +1,5 @@
+import type { AbstractIntlMessages } from "next-intl";
+
 type Localized = { fr?: string; en?: string; ar?: string };
 
 function isLocalized(value: unknown): value is Localized {
@@ -40,13 +42,13 @@ function overlay(target: unknown, source: unknown, locale: string): unknown {
 
 /** Remplace les textes du site par ceux enregistrés dans l'administration. */
 export function applyPageCopy(
-  messages: Record<string, unknown>,
+  messages: AbstractIntlMessages,
   copy: unknown,
   locale: string,
-): Record<string, unknown> {
+): AbstractIntlMessages {
   if (!copy || typeof copy !== "object" || Array.isArray(copy) || Object.keys(copy).length === 0) {
     return messages;
   }
 
-  return overlay(structuredClone(messages), copy, locale) as Record<string, unknown>;
+  return overlay(structuredClone(messages), copy, locale) as AbstractIntlMessages;
 }

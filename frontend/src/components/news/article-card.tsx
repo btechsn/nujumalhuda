@@ -46,7 +46,7 @@ export function ArticleCard({ article, className }: ArticleCardProps) {
         className,
       )}
     >
-      <Link href={href} className="relative block aspect-[16/10] overflow-hidden bg-brand-900">
+      <Link href={href} className="relative block aspect-[16/10] overflow-hidden bg-brand-500/10">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -55,8 +55,8 @@ export function ArticleCard({ article, className }: ArticleCardProps) {
             className="size-full object-cover transition duration-500 group-hover:scale-105"
           />
         ) : (
-          <span className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-brand-800 to-brand-950">
-            <Image src="/brand/logo.jpeg" alt="" width={72} height={72} className="rounded-full opacity-40" />
+          <span className="absolute inset-0 flex items-center justify-center bg-brand-500/10">
+            <Image src="/brand/logo.jpeg" alt="" width={72} height={72} className="rounded-full opacity-80" />
           </span>
         )}
         {article.is_featured ? (

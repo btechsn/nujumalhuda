@@ -5,6 +5,12 @@ import { Card } from '@/components/ui/card';
 import type { Teacher } from '@/types/api';
 import { cn } from '@/lib/utils';
 
+function asTextList(value: string | string[] | undefined): string[] {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string' && value.length > 0) return [value];
+  return [];
+}
+
 interface TeacherCardProps {
   teacher: Teacher;
   className?: string;
@@ -79,10 +85,9 @@ export function TeacherCard({ teacher, className }: TeacherCardProps) {
               {t('qualifications', { defaultValue: 'Qualifications' })}
             </h4>
             <ul className="text-sm text-ink-600 space-y-1">
-              {(Array.isArray(teacher.qualifications[locale])
-                ? teacher.qualifications[locale]
-                : teacher.qualifications.fr || []
-              ).slice(0, 3).map((qual, i) => (
+              {asTextList(teacher.qualifications[locale] ?? teacher.qualifications.fr)
+                .slice(0, 3)
+                .map((qual, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-brand-600 mt-1">•</span>
                   <span>{qual}</span>

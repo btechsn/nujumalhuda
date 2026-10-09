@@ -30,8 +30,8 @@ export function usePrayerTimes(options: UsePrayerTimesOptions = {}) {
         ? `/mosque/prayer-times/${date}`
         : '/mosque/prayer-times';
 
-      const response = await api.get<{ data: PrayerTimesResponse }>(endpoint);
-      setData(response.data);
+      const response = await api.get<PrayerTimesResponse>(endpoint);
+      setData(response.data ?? null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Erreur inconnue'));
     } finally {
