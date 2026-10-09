@@ -13,9 +13,10 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
+                'id' => $this->user?->id,
+                'name' => $this->displayName(),
             ],
+            'author_name' => $this->displayName(),
             'parent_id' => $this->parent_id,
             'replies' => CommentResource::collection($this->whenLoaded('replies')),
             'status' => $this->status,

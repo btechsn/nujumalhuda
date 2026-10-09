@@ -335,7 +335,11 @@ function PromotionModal({ promo, onClose }: { promo: Promotion; onClose: () => v
                   {i18nText(promo.program.name, locale)}
                 </p>
                 <p className="mt-1 text-sm text-content-secondary">
-                  {tp(`types.${promo.program.type}`)} · {tp(`levels.${promo.program.level}`)}
+                  {(i18nText(promo.program.type_name, locale) ||
+                    (["coran", "arabe", "baye_niasse", "sunnite", "autre"].includes(promo.program.type)
+                      ? tp(`types.${promo.program.type as "coran"}`)
+                      : promo.program.type.replaceAll("_", " ")))}{" "}
+                  · {tp(`levels.${promo.program.level}`)}
                 </p>
                 <p className="mt-1 text-sm text-content-secondary">
                   {promo.program.duration_weeks} {tp("weeks")} · {promo.program.hours_per_week}h / {tp("week")}

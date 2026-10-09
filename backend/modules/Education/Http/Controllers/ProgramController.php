@@ -16,12 +16,12 @@ class ProgramController extends Controller
     public function index(Request $request): JsonResponse
     {
         $programs = Program::query()
-            ->with(['organization', 'prerequisiteProgram'])
+            ->with(['organization', 'prerequisiteProgram', 'programType'])
             ->active()
             ->when($request->type, fn($q, $type) => $q->byType($type))
             ->when($request->level, fn($q, $level) => $q->where('level', $level))
             ->when($request->featured, fn($q) => $q->featured())
-            ->ordered()
+            ->orderByDesc('created_at')
             ->get();
 
         return response()->json([
@@ -37,6 +37,7 @@ class ProgramController extends Controller
         $program = Program::query()
             ->with([
                 'organization',
+                'programType',
                 'prerequisiteProgram',
                 'courses' => fn($q) => $q->active()->ordered(),
                 'promotions' => fn($q) => $q->openForEnrollment()->orderBy('start_date'),

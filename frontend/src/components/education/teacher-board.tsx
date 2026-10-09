@@ -52,10 +52,40 @@ function i18nList(
   return [];
 }
 
+function richParagraphs(value: string): string[] {
+  return value
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\/\s*p\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .split(/\n+/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+}
+
+function sanadChain(sanad: Teacher["sanad"] | string | null | undefined): string[] {
+  if (!sanad) return [];
+  if (typeof sanad === "string") {
+    return sanad
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }
+  return (sanad.chain ?? []).map((line) => line.trim()).filter(Boolean);
+}
+
 function ijazaOf(teacher: Teacher, locale: string): TeacherIjaza | null {
   const details = teacher.ijaza_details;
   if (!details) return null;
-  return details[locale] ?? details.fr ?? Object.values(details)[0] ?? null;
+  const raw = details[locale] ?? details.fr;
+  if (!raw || typeof raw !== "object") return null;
+  const ijaza = raw as TeacherIjaza;
+  if (!ijaza.title && !ijaza.issuer && !ijaza.year && !ijaza.domain) return null;
+  return ijaza;
 }
 
 function photoOf(teacher: Teacher, index = 0): string {
@@ -280,11 +310,13 @@ function TeacherModal({ teacher, onClose }: { teacher: Teacher; onClose: () => v
   const labelClass = locale === "ar" ? "font-arabic" : "uppercase tracking-wide";
 
   const title = i18nText(teacher.title, locale);
-  const bio = i18nText(teacher.bio, locale);
+  const bio = richParagraphs(i18nText(teacher.bio, locale));
   const specialties = i18nList(teacher.specialties, locale);
   const experiences = i18nList(teacher.qualifications, locale);
   const ijaza = ijazaOf(teacher, locale);
-  const chain = teacher.sanad?.chain?.filter(Boolean) ?? [];
+  const ijazaDocument = teacher.ijaza_document_url || "";
+  const ijazaIsImage = /\.(jpe?g|png|webp)(\?|$)/i.test(ijazaDocument);
+  const chain = sanadChain(teacher.sanad);
   const photo = photoOf(teacher);
 
   return (
@@ -326,10 +358,14 @@ function TeacherModal({ teacher, onClose }: { teacher: Teacher; onClose: () => v
       </div>
 
       <div className="space-y-6 p-5 sm:p-7">
-        {bio ? (
+        {bio.length > 0 ? (
           <section>
             <SectionTitle>{t("bio")}</SectionTitle>
-            <p className="mt-3 text-sm leading-relaxed text-content-secondary">{bio}</p>
+            <div className="mt-3 space-y-3 text-sm leading-relaxed text-content-secondary">
+              {bio.map((paragraph, index) => (
+                <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
+              ))}
+            </div>
           </section>
         ) : null}
 
@@ -363,33 +399,49 @@ function TeacherModal({ teacher, onClose }: { teacher: Teacher; onClose: () => v
           </section>
         ) : null}
 
-        {ijaza && teacher.has_ijaza ? (
+        {(ijaza || ijazaDocument) && teacher.has_ijaza ? (
           <section>
             <SectionTitle>{t("ijaza")}</SectionTitle>
             <div className="mt-3 rounded-xl border border-gold-300/50 bg-gold-300/10 p-4">
-              {ijaza.title ? (
+              {ijaza?.title ? (
                 <p className="font-sans text-base font-extrabold text-brand-900">{ijaza.title}</p>
               ) : null}
-              <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                {ijaza.issuer ? (
-                  <div>
-                    <dt className="text-content-secondary">{t("ijazaIssuer")}</dt>
-                    <dd className="font-semibold text-content">{ijaza.issuer}</dd>
-                  </div>
-                ) : null}
-                {ijaza.year ? (
-                  <div>
-                    <dt className="text-content-secondary">{t("ijazaYear")}</dt>
-                    <dd className="font-semibold text-content">{ijaza.year}</dd>
-                  </div>
-                ) : null}
-                {ijaza.domain ? (
-                  <div className="sm:col-span-2">
-                    <dt className="text-content-secondary">{t("ijazaDomain")}</dt>
-                    <dd className="font-semibold text-content">{ijaza.domain}</dd>
-                  </div>
-                ) : null}
-              </dl>
+              {ijaza ? (
+                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                  {ijaza.issuer ? (
+                    <div>
+                      <dt className="text-content-secondary">{t("ijazaIssuer")}</dt>
+                      <dd className="font-semibold text-content">{ijaza.issuer}</dd>
+                    </div>
+                  ) : null}
+                  {ijaza.year ? (
+                    <div>
+                      <dt className="text-content-secondary">{t("ijazaYear")}</dt>
+                      <dd className="font-semibold text-content">{ijaza.year}</dd>
+                    </div>
+                  ) : null}
+                  {ijaza.domain ? (
+                    <div className="sm:col-span-2">
+                      <dt className="text-content-secondary">{t("ijazaDomain")}</dt>
+                      <dd className="font-semibold text-content">{ijaza.domain}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+              ) : null}
+              {ijazaDocument ? (
+                <a
+                  href={ijazaDocument}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex flex-col gap-3 text-sm font-semibold text-primary hover:underline"
+                >
+                  {ijazaIsImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={ijazaDocument} alt="" className="max-h-72 w-auto rounded-lg border border-gold-300/40" />
+                  ) : null}
+                  {t("ijazaDocument")}
+                </a>
+              ) : null}
             </div>
           </section>
         ) : null}

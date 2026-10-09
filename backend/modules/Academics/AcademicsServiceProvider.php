@@ -6,6 +6,7 @@ use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Modules\Academics\Models\StudentProgress;
 use Modules\Academics\Observers\StudentProgressObserver;
+use Modules\Education\Models\Enrollment;
 
 class AcademicsServiceProvider extends ServiceProvider
 {
@@ -31,5 +32,9 @@ class AcademicsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'academics');
 
         StudentProgress::observe(StudentProgressObserver::class);
+
+        Enrollment::created(function (Enrollment $enrollment): void {
+            StudentProgress::ensureForStudent($enrollment->user_id);
+        });
     }
 }

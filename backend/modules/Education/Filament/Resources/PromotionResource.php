@@ -7,7 +7,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Models\User;
 use Modules\Education\Models\Promotion;
+use Modules\Education\Models\Teacher;
 
 class PromotionResource extends Resource
 {
@@ -100,8 +103,15 @@ class PromotionResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('main_teacher_id')
                             ->label('Enseignant principal')
-                            ->relationship('mainTeacher', 'name')
-                            ->searchable()
+                            ->relationship(
+                                name: 'mainTeacher',
+                                modifyQueryUsing: fn (Builder $query) => $query
+                                    ->whereIn('id', Teacher::query()->select('id'))
+                                    ->orderBy('last_name')
+                                    ->orderBy('first_name'),
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->fullName())
+                            ->searchable(['first_name', 'last_name'])
                             ->preload(),
                         
                         Forms\Components\TextInput::make('location')
@@ -204,7 +214,8 @@ class PromotionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array

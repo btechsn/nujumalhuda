@@ -28,7 +28,7 @@ export function EnrollmentBoard() {
   const t = useTranslations("enroll");
   const pages = useTranslations("pages.enroll");
   const { data: programs, isLoading: loadingPrograms } = usePrograms({ active: true });
-  const { data: promotions, isLoading: loadingPromotions } = usePromotions({ openOnly: true });
+  const { data: promotions, isLoading: loadingPromotions } = usePromotions();
 
   const [programId, setProgramId] = useState("");
   const [promotionId, setPromotionId] = useState("");
@@ -48,26 +48,28 @@ export function EnrollmentBoard() {
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const openPromotions = useMemo(() => {
-    return promotions.filter((p) => p.is_open_for_enrollment || p.can_enroll);
-  }, [promotions]);
-
   const programOptions = useMemo(() => {
-    const ids = new Set(openPromotions.map((p) => p.program_id));
-    const fromPrograms = programs.filter((p) => ids.has(p.id));
-    if (fromPrograms.length) return fromPrograms;
-    // Fallback: derive from promotion.program
-    const map = new Map<string, { id: string; name: I18nField }>();
-    for (const promo of openPromotions) {
-      if (promo.program) map.set(promo.program.id, { id: promo.program.id, name: promo.program.name });
-    }
-    return Array.from(map.values());
-  }, [programs, openPromotions]);
+    const ids = new Set(promotions.map((promo) => promo.program_id));
+    const fromPrograms = programs.filter((program) => ids.has(program.id));
+    const source = fromPrograms.length
+      ? fromPrograms
+      : Array.from(
+          promotions.reduce((map, promo) => {
+            if (promo.program) map.set(promo.program.id, promo.program);
+            return map;
+          }, new Map<string, { id: string; name: I18nField }>()).values(),
+        );
+    return [...source].sort((a, b) =>
+      i18nText(a.name, locale).localeCompare(i18nText(b.name, locale), locale),
+    );
+  }, [programs, promotions, locale]);
 
   const promotionsForProgram = useMemo(() => {
-    if (!programId) return openPromotions;
-    return openPromotions.filter((p) => p.program_id === programId);
-  }, [openPromotions, programId]);
+    if (!programId) return [];
+    return promotions
+      .filter((promo) => promo.program_id === programId)
+      .sort((a, b) => b.academic_year - a.academic_year);
+  }, [promotions, programId]);
 
   const selectedPromotion: Promotion | null = useMemo(
     () => promotionsForProgram.find((p) => p.id === promotionId) ?? null,
@@ -76,7 +78,10 @@ export function EnrollmentBoard() {
 
   const onProgramChange = (id: string) => {
     setProgramId(id);
-    setPromotionId("");
+    const open = promotions.filter(
+      (promo) => promo.program_id === id && (promo.is_open_for_enrollment || promo.can_enroll),
+    );
+    setPromotionId(open.length === 1 ? open[0].id : "");
   };
 
   const submit = async (event: FormEvent) => {
@@ -158,7 +163,7 @@ export function EnrollmentBoard() {
                     <p className="text-xs font-semibold uppercase tracking-wide text-gold-300">
                       {t("selectedEyebrow")}
                     </p>
-                    <h3 className="mt-2 font-sans text-lg font-extrabold">
+                    <h3 className="mt-2 font-sans text-lg font-extrabold text-white">
                       {i18nText(selectedPromotion.name, locale)}
                     </h3>
                     {selectedPromotion.program ? (
@@ -198,7 +203,7 @@ export function EnrollmentBoard() {
 
                 {loading ? (
                   <div className="mt-8 h-64 animate-pulse rounded-2xl bg-[#f3f4f6]" />
-                ) : openPromotions.length === 0 ? (
+                ) : programOptions.length === 0 ? (
                   <p className="mt-8 rounded-2xl bg-gold-100/60 p-5 text-sm text-brand-950">{t("noOpen")}</p>
                 ) : status === "ok" ? (
                   <div className="mt-8 rounded-2xl bg-brand-50 p-5">
@@ -232,20 +237,45 @@ export function EnrollmentBoard() {
                       </label>
                       <label className="block sm:col-span-2">
                         <span className="mb-1.5 block text-sm font-semibold text-content">{t("promotion")}</span>
-                        <select
-                          required
-                          value={promotionId}
-                          onChange={(e) => setPromotionId(e.target.value)}
-                          className={FIELD}
-                          disabled={!promotionsForProgram.length}
-                        >
-                          <option value="">{t("promotionPh")}</option>
-                          {promotionsForProgram.map((promo) => (
-                            <option key={promo.id} value={promo.id}>
-                              {i18nText(promo.name, locale)} ({promo.academic_year})
-                            </option>
-                          ))}
-                        </select>
+                        {!programId ? (
+                          <p className="rounded-xl border border-black/10 bg-[#f8f9fa] px-3 py-3 text-sm text-brand-800/80">
+                            {t("promotionPh")}
+                          </p>
+                        ) : promotionsForProgram.length === 0 ? (
+                          <p className="rounded-xl border border-black/10 bg-[#f8f9fa] px-3 py-3 text-sm text-brand-800">
+                            {t("noPromotionForProgram")}
+                          </p>
+                        ) : (
+                          <div className="space-y-2">
+                            {promotionsForProgram.map((promo) => {
+                              const open = promo.is_open_for_enrollment || promo.can_enroll;
+                              const selected = promotionId === promo.id;
+                              return (
+                                <button
+                                  key={promo.id}
+                                  type="button"
+                                  disabled={!open}
+                                  onClick={() => setPromotionId(promo.id)}
+                                  className={cn(
+                                    "flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-start text-sm transition",
+                                    selected
+                                      ? "border-brand-600 bg-brand-50 text-brand-900 ring-2 ring-gold-300/60"
+                                      : "border-black/10 bg-[#f8f9fa] text-brand-800 hover:border-brand-400",
+                                    !open && "cursor-not-allowed opacity-60 hover:border-black/10",
+                                  )}
+                                >
+                                  <span className="font-semibold">
+                                    {i18nText(promo.name, locale)}
+                                    <span className="ms-2 font-medium text-brand-700/80">{promo.academic_year}</span>
+                                  </span>
+                                  {!open ? (
+                                    <span className="shrink-0 text-xs font-medium text-brand-700/70">{t("promotionClosed")}</span>
+                                  ) : null}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
                       </label>
 
                       <label className="block">

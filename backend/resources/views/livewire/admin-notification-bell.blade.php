@@ -2,7 +2,8 @@
     <x-filament::dropdown placement="bottom-end" teleport width="sm" max-height="24rem">
         <x-slot name="trigger">
             <x-filament::icon-button
-                :badge="$unreadCount > 0 ? ($unreadCount > 9 ? '9+' : $unreadCount) : null"
+                :badge="$badgeCount > 0 ? ($badgeCount > 9 ? '9+' : $badgeCount) : null"
+                badge-color="danger"
                 color="gray"
                 icon="heroicon-o-bell"
                 icon-size="lg"
@@ -13,7 +14,7 @@
 
         <x-filament::dropdown.header>
             <span class="flex w-full items-center gap-3">
-                <span class="font-semibold">Notifications</span>
+                <span class="font-semibold">À traiter</span>
                 @if ($unreadCount > 0)
                     <button
                         type="button"
@@ -26,34 +27,54 @@
             </span>
         </x-filament::dropdown.header>
 
-        @forelse ($notifications as $notification)
-            <button
-                type="button"
-                wire:click="open('{{ $notification->id }}')"
-                @class([
-                    'flex w-full flex-col gap-0.5 px-3 py-2.5 text-start transition hover:bg-gray-50 dark:hover:bg-white/5',
-                    'bg-primary-50/60 dark:bg-primary-400/5' => $notification->read_at === null,
-                ])
-            >
-                <span class="flex items-center gap-2">
-                    @if ($notification->read_at === null)
-                        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"></span>
-                    @endif
-                    <span class="truncate text-sm font-medium text-gray-950 dark:text-white">
-                        {{ $notification->title }}
-                    </span>
-                </span>
-                <span class="line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
-                    {{ $notification->message }}
-                </span>
-                <span class="text-[11px] text-gray-400 dark:text-gray-500">
-                    {{ $notification->created_at?->diffForHumans() }}
-                </span>
-            </button>
-        @empty
-            <p class="px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                Aucune notification
+        @if ($pending->isEmpty())
+            <p class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                Rien en attente
             </p>
-        @endforelse
+        @else
+            <x-filament::dropdown.list>
+                @foreach ($pending as $item)
+                    <x-filament::dropdown.list.item
+                        :badge="$item['value']"
+                        badge-color="warning"
+                        color="gray"
+                        :icon="$item['icon']"
+                        tag="button"
+                        wire:click="openPending('{{ $item['key'] }}')"
+                    >
+                        {{ $item['label'] }}
+                    </x-filament::dropdown.list.item>
+                @endforeach
+            </x-filament::dropdown.list>
+        @endif
+
+        @if ($notifications->isNotEmpty())
+            <p class="px-3 pt-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Notifications</p>
+            @foreach ($notifications as $notification)
+                <button
+                    type="button"
+                    wire:click="open('{{ $notification->id }}')"
+                    @class([
+                        'flex w-full flex-col gap-0.5 px-3 py-2.5 text-start transition hover:bg-gray-50 dark:hover:bg-white/5',
+                        'bg-primary-50/60 dark:bg-primary-400/5' => $notification->read_at === null,
+                    ])
+                >
+                    <span class="flex items-center gap-2">
+                        @if ($notification->read_at === null)
+                            <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"></span>
+                        @endif
+                        <span class="truncate text-sm font-medium text-gray-950 dark:text-white">
+                            {{ $notification->title }}
+                        </span>
+                    </span>
+                    <span class="line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
+                        {{ $notification->message }}
+                    </span>
+                    <span class="text-[11px] text-gray-400 dark:text-gray-500">
+                        {{ $notification->created_at?->diffForHumans() }}
+                    </span>
+                </button>
+            @endforeach
+        @endif
     </x-filament::dropdown>
 </div>

@@ -59,6 +59,11 @@ class Program extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function programType(): BelongsTo
+    {
+        return $this->belongsTo(ProgramType::class, 'type', 'slug');
+    }
+
     public function prerequisiteProgram(): BelongsTo
     {
         return $this->belongsTo(Program::class, 'prerequisite_program_id');

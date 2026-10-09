@@ -194,7 +194,16 @@
     "by": "بقلم",
     "detail": {
       "back": "العودة إلى الأخبار",
-      "notFound": "تعذّر العثور على هذه المقالة."
+      "notFound": "تعذّر العثور على هذه المقالة.",
+      "commentsTitle": "التعليقات",
+      "commentsEmpty": "لا تعليقات منشورة حالياً.",
+      "commentName": "اسمك",
+      "commentNamePh": "الاسم واللقب",
+      "commentBody": "تعليقك",
+      "commentBodyPh": "اكتب رسالتك…",
+      "commentSubmit": "نشر",
+      "commentPending": "شكراً. سيظهر تعليقك بعد المراجعة.",
+      "commentError": "تعذّر إرسال التعليق. أعد المحاولة."
     }
   },
   "live": {
@@ -580,10 +589,12 @@
     "formTitle": "طلب التسجيل",
     "formLede": "املأ النموذج. بعد الإرسال تراجع الأمانة الطلب.",
     "noOpen": "لا دفعة مفتوحة للتسجيل حالياً.",
+    "noPromotionForProgram": "لا توجد دفعة مفتوحة لهذا البرنامج. يجب فتحها أولاً من الإدارة.",
     "program": "البرنامج",
     "programPh": "اختر برنامجاً",
     "promotion": "الدفعة",
-    "promotionPh": "اختر دفعة",
+    "promotionPh": "اختر البرنامج أولاً",
+    "promotionClosed": "التسجيل مغلق",
     "firstName": "الاسم الأول",
     "lastName": "اسم العائلة",
     "phone": "الهاتف",
@@ -679,11 +690,14 @@
   "quizzes": {
     "errors": {
       "loading": "تعذّر تحميل الاختبارات.",
-      "notFound": "تعذّر العثور على هذا الاختبار."
+      "notFound": "تعذّر العثور على هذا الاختبار.",
+      "identity": "أدخل اسمك الكامل قبل التأكيد.",
+      "submit": "تعذّر حفظ النتيجة. أعد المحاولة."
     },
     "empty": "لا اختبارات في الوقت الحالي.",
     "listTitle": "اختباراتنا",
     "resultsCount": "{count} نتائج",
+    "pageOf": "صفحة {page} / {pages}",
     "searchPlaceholder": "ابحث عن اختبار…",
     "filterTopic": "تصفية حسب المسار",
     "allTopics": "كل المسارات",
@@ -693,6 +707,11 @@
     "start": "ابدأ",
     "takeQuiz": "أجرِ الاختبار",
     "question": "السؤال {number}",
+    "fullName": "الاسم الكامل",
+    "fullNamePh": "الاسم واللقب",
+    "phone": "الهاتف",
+    "phoneOptional": "اختياري",
+    "phonePh": "77 000 00 00",
     "submit": "تأكيد إجاباتي",
     "retry": "أعد المحاولة",
     "passed": "أحسنت — نجحت في الاختبار",
@@ -700,6 +719,7 @@
     "scoreHint": "يلزمك 60٪ على الأقل للنجاح.",
     "topics": {
       "tajwid": "التجويد",
+      "vocabulary": "المفردات",
       "coran": "القرآن",
       "arabe": "العربية",
       "fiqh": "الفقه والعقيدة",
@@ -833,6 +853,7 @@
     "ijazaIssuer": "صادرة عن",
     "ijazaYear": "السنة",
     "ijazaDomain": "المجال",
+    "ijazaDocument": "عرض الوثيقة",
     "sanad": "السند",
     "sanadHint": "سلسلة إسناد تربط المدرّس بشيوخه.",
     "viewProfile": "عرض الملف",

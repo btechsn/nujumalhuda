@@ -16,7 +16,7 @@ class PromotionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $promotions = Promotion::query()
-            ->with(['program', 'mainTeacher', 'organization'])
+            ->with(['program.programType', 'mainTeacher', 'organization'])
             ->when($request->status, fn($q, $status) => $q->where('status', $status))
             ->when($request->open_only, fn($q) => $q->openForEnrollment())
             ->when($request->year, fn($q, $year) => $q->byYear($year))
@@ -35,6 +35,7 @@ class PromotionController extends Controller
     {
         $promotion = Promotion::query()
             ->with([
+                'program.programType',
                 'program.courses',
                 'mainTeacher',
                 'organization',

@@ -8,6 +8,10 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Enums\PaymentMethod;
+use Modules\Core\Enums\PaymentStatus;
+use Modules\Core\Models\Payment;
 use Modules\Education\Events\EnrollmentApproved;
 use Modules\Education\Events\EnrollmentRejected;
 use Modules\Education\Models\Enrollment;
@@ -19,32 +23,53 @@ class EnrollmentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationGroup = 'Éducation';
     protected static ?string $navigationLabel = 'Inscriptions';
+
+    protected static ?string $modelLabel = 'inscription';
+
+    protected static ?string $pluralModelLabel = 'inscriptions';
+
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Élève et promotion')
+                Forms\Components\Section::make('Élève')
+                    ->description('Saisissez la personne à inscrire. Il n\'y a pas d\'écran des comptes : l\'élève est créé ici.')
                     ->schema([
-                        Forms\Components\Select::make('user_id')
-                            ->label('Élève')
-                            ->relationship('user', 'name')
+                        Forms\Components\TextInput::make('first_name')
+                            ->label('Prénom')
                             ->required()
-                            ->searchable()
-                            ->preload(),
-                        
+                            ->maxLength(80),
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Nom')
+                            ->required()
+                            ->maxLength(80),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Téléphone')
+                            ->tel()
+                            ->required()
+                            ->maxLength(20),
+                        Forms\Components\TextInput::make('email')
+                            ->label('E-mail')
+                            ->email()
+                            ->maxLength(255),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Promotion')
+                    ->schema([
                         Forms\Components\Select::make('promotion_id')
                             ->label('Promotion')
                             ->relationship('promotion', 'code')
                             ->required()
                             ->searchable()
                             ->preload(),
-                    ])->columns(2),
+                    ]),
                 
                 Forms\Components\Section::make('Statut du dossier')
                     ->schema([
                         Forms\Components\Select::make('status')
+                            ->label('Statut')
                             ->options([
                                 'pending' => 'En attente',
                                 'approved' => 'Approuvé',
@@ -79,14 +104,27 @@ class EnrollmentResource extends Resource
                     ])->columns(3),
                 
                 Forms\Components\Section::make('Paiement')
+                    ->description('Cochez les frais payés, puis indiquez le mode, le montant et le numéro de reçu.')
                     ->schema([
                         Forms\Components\Toggle::make('fees_paid')
-                            ->label('Frais payés'),
-                        
-                        Forms\Components\Select::make('payment_id')
-                            ->label('Référence paiement')
-                            ->relationship('payment', 'id')
-                            ->searchable(),
+                            ->label('Frais payés')
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('payment_method')
+                            ->label('Mode de paiement')
+                            ->options(collect(PaymentMethod::cases())->mapWithKeys(
+                                fn (PaymentMethod $method): array => [$method->value => $method->label()],
+                            )->all())
+                            ->native(false),
+                        Forms\Components\TextInput::make('payment_amount')
+                            ->label('Montant')
+                            ->numeric()
+                            ->minValue(0)
+                            ->suffix('FCFA'),
+                        Forms\Components\TextInput::make('payment_reference')
+                            ->label('Référence')
+                            ->maxLength(120)
+                            ->helperText('Numéro Wave, Orange Money ou reçu.')
+                            ->columnSpanFull(),
                     ])->columns(2),
                 
                 Forms\Components\Section::make('Progression')
@@ -117,10 +155,15 @@ class EnrollmentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('user.first_name')
                     ->label('Élève')
-                    ->searchable()
-                    ->sortable(),
+                    ->formatStateUsing(fn (mixed $state, Enrollment $record): string => $record->user?->fullName() ?: '—')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('user', function (Builder $user) use ($search): void {
+                            $user->where('first_name', 'ilike', "%{$search}%")
+                                ->orWhere('last_name', 'ilike', "%{$search}%");
+                        });
+                    }),
                 
                 Tables\Columns\TextColumn::make('promotion.code')
                     ->label('Promotion')
@@ -212,6 +255,54 @@ class EnrollmentResource extends Resource
                 ]),
             ])
             ->defaultSort('submitted_at', 'desc');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array{method: ?string, reference: ?string, amount: int|string|null, fees_paid: bool}
+     */
+    public static function paymentInputFrom(array $data): array
+    {
+        return [
+            'method' => filled($data['payment_method'] ?? null) ? (string) $data['payment_method'] : null,
+            'reference' => filled($data['payment_reference'] ?? null) ? (string) $data['payment_reference'] : null,
+            'amount' => $data['payment_amount'] ?? null,
+            'fees_paid' => (bool) ($data['fees_paid'] ?? false),
+        ];
+    }
+
+    /**
+     * @param  array{method?: string|null, reference?: string|null, amount?: int|string|null, fees_paid?: bool}  $input
+     */
+    public static function syncFeePayment(Enrollment $enrollment, array $input): void
+    {
+        if (! ($input['fees_paid'] ?? false)) {
+            return;
+        }
+
+        $method = filled($input['method'] ?? null) ? (string) $input['method'] : PaymentMethod::CASH->value;
+        $reference = trim((string) ($input['reference'] ?? ''));
+        $amount = max(0, (int) ($input['amount'] ?? 0));
+
+        $payment = $enrollment->payment;
+        $attributes = [
+            'payable_type' => $enrollment->getMorphClass(),
+            'payable_id' => $enrollment->id,
+            'user_id' => $enrollment->user_id,
+            'method' => $method,
+            'status' => PaymentStatus::COMPLETED,
+            'currency' => 'XOF',
+            'amount_minor' => $amount,
+            'gateway_transaction_id' => $reference !== '' ? $reference : null,
+            'completed_at' => $payment?->completed_at ?? now(),
+        ];
+
+        if ($payment) {
+            $payment->update($attributes);
+        } else {
+            $payment = Payment::query()->create($attributes);
+            $enrollment->update(['payment_id' => $payment->id]);
+        }
     }
 
     public static function getPages(): array

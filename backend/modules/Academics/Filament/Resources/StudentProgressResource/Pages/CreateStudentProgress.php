@@ -8,4 +8,6 @@ use Modules\Academics\Filament\Resources\StudentProgressResource;
 class CreateStudentProgress extends CreateRecord
 {
     protected static string $resource = StudentProgressResource::class;
+
+    protected static ?string $title = 'Nouvelle progression';
 }

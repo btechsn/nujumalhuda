@@ -10,6 +10,13 @@ class ViewContactMessage extends ViewRecord
 {
     protected static string $resource = ContactMessageResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            ContactMessageResource::pageReplyAction(),
+        ];
+    }
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         /** @var ContactMessage $record */

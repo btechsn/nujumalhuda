@@ -37,4 +37,17 @@ class StudentProgress extends Model
     {
         return $this->hasOne(Certificate::class, 'progress_id');
     }
+
+    public static function ensureForStudent(string $studentId): void
+    {
+        $exists = static::query()->where('student_id', $studentId)->exists();
+        if ($exists) {
+            return;
+        }
+
+        static::query()->create([
+            'student_id' => $studentId,
+            'status' => 'not_started',
+        ]);
+    }
 }

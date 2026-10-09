@@ -38,11 +38,26 @@ class QuizScorer
 
     public function attempt(Quiz $quiz, User $user, array $answers): QuizAttempt
     {
+        return $this->record($quiz, $user, $answers);
+    }
+
+    /**
+     * @param  array<int|string, mixed>  $answers
+     */
+    public function record(
+        Quiz $quiz,
+        ?User $user,
+        array $answers,
+        ?string $participantName = null,
+        ?string $participantPhone = null,
+    ): QuizAttempt {
         $result = $this->score($quiz, $answers);
 
         return QuizAttempt::create([
             'quiz_id' => $quiz->id,
-            'user_id' => $user->id,
+            'user_id' => $user?->id,
+            'participant_name' => $participantName !== null && trim($participantName) !== '' ? trim($participantName) : null,
+            'participant_phone' => $participantPhone !== null && trim($participantPhone) !== '' ? trim($participantPhone) : null,
             'answers' => array_values($answers),
             'score' => $result['score'],
             'total' => $result['total'],

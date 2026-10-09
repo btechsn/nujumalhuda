@@ -18,11 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->only('store');
-    }
-
     public function store(CommentStoreRequest $request, CommentSpamService $spam, ModerationService $moderation): JsonResponse
     {
         $article = Article::findOrFail($request->article_id);
@@ -43,7 +38,8 @@ class CommentController extends Controller
 
         $comment = ArticleComment::create([
             'article_id' => $article->id,
-            'user_id' => $user->id,
+            'user_id' => $user?->id,
+            'author_name' => filled($request->input('author_name')) ? trim((string) $request->input('author_name')) : null,
             'parent_id' => $request->parent_id,
             'content' => $request->content,
             'status' => $analysis['status'],

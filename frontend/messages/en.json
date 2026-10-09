@@ -194,7 +194,16 @@
     "by": "By",
     "detail": {
       "back": "Back to news",
-      "notFound": "This article could not be found."
+      "notFound": "This article could not be found.",
+      "commentsTitle": "Comments",
+      "commentsEmpty": "No published comments yet.",
+      "commentName": "Your name",
+      "commentNamePh": "First and last name",
+      "commentBody": "Your comment",
+      "commentBodyPh": "Write your message…",
+      "commentSubmit": "Publish",
+      "commentPending": "Thank you. Your comment will appear after review.",
+      "commentError": "The comment could not be sent. Please try again."
     }
   },
   "live": {
@@ -580,10 +589,12 @@
     "formTitle": "Enrolment request",
     "formLede": "Fill in the form. Once sent, the office reviews the request.",
     "noOpen": "No promotion is open for enrolment at the moment.",
+    "noPromotionForProgram": "No promotion is open for this programme yet. The office must open one in the administration first.",
     "program": "Programme",
     "programPh": "Choose a programme",
     "promotion": "Promotion",
-    "promotionPh": "Choose a promotion",
+    "promotionPh": "Choose a programme first",
+    "promotionClosed": "Enrolment closed",
     "firstName": "First name",
     "lastName": "Last name",
     "phone": "Phone",
@@ -679,11 +690,14 @@
   "quizzes": {
     "errors": {
       "loading": "The quizzes could not be loaded.",
-      "notFound": "This quiz could not be found."
+      "notFound": "This quiz could not be found.",
+      "identity": "Enter your full name before submitting.",
+      "submit": "The result could not be saved. Please try again."
     },
     "empty": "No quizzes yet.",
     "listTitle": "Our quizzes",
     "resultsCount": "{count} results",
+    "pageOf": "Page {page} / {pages}",
     "searchPlaceholder": "Search a quiz…",
     "filterTopic": "Filter by path",
     "allTopics": "All paths",
@@ -693,6 +707,11 @@
     "start": "Start",
     "takeQuiz": "Take the quiz",
     "question": "Question {number}",
+    "fullName": "Full name",
+    "fullNamePh": "First and last name",
+    "phone": "Phone",
+    "phoneOptional": "optional",
+    "phonePh": "77 000 00 00",
     "submit": "Submit my answers",
     "retry": "Try again",
     "passed": "Well done — quiz passed",
@@ -700,6 +719,7 @@
     "scoreHint": "You need at least 60% to pass.",
     "topics": {
       "tajwid": "Tajweed",
+      "vocabulary": "Vocabulary",
       "coran": "Qur'an",
       "arabe": "Arabic",
       "fiqh": "Fiqh & faith",
@@ -833,6 +853,7 @@
     "ijazaIssuer": "Issued by",
     "ijazaYear": "Year",
     "ijazaDomain": "Field",
+    "ijazaDocument": "View the document",
     "sanad": "Sanad",
     "sanadHint": "Chain of transmission linking the teacher to their masters.",
     "viewProfile": "View profile",

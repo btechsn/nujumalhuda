@@ -194,7 +194,16 @@
     "by": "Par",
     "detail": {
       "back": "Retour aux actualités",
-      "notFound": "Cette actualité est introuvable."
+      "notFound": "Cette actualité est introuvable.",
+      "commentsTitle": "Commentaires",
+      "commentsEmpty": "Aucun commentaire publié pour le moment.",
+      "commentName": "Votre nom",
+      "commentNamePh": "Prénom et nom",
+      "commentBody": "Votre commentaire",
+      "commentBodyPh": "Écrivez votre message…",
+      "commentSubmit": "Publier",
+      "commentPending": "Merci. Votre commentaire sera visible après validation.",
+      "commentError": "Le commentaire n'a pas pu être envoyé. Réessayez."
     }
   },
   "live": {
@@ -580,10 +589,12 @@
     "formTitle": "Demande d’inscription",
     "formLede": "Remplissez le formulaire. Une fois envoyé, le secrétariat traite la demande.",
     "noOpen": "Aucune promotion n’est ouverte aux inscriptions pour le moment.",
+    "noPromotionForProgram": "Aucune promotion n’est ouverte pour ce programme. Le secrétariat doit d’abord en ouvrir une dans l’administration.",
     "program": "Programme",
     "programPh": "Choisir un programme",
     "promotion": "Promotion",
-    "promotionPh": "Choisir une promotion",
+    "promotionPh": "Choisissez d’abord un programme",
+    "promotionClosed": "Inscriptions fermées",
     "firstName": "Prénom",
     "lastName": "Nom",
     "phone": "Téléphone",
@@ -679,11 +690,14 @@
   "quizzes": {
     "errors": {
       "loading": "Les quizz n'ont pas pu être chargés.",
-      "notFound": "Ce quizz est introuvable."
+      "notFound": "Ce quizz est introuvable.",
+      "identity": "Indiquez votre nom complet avant de valider.",
+      "submit": "La correction n'a pas pu être enregistrée. Réessayez."
     },
     "empty": "Aucun quizz pour le moment.",
     "listTitle": "Nos quizz",
     "resultsCount": "{count} résultats",
+    "pageOf": "Page {page} / {pages}",
     "searchPlaceholder": "Rechercher un quizz…",
     "filterTopic": "Filtrer par parcours",
     "allTopics": "Tous les parcours",
@@ -693,6 +707,11 @@
     "start": "Commencer",
     "takeQuiz": "Passer le quizz",
     "question": "Question {number}",
+    "fullName": "Nom complet",
+    "fullNamePh": "Prénom et nom",
+    "phone": "Téléphone",
+    "phoneOptional": "facultatif",
+    "phonePh": "77 000 00 00",
     "submit": "Valider mes réponses",
     "retry": "Recommencer",
     "passed": "Bravo, quizz réussi",
@@ -700,6 +719,7 @@
     "scoreHint": "Il faut au moins 60 % pour réussir.",
     "topics": {
       "tajwid": "Tajwid",
+      "vocabulary": "Vocabulaire",
       "coran": "Coran",
       "arabe": "Arabe",
       "fiqh": "Fiqh & foi",
@@ -833,6 +853,7 @@
     "ijazaIssuer": "Délivrée par",
     "ijazaYear": "Année",
     "ijazaDomain": "Domaine",
+    "ijazaDocument": "Voir le document",
     "sanad": "Sanad",
     "sanadHint": "Chaîne de transmission reliant l'enseignant à ses maîtres.",
     "viewProfile": "Voir la fiche",

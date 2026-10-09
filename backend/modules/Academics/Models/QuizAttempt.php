@@ -12,7 +12,7 @@ class QuizAttempt extends Model
     use HasUlids;
 
     protected $fillable = [
-        'quiz_id', 'user_id', 'answers', 'score', 'total', 'passed', 'completed_at',
+        'quiz_id', 'user_id', 'participant_name', 'participant_phone', 'answers', 'score', 'total', 'passed', 'completed_at',
     ];
 
     protected $casts = [

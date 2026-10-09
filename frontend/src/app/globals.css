@@ -892,11 +892,7 @@
 }
 
 .nh-zawiya-veil {
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--color-brand-800) 42%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand-500) 22%, transparent) 100%
-  );
+  background: color-mix(in srgb, var(--color-brand-800) 34%, transparent);
   clip-path: polygon(0 0, 66% 0, 44% 100%, 0 100%);
 }
 

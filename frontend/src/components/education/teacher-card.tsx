@@ -14,7 +14,7 @@ export function TeacherCard({ teacher, className }: TeacherCardProps) {
   const locale = useLocale() as 'fr' | 'en' | 'ar';
   const t = useTranslations('teachers');
 
-  const bio = teacher.bio?.[locale] || teacher.bio?.fr;
+  const bio = (teacher.bio?.[locale] || teacher.bio?.fr || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const specialties = teacher.specialties?.[locale] || teacher.specialties?.fr;
 
   return (

@@ -48,10 +48,15 @@ export function IjazaBoard() {
   const dialogId = useId();
   const points = t.raw("points") as string[];
 
+  const ordered = useMemo(
+    () => [...ijazas].sort((a, b) => (b.signed_at || "").localeCompare(a.signed_at || "")),
+    [ijazas],
+  );
+
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase(locale);
-    if (!needle) return ijazas;
-    return ijazas.filter((item) => {
+    if (!needle) return ordered;
+    return ordered.filter((item) => {
       const haystack = [
         item.student_name,
         item.teacher_name,
@@ -63,7 +68,7 @@ export function IjazaBoard() {
         .toLocaleLowerCase(locale);
       return haystack.includes(needle);
     });
-  }, [ijazas, query, locale]);
+  }, [ordered, query, locale]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const safePage = Math.min(page, pages - 1);
@@ -333,6 +338,9 @@ function IjazaCard({ ijaza, onSelect }: { ijaza: IjazaSummary; onSelect: () => v
       <p className="mt-3 line-clamp-2 text-sm text-white/90">{i18nText(ijaza.scope, locale)}</p>
       <p className="mt-2 text-xs text-white/75">
         {ti("teacher")}: {ijaza.teacher_name}
+      </p>
+      <p className="nh-numeric mt-2 text-xs font-semibold tracking-widest text-gold-300">
+        {ti("verificationCode")} : {ijaza.verification_code}
       </p>
       <div className="mt-auto flex items-center justify-between gap-3 pt-5">
         <span className="text-xs text-gold-300">{formatDate(ijaza.signed_at, locale)}</span>

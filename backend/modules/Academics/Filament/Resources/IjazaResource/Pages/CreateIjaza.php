@@ -8,4 +8,6 @@ use Modules\Academics\Filament\Resources\IjazaResource;
 class CreateIjaza extends CreateRecord
 {
     protected static string $resource = IjazaResource::class;
+
+    protected static ?string $title = 'Nouvelle ijaza';
 }

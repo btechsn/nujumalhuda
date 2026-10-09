@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -114,6 +115,8 @@ export function ArticleDetail() {
             dangerouslySetInnerHTML={{ __html: content }}
           />
 
+          {article.allow_comments ? <ArticleComments articleId={article.id} /> : null}
+
           <div className="mt-10 border-t border-line pt-8">
             <Link
               href={listHref}
@@ -125,6 +128,162 @@ export function ArticleDetail() {
         </div>
       </div>
     </article>
+  );
+}
+
+const API_BASES = [
+  process.env.NEXT_PUBLIC_API_URL,
+  "http://127.0.0.1:8000/api/v1",
+  "http://localhost:8000/api/v1",
+].filter((base): base is string => Boolean(base));
+
+type PublicComment = {
+  id: string;
+  content: string;
+  author_name?: string;
+  user?: { name?: string };
+  created_at?: string;
+};
+
+function ArticleComments({ articleId }: { articleId: string }) {
+  const t = useTranslations("news.detail");
+  const locale = useLocale();
+  const [comments, setComments] = useState<PublicComment[]>([]);
+  const [name, setName] = useState("");
+  const [content, setContent] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      for (const base of API_BASES) {
+        try {
+          const response = await fetch(`${base}/news/articles/${articleId}/comments`, {
+            headers: { Accept: "application/json" },
+            cache: "no-store",
+          });
+          if (!response.ok) continue;
+          const body = (await response.json()) as { data?: PublicComment[] };
+          if (!cancelled) setComments(body.data ?? []);
+          return;
+        } catch {
+          continue;
+        }
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [articleId]);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (busy || name.trim().length < 2 || content.trim().length < 10) return;
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+
+    try {
+      for (const base of API_BASES) {
+        try {
+          const response = await fetch(`${base}/news/comments`, {
+            method: "POST",
+            headers: { Accept: "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({
+              article_id: articleId,
+              author_name: name.trim(),
+              content: content.trim(),
+            }),
+          });
+          if (response.status === 422 || response.status === 403) {
+            setError(t("commentError"));
+            setBusy(false);
+            return;
+          }
+          if (!response.ok) continue;
+          setContent("");
+          setNotice(t("commentPending"));
+          setBusy(false);
+          return;
+        } catch {
+          continue;
+        }
+      }
+      setError(t("commentError"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="mt-12 border-t border-line pt-8">
+      <h2 className="font-sans text-lg font-extrabold text-content">{t("commentsTitle")}</h2>
+
+      {comments.length === 0 ? (
+        <p className="mt-4 text-sm text-content-secondary">{t("commentsEmpty")}</p>
+      ) : (
+        <ul className="mt-4 space-y-4">
+          {comments.map((comment) => (
+            <li key={comment.id} className="rounded-2xl bg-[#f3f4f6] px-4 py-3">
+              <p className="text-sm font-semibold text-content">
+                {comment.author_name || comment.user?.name || "—"}
+              </p>
+              <p className="mt-1 text-sm text-content-secondary">{comment.content}</p>
+              {comment.created_at ? (
+                <p className="mt-2 text-xs text-content-secondary">
+                  {new Date(comment.created_at).toLocaleDateString(locale === "ar" ? "ar-SA" : locale, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={submit} className="mt-6 space-y-4">
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-semibold text-content">{t("commentName")}</span>
+          <input
+            required
+            minLength={2}
+            maxLength={80}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder={t("commentNamePh")}
+            autoComplete="name"
+            className="h-11 w-full rounded-xl border border-line bg-[#f8f9fa] px-3 text-sm text-content outline-none ring-primary/30 placeholder:text-content-secondary focus:bg-white focus:ring-2"
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-semibold text-content">{t("commentBody")}</span>
+          <textarea
+            required
+            minLength={10}
+            maxLength={2000}
+            rows={4}
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            placeholder={t("commentBodyPh")}
+            className="w-full rounded-xl border border-line bg-[#f8f9fa] px-3 py-2.5 text-sm text-content outline-none ring-primary/30 placeholder:text-content-secondary focus:bg-white focus:ring-2"
+          />
+        </label>
+        {notice ? <p className="text-sm text-brand-800">{notice}</p> : null}
+        {error ? <p className="text-sm text-red-800">{error}</p> : null}
+        <button
+          type="submit"
+          disabled={busy || name.trim().length < 2 || content.trim().length < 10}
+          className="inline-flex items-center rounded-full bg-brand-700 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-brand-800 disabled:opacity-40"
+        >
+          {busy ? "…" : t("commentSubmit")}
+        </button>
+      </form>
+    </section>
   );
 }
 

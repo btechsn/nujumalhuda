@@ -8,6 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Modules\Education\Models\Program;
+use Modules\Education\Models\ProgramType;
 
 class ProgramResource extends Resource
 {
@@ -50,13 +51,11 @@ class ProgramResource extends Resource
                 Forms\Components\Section::make('Caractéristiques')
                     ->schema([
                         Forms\Components\Select::make('type')
-                            ->options([
-                                'coran' => 'Coran',
-                                'arabe' => 'Arabe',
-                                'baye_niasse' => 'Baye Niasse',
-                                'sunnite' => 'Corpus Sunnite',
-                            ])
-                            ->required(),
+                            ->label('Parcours')
+                            ->options(fn (): array => self::typeOptions())
+                            ->searchable()
+                            ->required()
+                            ->helperText('Ajoutez un parcours dans Éducation → Types de parcours.'),
                         
                         Forms\Components\Select::make('level')
                             ->options([
@@ -134,13 +133,10 @@ class ProgramResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\BadgeColumn::make('type')
-                    ->colors([
-                        'success' => 'coran',
-                        'primary' => 'arabe',
-                        'warning' => 'baye_niasse',
-                        'info' => 'sunnite',
-                    ]),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Parcours')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => self::typeOptions()[$state] ?? (string) $state),
                 
                 Tables\Columns\BadgeColumn::make('level')
                     ->label('Niveau'),
@@ -158,8 +154,11 @@ class ProgramResource extends Resource
                     ->label('En avant')
                     ->boolean(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('type'),
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('Parcours')
+                    ->options(fn (): array => self::typeOptions()),
                 Tables\Filters\SelectFilter::make('level'),
                 Tables\Filters\TernaryFilter::make('is_active')->label('Actif'),
             ])
@@ -171,6 +170,19 @@ class ProgramResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function typeOptions(): array
+    {
+        return ProgramType::query()
+            ->orderBy('sort')
+            ->orderBy('name_i18n->fr')
+            ->get()
+            ->mapWithKeys(fn (ProgramType $type): array => [$type->slug => $type->label()])
+            ->all();
     }
 
     public static function getPages(): array

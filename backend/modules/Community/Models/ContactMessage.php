@@ -19,10 +19,14 @@ class ContactMessage extends Model
         'locale',
         'status',
         'read_at',
+        'reply_message',
+        'replied_at',
+        'replied_by',
     ];
 
     protected $casts = [
         'read_at' => 'datetime',
+        'replied_at' => 'datetime',
     ];
 
     public function fullName(): string

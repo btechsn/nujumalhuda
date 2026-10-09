@@ -8,7 +8,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { Program } from "@/types/api";
 import { PageHeading } from "@/components/layout/page-heading";
 
-const PROGRAM_TYPES = ["coran", "arabe", "baye_niasse", "sunnite"] as const;
+const KNOWN_TYPES = new Set(["coran", "arabe", "baye_niasse", "sunnite", "autre"]);
 
 const TYPE_IMAGES: Record<string, string> = {
   coran: "/brand/slide-priere.jpg",
@@ -26,6 +26,17 @@ function i18nText(
   if (locale === "en") return field.en || field.fr;
   if (locale === "ar") return field.ar || field.fr;
   return field.fr;
+}
+
+function plainText(value: string): string {
+  return value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function typeName(program: Program, locale: string, translate: (key: "types.coran") => string): string {
+  const fromApi = i18nText(program.type_name ?? undefined, locale);
+  if (fromApi) return fromApi;
+  if (KNOWN_TYPES.has(program.type)) return translate(`types.${program.type as "coran"}`);
+  return program.type.replaceAll("_", " ");
 }
 
 function tuitionOf(program: Program): string {
@@ -50,16 +61,29 @@ export function ProgramBoard({
   const [query, setQuery] = useState("");
   const [types, setTypes] = useState<string[]>([]);
 
+  const ordered = useMemo(
+    () => [...programs].sort((a, b) => (b.created_at || "").localeCompare(a.created_at || "")),
+    [programs],
+  );
+
+  const availableTypes = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const program of ordered) {
+      if (!seen.has(program.type)) seen.set(program.type, typeName(program, locale, t));
+    }
+    return [...seen.entries()].sort((a, b) => a[1].localeCompare(b[1], locale));
+  }, [ordered, locale, t]);
+
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase(locale);
-    return programs.filter((program) => {
+    return ordered.filter((program) => {
       if (types.length > 0 && !types.includes(program.type)) return false;
       if (!needle) return true;
       const name = i18nText(program.name, locale);
       const description = i18nText(program.description, locale);
       return `${name} ${description}`.toLocaleLowerCase(locale).includes(needle);
     });
-  }, [programs, query, types, locale]);
+  }, [ordered, query, types, locale]);
 
   useEffect(() => {
     setDraft("");
@@ -93,7 +117,7 @@ export function ProgramBoard({
             <span aria-hidden="true" className="mt-2 block h-0.5 w-12 bg-primary" />
             <p className="mt-5 text-sm font-bold text-brand-900">{t("filterType")}</p>
             <ul className="mt-3 space-y-2.5">
-              {PROGRAM_TYPES.map((type) => (
+              {availableTypes.map(([type, label]) => (
                 <li key={type}>
                   <label className="flex cursor-pointer items-start gap-2.5 text-sm text-content">
                     <input
@@ -102,7 +126,7 @@ export function ProgramBoard({
                       onChange={() => toggleType(type)}
                       className="mt-0.5 size-4 rounded border-line accent-[var(--color-brand-500)]"
                     />
-                    <span className="font-semibold uppercase tracking-wide">{t(`types.${type}`)}</span>
+                    <span className="font-semibold uppercase tracking-wide">{label}</span>
                   </label>
                 </li>
               ))}
@@ -153,7 +177,7 @@ export function ProgramBoard({
               ) : (
                 filtered.map((program) => {
                   const name = i18nText(program.name, locale);
-                  const description = i18nText(program.description, locale);
+                  const description = plainText(i18nText(program.description, locale));
                   const image = TYPE_IMAGES[program.type] ?? TYPE_IMAGES.autre;
                   const tuition = tuitionOf(program);
 
@@ -166,7 +190,7 @@ export function ProgramBoard({
                       <div className="flex flex-col justify-center p-5 sm:p-6">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                            {t(`types.${program.type}`)}
+                            {typeName(program, locale, t)}
                           </span>
                           <span className="rounded-full bg-[#f3f4f6] px-2.5 py-0.5 text-xs font-medium text-content-secondary">
                             {t(`levels.${program.level}`)}

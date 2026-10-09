@@ -17,10 +17,9 @@ Route::prefix('api/v1/news')->middleware('api')->group(function () {
     Route::get('categories', [CategoryController::class, 'index']);
     
     Route::get('articles/{id}/comments', [CommentController::class, 'index']);
-    
-    // Routes authentifiées
+    Route::post('comments', [CommentController::class, 'store']);
+
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('comments', [CommentController::class, 'store']);
         Route::post('comments/{id}/report', [CommentController::class, 'report']);
     });
 });

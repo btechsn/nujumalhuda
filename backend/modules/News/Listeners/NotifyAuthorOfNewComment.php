@@ -20,6 +20,10 @@ class NotifyAuthorOfNewComment
             return;
         }
 
-        $author->notify(new NewCommentNotification($comment));
+        try {
+            $author->notify(new NewCommentNotification($comment));
+        } catch (\Throwable) {
+            // Un échec de notification ne doit pas empêcher d'enregistrer le commentaire.
+        }
     }
 }

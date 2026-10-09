@@ -21,7 +21,7 @@ class CommentSpamService
     /**
      * @return array{score: int, flags: array<int, string>, status: string}
      */
-    public function analyze(User $user, string $content, ?string $honeypot, string $ip): array
+    public function analyze(?User $user, string $content, ?string $honeypot, string $ip): array
     {
         $flags = [];
         $score = 0;
@@ -61,9 +61,13 @@ class CommentSpamService
         }
 
         $recentDuplicate = ArticleComment::query()
-            ->where('user_id', $user->id)
             ->where('content', $content)
             ->where('created_at', '>=', now()->subDay())
+            ->when(
+                $user,
+                fn ($query) => $query->where('user_id', $user->id),
+                fn ($query) => $query->where('ip_address', $ip),
+            )
             ->exists();
 
         if ($recentDuplicate) {
@@ -71,7 +75,7 @@ class CommentSpamService
             $score += 50;
         }
 
-        $rateKey = 'news.comments.rate.' . $user->id;
+        $rateKey = 'news.comments.rate.' . ($user?->id ?? ('ip.' . sha1($ip)));
         $attempts = (int) Cache::get($rateKey, 0);
         if ($attempts >= 5) {
             $flags[] = 'rate_limit';
@@ -99,9 +103,9 @@ class CommentSpamService
         ];
     }
 
-    public function rememberAttempt(User $user, string $ip): void
+    public function rememberAttempt(?User $user, string $ip): void
     {
-        $rateKey = 'news.comments.rate.' . $user->id;
+        $rateKey = 'news.comments.rate.' . ($user?->id ?? ('ip.' . sha1($ip)));
         $ipKey = 'news.comments.ip.' . sha1($ip);
 
         Cache::put($rateKey, ((int) Cache::get($rateKey, 0)) + 1, now()->addHour());

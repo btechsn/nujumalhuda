@@ -16,6 +16,7 @@ class ProgramResource extends JsonResource
             'description' => $this->description_i18n,
             'objectives' => $this->objectives_i18n,
             'type' => $this->type,
+            'type_name' => $this->programType?->name_i18n,
             'level' => $this->level,
             'duration_weeks' => $this->duration_weeks,
             'hours_per_week' => $this->hours_per_week,

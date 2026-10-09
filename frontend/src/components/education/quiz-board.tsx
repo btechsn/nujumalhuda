@@ -9,7 +9,8 @@ import { useQuiz, useQuizzes } from "@/hooks/useQuizzes";
 import type { I18nField, QuizQuestion, QuizSummary } from "@/types/api";
 import { cn } from "@/lib/utils";
 
-const TOPICS = ["tajwid", "coran", "arabe", "fiqh", "baye_niasse"] as const;
+const KNOWN_TOPICS = new Set(["tajwid", "vocabulary", "coran", "arabe", "fiqh", "baye_niasse"]);
+const PER_PAGE = 8;
 
 function i18nText(field: I18nField | string | undefined | null, locale: string): string {
   if (!field) return "";
@@ -17,6 +18,17 @@ function i18nText(field: I18nField | string | undefined | null, locale: string):
   if (locale === "en") return field.en || field.fr || "";
   if (locale === "ar") return field.ar || field.fr || "";
   return field.fr || "";
+}
+
+function topicName(
+  quiz: QuizSummary,
+  locale: string,
+  translate: (key: "topics.tajwid") => string,
+): string {
+  const fromApi = i18nText(quiz.topic_name, locale);
+  if (fromApi) return fromApi;
+  if (KNOWN_TOPICS.has(quiz.topic)) return translate(`topics.${quiz.topic as "tajwid"}`);
+  return quiz.topic.replaceAll("_", " ");
 }
 
 function choiceText(choice: string | I18nField, locale: string): string {
@@ -27,26 +39,44 @@ export function QuizBoard() {
   const locale = useLocale();
   const t = useTranslations("pages.quiz");
   const tq = useTranslations("quizzes");
+  const common = useTranslations("common");
   const { data: quizzes, isLoading, error } = useQuizzes();
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
+  const [page, setPage] = useState(0);
   const dialogId = useId();
 
   const topicOptions = useMemo(() => {
-    const present = new Set(quizzes.map((quiz) => quiz.topic));
-    return TOPICS.filter((item) => present.has(item));
-  }, [quizzes]);
+    const seen = new Map<string, string>();
+    for (const quiz of quizzes) {
+      if (!seen.has(quiz.topic)) seen.set(quiz.topic, topicName(quiz, locale, tq));
+    }
+    return [...seen.entries()].sort((a, b) => a[1].localeCompare(b[1], locale));
+  }, [quizzes, locale, tq]);
+
+  const ordered = useMemo(
+    () => [...quizzes].sort((a, b) => (b.created_at || "").localeCompare(a.created_at || "")),
+    [quizzes],
+  );
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase(locale);
-    return quizzes.filter((quiz) => {
+    return ordered.filter((quiz) => {
       if (topic && quiz.topic !== topic) return false;
       if (!needle) return true;
       const haystack = `${i18nText(quiz.title, locale)} ${quiz.slug} ${quiz.topic}`.toLocaleLowerCase(locale);
       return haystack.includes(needle);
     });
-  }, [quizzes, topic, query, locale]);
+  }, [ordered, topic, query, locale]);
+
+  const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const safePage = Math.min(page, pages - 1);
+  const visible = filtered.slice(safePage * PER_PAGE, safePage * PER_PAGE + PER_PAGE);
+
+  useEffect(() => {
+    setPage(0);
+  }, [query, topic]);
 
   useEffect(() => {
     if (!activeSlug) return;
@@ -108,9 +138,9 @@ export function QuizBoard() {
                       className="h-11 w-full appearance-none rounded-full border border-line bg-white px-4 pe-10 text-sm text-content outline-none ring-primary/30 focus:ring-2"
                     >
                       <option value="">{tq("allTopics")}</option>
-                      {topicOptions.map((item) => (
+                      {topicOptions.map(([item, label]) => (
                         <option key={item} value={item}>
-                          {tq(`topics.${item}`)}
+                          {label}
                         </option>
                       ))}
                     </select>
@@ -142,11 +172,41 @@ export function QuizBoard() {
               {filtered.length === 0 ? (
                 <p className="rounded-2xl bg-white p-6 text-content-secondary">{tq("noMatch")}</p>
               ) : (
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                  {filtered.map((quiz) => (
-                    <QuizCard key={quiz.id} quiz={quiz} onSelect={() => setActiveSlug(quiz.slug)} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                    {visible.map((quiz) => (
+                      <QuizCard key={quiz.id} quiz={quiz} onSelect={() => setActiveSlug(quiz.slug)} />
+                    ))}
+                  </div>
+                  {pages > 1 ? (
+                    <nav
+                      aria-label={tq("pageOf", { page: safePage + 1, pages })}
+                      className="mt-6 flex items-center justify-between gap-3"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setPage(Math.max(0, safePage - 1))}
+                        disabled={safePage === 0}
+                        className="nh-khutba-arrow disabled:opacity-40"
+                        aria-label={common("previous")}
+                      >
+                        ‹
+                      </button>
+                      <p className="nh-numeric text-small text-content-secondary">
+                        {tq("pageOf", { page: safePage + 1, pages })}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setPage(Math.min(pages - 1, safePage + 1))}
+                        disabled={safePage >= pages - 1}
+                        className="nh-khutba-arrow disabled:opacity-40"
+                        aria-label={common("next")}
+                      >
+                        ›
+                      </button>
+                    </nav>
+                  ) : null}
+                </>
               )}
             </section>
           )}
@@ -187,7 +247,7 @@ function QuizCard({ quiz, onSelect }: { quiz: QuizSummary; onSelect: () => void 
     >
       <div className="flex items-start justify-between gap-2">
         <p className="font-sans text-xl font-extrabold tracking-tight uppercase">
-          {tq(`topics.${quiz.topic}`)}
+          {topicName(quiz, locale, tq)}
         </p>
         <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold">
           {tq("questionsCount", { count: quiz.questions_count })}
@@ -215,6 +275,9 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
   const { data: quiz, isLoading, error } = useQuiz(slug);
 
   const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [score, setScore] = useState<{
@@ -226,15 +289,25 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
 
   useEffect(() => {
     setAnswers({});
+    setFullName("");
+    setPhone("");
+    setFormError(null);
     setSubmitted(false);
     setScore(null);
   }, [slug]);
 
+  const nameReady = fullName.trim().length >= 2;
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!quiz?.questions?.length || busy) return;
+    if (!nameReady) {
+      setFormError(tq("errors.identity"));
+      return;
+    }
 
     setBusy(true);
+    setFormError(null);
     const payload = quiz.questions.map((_, index) => answers[index] ?? -1);
     const bases = [
       process.env.NEXT_PUBLIC_API_URL,
@@ -248,8 +321,17 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
           const response = await fetch(`${base}/academics/quizzes/${slug}/practice`, {
             method: "POST",
             headers: { Accept: "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({ answers: payload }),
+            body: JSON.stringify({
+              answers: payload,
+              participant_name: fullName.trim(),
+              participant_phone: phone.trim() || null,
+            }),
           });
+          if (response.status === 422) {
+            setFormError(tq("errors.identity"));
+            setBusy(false);
+            return;
+          }
           if (!response.ok) continue;
           const body = (await response.json()) as {
             data?: {
@@ -277,14 +359,17 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
           continue;
         }
       }
+      setFormError(tq("errors.submit"));
       setBusy(false);
     } catch {
+      setFormError(tq("errors.submit"));
       setBusy(false);
     }
   };
 
   const reset = () => {
     setAnswers({});
+    setFormError(null);
     setSubmitted(false);
     setScore(null);
   };
@@ -310,7 +395,7 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-gold-300">
-              {tq(`topics.${quiz.topic}`)}
+              {topicName(quiz, locale, tq)}
             </p>
             <h2 className="mt-1 font-sans text-2xl font-extrabold sm:text-3xl">
               {i18nText(quiz.title, locale)}
@@ -344,6 +429,41 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
         ) : null}
 
         <form onSubmit={submit} className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-semibold text-content">{tq("fullName")}</span>
+              <input
+                required
+                minLength={2}
+                maxLength={160}
+                value={fullName}
+                disabled={submitted}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder={tq("fullNamePh")}
+                autoComplete="name"
+                className="h-11 w-full rounded-xl border border-line bg-[#f8f9fa] px-3 text-sm text-content outline-none ring-primary/30 placeholder:text-content-secondary focus:bg-white focus:ring-2 disabled:opacity-70"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-semibold text-content">
+                {tq("phone")}{" "}
+                <span className="font-normal text-content-secondary">({tq("phoneOptional")})</span>
+              </span>
+              <input
+                type="tel"
+                maxLength={40}
+                value={phone}
+                disabled={submitted}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder={tq("phonePh")}
+                autoComplete="tel"
+                className="nh-numeric h-11 w-full rounded-xl border border-line bg-[#f8f9fa] px-3 text-sm text-content outline-none ring-primary/30 placeholder:text-content-secondary focus:bg-white focus:ring-2 disabled:opacity-70"
+              />
+            </label>
+          </div>
+
+          {formError ? <p className="text-sm text-red-800">{formError}</p> : null}
+
           {quiz.questions.map((question, index) => (
             <QuestionBlock
               key={`${quiz.slug}-${index}`}
@@ -363,7 +483,7 @@ function QuizModal({ slug, onClose }: { slug: string; onClose: () => void }) {
             {!submitted ? (
               <button
                 type="submit"
-                disabled={busy || Object.keys(answers).length < quiz.questions.length}
+                disabled={busy || !nameReady || Object.keys(answers).length < quiz.questions.length}
                 className={cn(
                   "nh-event-more inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold disabled:opacity-40",
                   labelClass,

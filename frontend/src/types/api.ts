@@ -28,7 +28,8 @@ export interface Program extends Timestamps {
   name: I18nField;
   description: I18nField;
   objectives?: Record<string, string[]> | string[] | null;
-  type: 'coran' | 'arabe' | 'baye_niasse' | 'sunnite' | 'autre';
+  type: string;
+  type_name?: I18nField | null;
   level: 'debutant' | 'intermediaire' | 'avance';
   duration_weeks: number;
   hours_per_week: number;
@@ -74,6 +75,7 @@ export interface Teacher extends Timestamps {
   has_sanad?: boolean;
   sanad?: TeacherSanad | null;
   ijaza_details?: Record<string, TeacherIjaza> | null;
+  ijaza_document_url?: string | null;
   photo_url?: string | null;
   stats?: {
     students_count?: number;
@@ -104,7 +106,7 @@ export interface Promotion extends Timestamps {
   is_open_for_enrollment: boolean;
   schedule?: Record<string, string> | null;
   location?: string | null;
-  program?: Pick<Program, 'id' | 'name' | 'type' | 'level' | 'duration_weeks' | 'hours_per_week'> | null;
+  program?: Pick<Program, 'id' | 'name' | 'type' | 'type_name' | 'level' | 'duration_weeks' | 'hours_per_week'> | null;
   main_teacher?: (Pick<Teacher, 'id' | 'name' | 'email' | 'photo_url' | 'title'> & {
     photo_url?: string | null;
   }) | null;
@@ -132,8 +134,10 @@ export interface QuizSummary {
   id: string;
   slug: string;
   topic: string;
+  topic_name?: I18nField | null;
   title: I18nField;
   questions_count: number;
+  created_at?: string;
 }
 
 export interface QuizDetail extends QuizSummary {

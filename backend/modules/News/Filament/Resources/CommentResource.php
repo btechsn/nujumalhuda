@@ -8,6 +8,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Models\User;
 use Modules\News\Models\ArticleComment;
 
 class CommentResource extends Resource
@@ -42,8 +44,12 @@ class CommentResource extends Resource
                             ->disabled(),
                         
                         Forms\Components\Select::make('user_id')
-                            ->label('Utilisateur')
-                            ->relationship('user', 'name')
+                            ->label('Auteur')
+                            ->relationship(
+                                'user',
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('last_name')->orderBy('first_name'),
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->fullName() !== '' ? $record->fullName() : ($record->email ?: (string) $record->phone))
                             ->required()
                             ->disabled(),
                         
@@ -92,10 +98,21 @@ class CommentResource extends Resource
                     ->limit(30)
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Utilisateur')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('author_name')
+                    ->label('Auteur')
+                    ->formatStateUsing(fn (mixed $state, ArticleComment $record): string => $record->displayName())
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        $like = '%'.$search.'%';
+
+                        return $query->where(function (Builder $comment) use ($like): void {
+                            $comment->where('author_name', 'ilike', $like)
+                                ->orWhereHas('user', function (Builder $user) use ($like): void {
+                                    $user->where('first_name', 'ilike', $like)
+                                        ->orWhere('last_name', 'ilike', $like)
+                                        ->orWhereRaw("concat(first_name, ' ', last_name) ilike ?", [$like]);
+                                });
+                        });
+                    }),
                 
                 Tables\Columns\TextColumn::make('content')
                     ->label('Contenu')

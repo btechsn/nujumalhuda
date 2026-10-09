@@ -68,7 +68,7 @@ export function ProgramDetail({ id }: { id: string }) {
   }
 
   const name = i18nText(program.name, locale);
-  const description = i18nText(program.description, locale);
+  const description = i18nText(program.description, locale).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const objectives = objectivesOf(program, locale);
   const image = TYPE_IMAGES[program.type] ?? TYPE_IMAGES.autre;
   const prerequisite = program.prerequisite_program;
@@ -94,7 +94,12 @@ export function ProgramDetail({ id }: { id: string }) {
         <div aria-hidden="true" className="absolute inset-0 bg-brand-900/80" />
         <div className="nh-container relative py-14 sm:py-16">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">{t(`types.${program.type}`)}</span>
+            <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
+              {i18nText(program.type_name ?? undefined, locale) ||
+                (["coran", "arabe", "baye_niasse", "sunnite", "autre"].includes(program.type)
+                  ? t(`types.${program.type as "coran"}`)
+                  : program.type)}
+            </span>
             <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">{t(`levels.${program.level}`)}</span>
             {program.is_featured ? (
               <span className="rounded-full bg-gold-300 px-3 py-1 text-xs font-semibold text-brand-950">{t("featured")}</span>

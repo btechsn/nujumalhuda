@@ -20,6 +20,7 @@ class ArticleComment extends Model
     protected $fillable = [
         'article_id',
         'user_id',
+        'author_name',
         'parent_id',
         'content',
         'status',
@@ -48,6 +49,16 @@ class ArticleComment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function displayName(): string
+    {
+        $name = $this->user?->fullName();
+        if (filled($name)) {
+            return $name;
+        }
+
+        return filled($this->author_name) ? (string) $this->author_name : 'Lecteur';
     }
 
     public function parent(): BelongsTo

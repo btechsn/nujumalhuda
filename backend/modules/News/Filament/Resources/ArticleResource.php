@@ -7,7 +7,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Modules\Core\Models\Media;
+use Modules\Core\Models\Organization;
+use Modules\Core\Models\User;
 use Modules\News\Models\Article;
 
 class ArticleResource extends Resource
@@ -29,7 +34,7 @@ class ArticleResource extends Resource
                             ->default(fn() => auth()->id()),
                         
                         Forms\Components\Hidden::make('organization_id')
-                            ->default(fn() => auth()->user()->organization_id),
+                            ->default(fn (): ?string => self::currentOrganizationId()),
                         
                         Forms\Components\Select::make('category_id')
                             ->label('Catégorie')
@@ -102,11 +107,15 @@ class ArticleResource extends Resource
                 
                 Forms\Components\Section::make('Image de couverture')
                     ->schema([
-                        Forms\Components\Select::make('cover_image_id')
+                        Forms\Components\FileUpload::make('cover')
                             ->label('Image')
-                            ->relationship('coverImage', 'filename')
-                            ->searchable()
-                            ->preload(),
+                            ->image()
+                            ->disk('public')
+                            ->directory('articles/covers')
+                            ->visibility('public')
+                            ->maxSize(4096)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->helperText('Choisissez une image sur votre ordinateur. JPEG, PNG ou WebP, 4 Mo maximum.'),
                     ]),
                 
                 Forms\Components\Section::make('SEO')
@@ -162,9 +171,10 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('coverImage.url')
+                Tables\Columns\ImageColumn::make('cover')
                     ->label('Image')
-                    ->circular(),
+                    ->circular()
+                    ->state(fn (Article $record): ?string => $record->coverImage?->url()),
                 
                 Tables\Columns\TextColumn::make('title_i18n.fr')
                     ->label('Titre')
@@ -176,9 +186,17 @@ class ArticleResource extends Resource
                     ->label('Catégorie')
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('author.name')
+                Tables\Columns\TextColumn::make('author.first_name')
                     ->label('Auteur')
-                    ->sortable(),
+                    ->formatStateUsing(fn (mixed $state, Article $record): string => $record->author?->fullName() ?: '—')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('author', function (Builder $author) use ($search): void {
+                            $like = '%'.$search.'%';
+                            $author->where('first_name', 'ilike', $like)
+                                ->orWhere('last_name', 'ilike', $like)
+                                ->orWhereRaw("concat(first_name, ' ', last_name) ilike ?", [$like]);
+                        });
+                    }),
                 
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Statut')
@@ -212,8 +230,17 @@ class ArticleResource extends Resource
                     ->label('Catégorie'),
                 Tables\Filters\SelectFilter::make('status'),
                 Tables\Filters\SelectFilter::make('author_id')
-                    ->relationship('author', 'name')
-                    ->label('Auteur'),
+                    ->label('Auteur')
+                    ->options(fn (): array => User::query()
+                        ->whereIn('id', Article::query()->select('author_id'))
+                        ->orderBy('last_name')
+                        ->orderBy('first_name')
+                        ->get()
+                        ->mapWithKeys(fn (User $user): array => [
+                            $user->getKey() => $user->fullName() !== '' ? $user->fullName() : ($user->email ?: (string) $user->phone),
+                        ])
+                        ->all())
+                    ->searchable(),
                 Tables\Filters\TernaryFilter::make('is_featured')->label('Vedette'),
             ])
             ->actions([
@@ -225,6 +252,82 @@ class ArticleResource extends Resource
                 ]),
             ])
             ->defaultSort('published_at', 'desc');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function currentOrganizationId(): ?string
+    {
+        $fromMembership = auth()->user()?->memberships()->value('organization_id');
+        if (filled($fromMembership)) {
+            return $fromMembership;
+        }
+
+        return Organization::query()->orderBy('created_at')->value('id');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function applyCover(array $data, ?string $articleId = null, ?string $currentMediaId = null): array
+    {
+        $path = self::uploadedPath($data['cover'] ?? null);
+        unset($data['cover']);
+
+        if ($path === null) {
+            $data['cover_image_id'] = null;
+
+            return $data;
+        }
+
+        $current = filled($currentMediaId) ? Media::query()->find($currentMediaId) : null;
+        if ($current && $current->path === $path) {
+            $data['cover_image_id'] = $current->id;
+
+            return $data;
+        }
+
+        $disk = Storage::disk('public');
+        if (! $disk->exists($path)) {
+            $data['cover_image_id'] = $current?->id;
+
+            return $data;
+        }
+
+        $absolute = $disk->path($path);
+        $info = is_file($absolute) ? @getimagesize($absolute) : false;
+        $fileName = basename($path);
+
+        $media = Media::query()->create([
+            'mediable_type' => Article::class,
+            'mediable_id' => $articleId,
+            'uploaded_by' => auth()->id(),
+            'collection' => 'cover',
+            'name' => pathinfo($fileName, PATHINFO_FILENAME) ?: $fileName,
+            'file_name' => $fileName,
+            'mime_type' => $disk->mimeType($path) ?: 'image/jpeg',
+            'disk' => 'public',
+            'path' => $path,
+            'size' => $disk->size($path) ?: 0,
+            'width' => is_array($info) ? ($info[0] ?? null) : null,
+            'height' => is_array($info) ? ($info[1] ?? null) : null,
+        ]);
+
+        $data['cover_image_id'] = $media->id;
+
+        return $data;
+    }
+
+    private static function uploadedPath(mixed $value): ?string
+    {
+        if (is_array($value)) {
+            $value = array_values(array_filter($value, 'is_string'))[0] ?? null;
+        }
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 
     public static function getPages(): array

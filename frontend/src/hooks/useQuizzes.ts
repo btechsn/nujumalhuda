@@ -115,7 +115,7 @@ export function useQuiz(slug: string | null) {
 
         if (!payload?.slug) {
           setData(null);
-          setError(new Error('Quiz introuvable'));
+          setError(new Error('Quizz introuvable'));
           return;
         }
 

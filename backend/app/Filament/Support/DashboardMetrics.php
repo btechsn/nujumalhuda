@@ -62,6 +62,65 @@ final class DashboardMetrics
     }
 
     /**
+     * Dossiers en attente, avec le lien vers leur page d'administration.
+     *
+     * @return list<array{key: string, label: string, value: int, ids: list<string>, url: ?string, icon: string}>
+     */
+    public static function attention(): array
+    {
+        $items = [
+            [
+                'key' => 'enrollments',
+                'label' => 'Inscriptions',
+                'ids' => self::ids(Enrollment::class, fn ($query) => $query->where('status', 'pending')),
+                'url' => self::url(EnrollmentResource::class),
+                'icon' => 'heroicon-o-clipboard-document-list',
+            ],
+            [
+                'key' => 'join_requests',
+                'label' => 'Adhésions dahira',
+                'ids' => self::ids(DahiraJoinRequest::class, fn ($query) => $query->where('status', 'pending')),
+                'url' => self::url(\Modules\Dahira\Filament\Resources\JoinRequestResource::class),
+                'icon' => 'heroicon-o-user-plus',
+            ],
+            [
+                'key' => 'messages',
+                'label' => 'Messages',
+                'ids' => self::ids(ContactMessage::class, fn ($query) => $query->where('status', 'new')),
+                'url' => self::url(\Modules\Community\Filament\Resources\ContactMessageResource::class),
+                'icon' => 'heroicon-o-envelope',
+            ],
+            [
+                'key' => 'dues',
+                'label' => 'Cotisations dues',
+                'ids' => self::ids(ContributionSchedule::class, fn ($query) => $query->whereIn('status', ['due', 'overdue'])),
+                'url' => self::url(\Modules\Dahira\Filament\Resources\ContributionScheduleResource::class),
+                'icon' => 'heroicon-o-banknotes',
+            ],
+            [
+                'key' => 'questions',
+                'label' => 'Questions',
+                'ids' => self::ids(Question::class, fn ($query) => $query->where('status', 'pending')),
+                'url' => self::url(QuestionResource::class),
+                'icon' => 'heroicon-o-question-mark-circle',
+            ],
+            [
+                'key' => 'comments',
+                'label' => 'Commentaires',
+                'ids' => self::ids(ArticleComment::class, fn ($query) => $query->where('status', 'pending')),
+                'url' => self::url(\Modules\News\Filament\Resources\CommentResource::class),
+                'icon' => 'heroicon-o-chat-bubble-left-ellipsis',
+            ],
+        ];
+
+        return array_map(function (array $item): array {
+            $item['value'] = count($item['ids']);
+
+            return $item;
+        }, $items);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private static function build(): array
@@ -165,38 +224,7 @@ final class DashboardMetrics
                     self::count(LiveStream::class),
                 ],
             ],
-            'attention' => [
-                [
-                    'label' => 'Inscriptions',
-                    'value' => self::count(Enrollment::class, fn ($query) => $query->where('status', 'pending')),
-                    'url' => self::url(EnrollmentResource::class),
-                ],
-                [
-                    'label' => 'Adhésions dahira',
-                    'value' => self::count(DahiraJoinRequest::class, fn ($query) => $query->where('status', 'pending')),
-                    'url' => self::url(\Modules\Dahira\Filament\Resources\JoinRequestResource::class),
-                ],
-                [
-                    'label' => 'Messages',
-                    'value' => self::count(ContactMessage::class, fn ($query) => $query->where('status', 'new')),
-                    'url' => self::url(\Modules\Community\Filament\Resources\ContactMessageResource::class),
-                ],
-                [
-                    'label' => 'Cotisations dues',
-                    'value' => self::count(ContributionSchedule::class, fn ($query) => $query->whereIn('status', ['due', 'overdue'])),
-                    'url' => self::url(\Modules\Dahira\Filament\Resources\ContributionScheduleResource::class),
-                ],
-                [
-                    'label' => 'Questions',
-                    'value' => self::count(Question::class, fn ($query) => $query->where('status', 'pending')),
-                    'url' => self::url(QuestionResource::class),
-                ],
-                [
-                    'label' => 'Commentaires',
-                    'value' => self::count(ArticleComment::class, fn ($query) => $query->where('status', 'pending')),
-                    'url' => self::url(\Modules\News\Filament\Resources\CommentResource::class),
-                ],
-            ],
+            'attention' => self::attention(),
             'areas' => [
                 [
                     'title' => 'Éducation',
@@ -338,6 +366,28 @@ final class DashboardMetrics
         }
 
         return array_map(fn (string $key): int => $grouped[$key] ?? 0, $keys);
+    }
+
+    /**
+     * @param  class-string<Model>  $model
+     * @return list<string>
+     */
+    private static function ids(string $model, ?callable $scope = null): array
+    {
+        if (! self::ready($model)) {
+            return [];
+        }
+
+        try {
+            $query = $model::query();
+            if ($scope) {
+                $scope($query);
+            }
+
+            return $query->pluck('id')->map(fn ($id): string => (string) $id)->all();
+        } catch (Throwable) {
+            return [];
+        }
     }
 
     /**

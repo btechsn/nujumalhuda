@@ -59,7 +59,7 @@ export function ProgramCard({ program, className }: ProgramCardProps) {
             'px-3 py-1 text-xs font-medium rounded-full border',
             typeColors[program.type] || typeColors.autre
           )}>
-            {typeLabels[program.type]?.[locale] || program.type}
+            {program.type_name?.[locale] || program.type_name?.fr || typeLabels[program.type]?.[locale] || program.type}
           </span>
           <span className="px-3 py-1 text-xs font-medium rounded-full bg-ivory-100 text-ink-700 border border-ivory-200">
             {levelLabels[program.level]?.[locale] || program.level}

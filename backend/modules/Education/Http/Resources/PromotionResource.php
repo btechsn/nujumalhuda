@@ -62,6 +62,7 @@ class PromotionResource extends JsonResource
                     'id' => $this->program->id,
                     'name' => $this->program->name_i18n,
                     'type' => $this->program->type,
+                    'type_name' => $this->program->programType?->name_i18n,
                     'level' => $this->program->level,
                     'duration_weeks' => $this->program->duration_weeks,
                     'hours_per_week' => $this->program->hours_per_week,

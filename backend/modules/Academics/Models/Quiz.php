@@ -4,6 +4,7 @@ namespace Modules\Academics\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
@@ -17,6 +18,11 @@ class Quiz extends Model
         'questions' => 'array',
         'is_published' => 'boolean',
     ];
+
+    public function quizTopic(): BelongsTo
+    {
+        return $this->belongsTo(QuizTopic::class, 'topic', 'slug');
+    }
 
     public function attempts(): HasMany
     {

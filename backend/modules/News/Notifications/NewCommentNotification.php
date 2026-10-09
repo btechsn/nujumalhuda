@@ -24,7 +24,7 @@ class NewCommentNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $articleTitle = $this->comment->article?->getTitle('fr') ?? 'un article';
-        $authorName = $this->comment->user?->name ?? 'Un lecteur';
+        $authorName = $this->comment->displayName();
 
         return (new MailMessage)
             ->subject('Nouveau commentaire à modérer — Nujum Al-Huda')

@@ -18,19 +18,27 @@ class HifzMilestoneResource extends Resource
 
     protected static ?string $navigationGroup = 'Suivi pédagogique';
 
-    protected static ?string $navigationLabel = 'Paliers de hifz';
+    protected static ?string $navigationLabel = 'Paliers de mémorisation';
+
+    protected static ?string $modelLabel = 'palier';
+
+    protected static ?string $pluralModelLabel = 'paliers';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true),
-            Forms\Components\TextInput::make('title_i18n.fr')->label('Titre (français)')->required(),
-            Forms\Components\TextInput::make('title_i18n.en')->label('Title (English)'),
+            Forms\Components\TextInput::make('slug')
+                ->label('Identifiant')
+                ->helperText('Court nom interne, par exemple juz-amma. Il n’apparaît pas sur le site.')
+                ->required()
+                ->unique(ignoreRecord: true),
+            Forms\Components\TextInput::make('title_i18n.fr')->label('Titre affiché')->required(),
+            Forms\Components\TextInput::make('title_i18n.en')->label('Titre en anglais'),
             Forms\Components\TextInput::make('title_i18n.ar')->label('العنوان'),
             Forms\Components\Textarea::make('description_i18n.fr')->label('Description'),
-            Forms\Components\TextInput::make('from_juz')->numeric()->minValue(1)->maxValue(30),
-            Forms\Components\TextInput::make('to_juz')->numeric()->minValue(1)->maxValue(30),
-            Forms\Components\TextInput::make('display_order')->numeric()->default(0),
+            Forms\Components\TextInput::make('from_juz')->label('Juz de début')->numeric()->minValue(1)->maxValue(30),
+            Forms\Components\TextInput::make('to_juz')->label('Juz de fin')->numeric()->minValue(1)->maxValue(30),
+            Forms\Components\TextInput::make('display_order')->label('Ordre')->numeric()->default(0),
         ]);
     }
 
@@ -39,8 +47,8 @@ class HifzMilestoneResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('display_order')->label('Ordre')->sortable(),
             Tables\Columns\TextColumn::make('title_i18n.fr')->label('Palier')->searchable(),
-            Tables\Columns\TextColumn::make('from_juz'),
-            Tables\Columns\TextColumn::make('to_juz'),
+            Tables\Columns\TextColumn::make('from_juz')->label('Juz de début'),
+            Tables\Columns\TextColumn::make('to_juz')->label('Juz de fin'),
         ])->defaultSort('display_order')->actions([Tables\Actions\EditAction::make()]);
     }
 
