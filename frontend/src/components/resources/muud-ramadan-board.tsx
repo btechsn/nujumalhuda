@@ -11,6 +11,17 @@ import {
   type MuudResult,
 } from "@/hooks/useMuudRamadan";
 
+function formatAnnouncedDate(iso: string, locale: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return iso;
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar" : locale === "en" ? "en" : "fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 function formatMoney(amount: number, currency = "XOF", locale = "fr"): string {
   try {
     return new Intl.NumberFormat(locale === "ar" ? "ar" : locale === "en" ? "en" : "fr-FR", {
@@ -245,7 +256,7 @@ export function MuudRamadanBoard() {
                       <Row label={t("sidebar.sa")} value={`${params.sa_grams} g`} />
                     ) : null}
                     {params.prices_as_of ? (
-                      <Row label={t("sidebar.pricesAsOf")} value={params.prices_as_of} />
+                      <Row label={t("sidebar.pricesAsOf")} value={formatAnnouncedDate(params.prices_as_of, locale)} />
                     ) : null}
                   </dl>
                 ) : (

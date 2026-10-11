@@ -22,18 +22,25 @@ class ContributionScheduleResource extends Resource
 
     protected static ?string $navigationLabel = 'Échéances';
 
+    protected static ?string $modelLabel = 'échéance';
+
+    protected static ?string $pluralModelLabel = 'Échéances';
+
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('status')->options([
-                'due' => 'Due',
-                'overdue' => 'En retard',
-                'processing' => 'Paiement en cours',
-                'paid' => 'Réglée',
-                'waived' => 'Dispensée',
-            ])->required(),
-            Forms\Components\DatePicker::make('due_on')->required(),
-            Forms\Components\TextInput::make('amount_minor')->numeric()->required(),
+            Forms\Components\Select::make('status')
+                ->label('Statut')
+                ->options([
+                    'due' => 'À régler',
+                    'overdue' => 'En retard',
+                    'processing' => 'Paiement en cours',
+                    'paid' => 'Réglée',
+                    'waived' => 'Dispensée',
+                ])
+                ->required(),
+            Forms\Components\DatePicker::make('due_on')->label('Date d’échéance')->required(),
+            Forms\Components\TextInput::make('amount_minor')->label('Montant (XOF)')->numeric()->required(),
         ]);
     }
 
@@ -42,9 +49,18 @@ class ContributionScheduleResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('plan.name_i18n.fr')->label('Plan'),
             Tables\Columns\TextColumn::make('membership.user.email')->label('Membre'),
-            Tables\Columns\TextColumn::make('due_on')->date(),
-            Tables\Columns\TextColumn::make('amount_minor')->label('XOF'),
-            Tables\Columns\TextColumn::make('status')->badge(),
+            Tables\Columns\TextColumn::make('due_on')->label('Date d’échéance')->date(),
+            Tables\Columns\TextColumn::make('amount_minor')->label('Montant (XOF)'),
+            Tables\Columns\TextColumn::make('status')
+                ->label('Statut')
+                ->badge()
+                ->formatStateUsing(fn (?string $state): string => match ($state) {
+                    'overdue' => 'En retard',
+                    'processing' => 'Paiement en cours',
+                    'paid' => 'Réglée',
+                    'waived' => 'Dispensée',
+                    default => 'À régler',
+                }),
         ])->actions([
             Tables\Actions\Action::make('cash')
                 ->label('Encaisser')

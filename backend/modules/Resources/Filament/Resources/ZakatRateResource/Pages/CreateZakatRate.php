@@ -8,4 +8,9 @@ use Modules\Resources\Filament\Resources\ZakatRateResource;
 class CreateZakatRate extends CreateRecord
 {
     protected static string $resource = ZakatRateResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouveau barème';
+    }
 }

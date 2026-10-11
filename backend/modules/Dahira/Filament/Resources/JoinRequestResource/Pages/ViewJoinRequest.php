@@ -8,4 +8,9 @@ use Modules\Dahira\Filament\Resources\JoinRequestResource;
 class ViewJoinRequest extends ViewRecord
 {
     protected static string $resource = JoinRequestResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Demande d’adhésion';
+    }
 }

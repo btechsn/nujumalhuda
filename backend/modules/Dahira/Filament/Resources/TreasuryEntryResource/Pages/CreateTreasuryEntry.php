@@ -8,4 +8,9 @@ use Modules\Dahira\Filament\Resources\TreasuryEntryResource;
 class CreateTreasuryEntry extends CreateRecord
 {
     protected static string $resource = TreasuryEntryResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouvelle écriture';
+    }
 }

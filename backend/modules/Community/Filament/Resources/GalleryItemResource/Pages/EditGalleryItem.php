@@ -10,6 +10,11 @@ class EditGalleryItem extends EditRecord
 {
     protected static string $resource = GalleryItemResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier le média';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

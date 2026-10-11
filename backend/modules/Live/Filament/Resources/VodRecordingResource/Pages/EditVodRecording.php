@@ -10,6 +10,11 @@ class EditVodRecording extends EditRecord
 {
     protected static string $resource = VodRecordingResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier l’enregistrement';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

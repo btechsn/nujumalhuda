@@ -10,6 +10,11 @@ class EditContributionPlan extends EditRecord
 {
     protected static string $resource = ContributionPlanResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier le plan';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

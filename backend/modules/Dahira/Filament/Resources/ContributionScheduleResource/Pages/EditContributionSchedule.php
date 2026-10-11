@@ -10,6 +10,11 @@ class EditContributionSchedule extends EditRecord
 {
     protected static string $resource = ContributionScheduleResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier l’échéance';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

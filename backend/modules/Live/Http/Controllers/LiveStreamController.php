@@ -4,7 +4,9 @@ namespace Modules\Live\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Modules\Live\Http\Requests\StreamStoreRequest;
+use Modules\Live\Services\SyncFinishedYoutubeLives;
 use Modules\Live\Http\Resources\LiveStreamResource;
 use Modules\Live\Models\LiveStream;
 use Modules\Live\Services\MediaMtxService;
@@ -23,6 +25,8 @@ class LiveStreamController extends Controller
      */
     public function index(Request $request)
     {
+        $this->syncFinishedYoutubeLives();
+
         $query = LiveStream::with(['channel', 'creator'])
             ->orderBy('scheduled_at', 'desc');
 
@@ -67,6 +71,8 @@ class LiveStreamController extends Controller
      */
     public function show(string $id)
     {
+        $this->syncFinishedYoutubeLives();
+
         $stream = LiveStream::with(['channel', 'creator', 'recording'])
             ->findOrFail($id);
 
@@ -256,6 +262,19 @@ class LiveStreamController extends Controller
             'publish_key' => $newKey,
             'rtmp_url' => $stream->getRtmpIngestUrl(),
         ]);
+    }
+
+    protected function syncFinishedYoutubeLives(): void
+    {
+        if (! Cache::add('live.youtube-sync', 1, 45)) {
+            return;
+        }
+
+        try {
+            app(SyncFinishedYoutubeLives::class)->run();
+        } catch (\Throwable) {
+            Cache::forget('live.youtube-sync');
+        }
     }
 
     protected function detectDeviceType(Request $request): string

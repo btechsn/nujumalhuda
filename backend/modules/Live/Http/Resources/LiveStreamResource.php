@@ -32,21 +32,15 @@ class LiveStreamResource extends JsonResource
             'enable_chat' => $this->enable_chat,
             'enable_reactions' => $this->enable_reactions,
             'is_featured' => $this->is_featured,
-            'thumbnail_url' => $this->thumbnail_url,
+            'thumbnail_url' => $this->publicThumbnailUrl(),
+            'external_url' => $this->external_url,
+            'embed_url' => $this->getEmbedUrl(),
             'creator' => $this->when($this->creator, function () {
                 return [
                     'id' => $this->creator->id,
                     'name' => $this->creator->name,
                 ];
             }),
-            'stream_urls' => $this->when($this->isLive() || $this->isScheduled(), [
-                'whep' => $this->getStreamUrl(),
-                'hls' => $this->getHlsUrl(),
-            ]),
-            'rtmp_ingest' => $this->when($request->user()?->can('manage', $this->resource), [
-                'url' => $this->getRtmpIngestUrl(),
-                'publish_key' => $this->publish_key,
-            ]),
             'recording' => $this->when($this->recording, function () {
                 return [
                     'id' => $this->recording->id,

@@ -8,4 +8,9 @@ use Modules\Live\Filament\Resources\SocialAccountResource;
 class CreateSocialAccount extends CreateRecord
 {
     protected static string $resource = SocialAccountResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouveau compte';
+    }
 }

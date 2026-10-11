@@ -209,9 +209,9 @@
   "live": {
     "errors": { "loading": "Les directs n'ont pas pu être chargés." },
     "liveNow": "En direct maintenant",
-    "listTitle": "Les émissions",
+    "listTitle": "Les futurs directs",
     "resultsCount": "{count} résultats",
-    "empty": "Aucun direct pour le moment.",
+    "empty": "Aucun direct à venir pour le moment.",
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {current} sur {total}",
@@ -256,16 +256,18 @@
     "detail": {
       "back": "Retour aux directs",
       "notFound": "Ce direct est introuvable.",
-      "playerHint": "Le flux s'affiche si le studio émet (HLS).",
+      "playerHint": "Le direct s’affiche dès que le lien YouTube est renseigné.",
       "scheduledHint": "Cette émission est planifiée. Revenez à l'heure indiquée.",
-      "openReplay": "Voir le replay"
+      "youtubeMissing": "Le lien YouTube de cette séance n’est pas encore renseigné.",
+      "openReplay": "Voir le replay",
+      "openSource": "Ouvrir sur YouTube"
     }
   },
   "replay": {
     "errors": { "loading": "Les replays n'ont pas pu être chargés." },
     "listTitle": "Les replays",
     "resultsCount": "{count} résultats",
-    "empty": "Aucun replay publié pour le moment.",
+    "empty": "Aucun direct terminé pour le moment.",
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {current} sur {total}",
@@ -273,7 +275,7 @@
     "searchPlaceholder": "Rechercher un replay…",
     "searchSubmit": "Rechercher",
     "filterTitle": "Filtrer",
-    "filterHint": "Utilisez la recherche pour trouver une séance enregistrée.",
+    "filterHint": "Utilisez la recherche pour trouver un direct terminé.",
     "clearFilters": "Effacer les filtres",
     "watch": "Regarder",
     "badge": "Replay",

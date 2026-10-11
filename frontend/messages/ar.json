@@ -209,9 +209,9 @@
   "live": {
     "errors": { "loading": "تعذّر تحميل البث المباشر." },
     "liveNow": "مباشر الآن",
-    "listTitle": "البثوث",
+    "listTitle": "البثوث القادمة",
     "resultsCount": "{count} نتائج",
-    "empty": "لا بث حالياً.",
+    "empty": "لا بث قادم حالياً.",
     "previous": "السابق",
     "next": "التالي",
     "pageOf": "صفحة {current} من {total}",
@@ -256,16 +256,18 @@
     "detail": {
       "back": "العودة إلى البث",
       "notFound": "تعذّر العثور على هذا البث.",
-      "playerHint": "يظهر البث عند الإرسال من الاستوديو (HLS).",
+      "playerHint": "يظهر البث عند إضافة رابط يوتيوب.",
       "scheduledHint": "هذا البث مجدول. عُد في الوقت المحدد.",
-      "openReplay": "فتح الإعادة"
+      "youtubeMissing": "رابط يوتيوب لهذه الجلسة غير مضاف بعد.",
+      "openReplay": "فتح الإعادة",
+      "openSource": "فتح على يوتيوب"
     }
   },
   "replay": {
     "errors": { "loading": "تعذّر تحميل الإعادات." },
     "listTitle": "الإعادات",
     "resultsCount": "{count} نتائج",
-    "empty": "لا إعادات منشورة حالياً.",
+    "empty": "لا بث منتهٍ حالياً.",
     "previous": "السابق",
     "next": "التالي",
     "pageOf": "صفحة {current} من {total}",
@@ -273,7 +275,7 @@
     "searchPlaceholder": "ابحث عن إعادة…",
     "searchSubmit": "بحث",
     "filterTitle": "تصفية",
-    "filterHint": "استخدم البحث للعثور على جلسة مسجّلة.",
+    "filterHint": "استخدم البحث للعثور على بث منتهٍ.",
     "clearFilters": "مسح عوامل التصفية",
     "watch": "مشاهدة",
     "badge": "إعادة",

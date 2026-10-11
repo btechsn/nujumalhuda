@@ -27,7 +27,7 @@ function youtubeId(url: string): string | null {
 }
 
 function isDirectVideo(url: string): boolean {
-  return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+  return /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url);
 }
 
 export function MediaBoard() {

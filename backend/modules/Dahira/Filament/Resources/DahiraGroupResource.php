@@ -22,6 +22,10 @@ class DahiraGroupResource extends Resource
 
     protected static ?string $navigationLabel = 'Dahiras';
 
+    protected static ?string $modelLabel = 'dahira';
+
+    protected static ?string $pluralModelLabel = 'Dahiras';
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -31,13 +35,18 @@ class DahiraGroupResource extends Resource
                 ->searchable()
                 ->required(),
             Forms\Components\TextInput::make('name_i18n.fr')->label('Nom (français)')->required(),
-            Forms\Components\TextInput::make('name_i18n.en')->label('Name'),
-            Forms\Components\TextInput::make('name_i18n.ar')->label('الاسم'),
+            Forms\Components\TextInput::make('name_i18n.en')->label('Nom (anglais)'),
+            Forms\Components\TextInput::make('name_i18n.ar')->label('Nom (arabe)'),
             Forms\Components\Textarea::make('description_i18n.fr')->label('Description'),
-            Forms\Components\DatePicker::make('founded_on'),
-            Forms\Components\TextInput::make('meeting_weekday')->numeric()->minValue(0)->maxValue(6)->helperText('0 = dimanche, 5 = vendredi'),
-            Forms\Components\TextInput::make('location'),
-            Forms\Components\Toggle::make('is_active')->default(true),
+            Forms\Components\DatePicker::make('founded_on')->label('Fondé le'),
+            Forms\Components\TextInput::make('meeting_weekday')
+                ->label('Jour de réunion')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(6)
+                ->helperText('0 = dimanche, 5 = vendredi'),
+            Forms\Components\TextInput::make('location')->label('Lieu'),
+            Forms\Components\Toggle::make('is_active')->label('Actif')->default(true),
         ]);
     }
 
@@ -46,8 +55,8 @@ class DahiraGroupResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('name_i18n.fr')->label('Nom')->searchable(),
             Tables\Columns\TextColumn::make('organization.slug')->label('Organisation'),
-            Tables\Columns\TextColumn::make('location'),
-            Tables\Columns\IconColumn::make('is_active')->boolean(),
+            Tables\Columns\TextColumn::make('location')->label('Lieu'),
+            Tables\Columns\IconColumn::make('is_active')->label('Actif')->boolean(),
         ])->actions([Tables\Actions\EditAction::make()]);
     }
 

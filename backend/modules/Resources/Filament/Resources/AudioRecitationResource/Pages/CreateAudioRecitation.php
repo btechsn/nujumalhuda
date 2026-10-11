@@ -8,4 +8,9 @@ use Modules\Resources\Filament\Resources\AudioRecitationResource;
 class CreateAudioRecitation extends CreateRecord
 {
     protected static string $resource = AudioRecitationResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouvelle récitation';
+    }
 }

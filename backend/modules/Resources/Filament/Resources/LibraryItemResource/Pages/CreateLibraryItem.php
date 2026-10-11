@@ -8,4 +8,9 @@ use Modules\Resources\Filament\Resources\LibraryItemResource;
 class CreateLibraryItem extends CreateRecord
 {
     protected static string $resource = LibraryItemResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouvelle ressource';
+    }
 }

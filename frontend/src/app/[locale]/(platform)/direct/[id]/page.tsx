@@ -34,7 +34,7 @@ export default function DirectDetailPage() {
   }
 
   const thumb = stream.thumbnail_url || "/brand/slide-live.jpg";
-  const hls = stream.stream_urls?.hls;
+  const embed = stream.embed_url;
 
   return (
     <article className="bg-white">
@@ -52,20 +52,24 @@ export default function DirectDetailPage() {
           ) : null}
 
           <div className="relative mt-8 overflow-hidden rounded-2xl bg-brand-950">
-            {stream.status === "live" && hls ? (
-              <div className="space-y-3 p-4">
-                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                <video controls className="aspect-video w-full rounded-xl bg-black" src={hls} poster={thumb} />
-                <p className="text-center text-xs text-white/70">{t("detail.playerHint")}</p>
-              </div>
+            {embed ? (
+              <iframe
+                src={embed}
+                title={stream.title}
+                className="aspect-video w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+              />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={thumb} alt="" className="aspect-video w-full object-cover opacity-90" />
             )}
           </div>
 
-          {stream.status === "scheduled" ? (
-            <p className="mt-6 rounded-2xl bg-gold-300/20 p-4 text-sm text-brand-900">{t("detail.scheduledHint")}</p>
+          {!embed ? (
+            <p className="mt-6 rounded-2xl bg-gold-300/20 p-4 text-sm text-brand-900">
+              {stream.status === "scheduled" ? t("detail.scheduledHint") : t("detail.youtubeMissing")}
+            </p>
           ) : null}
 
           {stream.recording?.slug ? (
@@ -77,7 +81,7 @@ export default function DirectDetailPage() {
             </Link>
           ) : null}
 
-          <div className="mt-10 border-t border-line pt-8">
+          <div className="mt-10">
             <Link
               href={`/${locale}/direct`}
               className="inline-flex items-center gap-2 rounded-full border border-brand-700 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-brand-700 hover:bg-brand-700 hover:text-white"

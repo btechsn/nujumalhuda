@@ -193,11 +193,15 @@ export function LibraryBoard() {
                       >
                         <span
                           className={cn(
-                            "inline-flex size-11 shrink-0 items-center justify-center rounded-xl",
+                            "relative inline-flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl",
                             toneClass(item.cover_tone),
                           )}
                         >
-                          <EightPointStar size={16} className="text-brand-800" />
+                          {item.cover_url ? (
+                            <Image src={item.cover_url} alt="" fill sizes="44px" className="object-contain" />
+                          ) : (
+                            <EightPointStar size={16} className="text-brand-800" />
+                          )}
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-bold text-content">
@@ -259,9 +263,19 @@ function LibraryCard({ item, locale }: { item: LibraryItem; locale: string }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md">
       <Link href={href} className={cn("relative block aspect-square overflow-hidden", toneClass(item.cover_tone))}>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <BookMarkIcon className="size-16 text-brand-900/25" />
-        </div>
+        {item.cover_url ? (
+          <Image
+            src={item.cover_url}
+            alt=""
+            fill
+            sizes="(min-width: 1280px) 18rem, (min-width: 640px) 45vw, 90vw"
+            className="object-contain"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <BookMarkIcon className="size-16 text-brand-900/25" />
+          </div>
+        )}
         <span className="absolute start-3 top-3 rounded-full bg-white/85 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-900">
           {t(`kinds.${item.kind}`)}
         </span>
@@ -388,8 +402,12 @@ export function LibraryDetail({ slug }: { slug: string }) {
     <article className="bg-white">
       <div className="nh-container py-10 sm:py-14">
         <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-[16rem_minmax(0,1fr)]">
-          <div className={cn("flex aspect-[3/4] items-center justify-center rounded-2xl", toneClass(item.cover_tone))}>
-            <BookMarkIcon className="size-24 text-brand-900/30" />
+          <div className={cn("relative flex aspect-[3/4] items-center justify-center overflow-hidden rounded-2xl", toneClass(item.cover_tone))}>
+            {item.cover_url ? (
+              <Image src={item.cover_url} alt="" fill sizes="16rem" className="object-contain" />
+            ) : (
+              <BookMarkIcon className="size-24 text-brand-900/30" />
+            )}
           </div>
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-700">

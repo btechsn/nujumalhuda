@@ -9,6 +9,11 @@ class CreateLiveStream extends CreateRecord
 {
     protected static string $resource = LiveStreamResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Nouvelle séance';
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['created_by'] = auth()->id();

@@ -10,6 +10,11 @@ class ListZakatRates extends ListRecords
 {
     protected static string $resource = ZakatRateResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Zakat — nisab';
+    }
+
     protected function getHeaderActions(): array
     {
         return [\Filament\Actions\CreateAction::make()];

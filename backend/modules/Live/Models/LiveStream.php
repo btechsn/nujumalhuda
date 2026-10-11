@@ -4,6 +4,7 @@ namespace Modules\Live\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ class LiveStream extends Model
         'enable_reactions',
         'is_featured',
         'thumbnail_url',
+        'external_url',
         'created_by',
         'metadata',
     ];
@@ -113,6 +115,55 @@ class LiveStream extends Model
         return in_array($this->status, ['ended', 'archived']);
     }
 
+    public function markEnded(?\DateTimeInterface $endedAt = null): void
+    {
+        if (! $this->isLive()) {
+            return;
+        }
+
+        $endedAt = $endedAt ? \Illuminate\Support\Carbon::parse($endedAt) : now();
+
+        $this->forceFill([
+            'status' => 'ended',
+            'ended_at' => $endedAt,
+            'duration_seconds' => $this->started_at
+                ? (int) abs($this->started_at->diffInSeconds($endedAt))
+                : $this->duration_seconds,
+        ])->save();
+    }
+
+    /**
+     * @param  array{started_at: ?\Illuminate\Support\Carbon, ended_at: ?\Illuminate\Support\Carbon, duration_seconds: ?int, views: ?int}  $broadcast
+     */
+    public function recordYoutubeBroadcast(array $broadcast, bool $close): void
+    {
+        $payload = [];
+
+        if ($close && $this->isLive()) {
+            $payload['status'] = 'ended';
+        }
+
+        if (! $this->started_at && $broadcast['started_at']) {
+            $payload['started_at'] = $broadcast['started_at'];
+        }
+
+        if ($broadcast['ended_at'] && (! $this->ended_at || $close)) {
+            $payload['ended_at'] = $broadcast['ended_at'];
+        }
+
+        if ($broadcast['duration_seconds']) {
+            $payload['duration_seconds'] = $broadcast['duration_seconds'];
+        }
+
+        if ($broadcast['views'] !== null) {
+            $payload['total_views'] = max((int) $this->total_views, (int) $broadcast['views']);
+        }
+
+        if ($payload !== []) {
+            $this->forceFill($payload)->save();
+        }
+    }
+
     public function getLocalizedTitle(?string $locale = null): string
     {
         $locale = $locale ?? app()->getLocale();
@@ -122,21 +173,95 @@ class LiveStream extends Model
     public function getLocalizedDescription(?string $locale = null): ?string
     {
         $locale = $locale ?? app()->getLocale();
-        return $this->description[$locale] ?? $this->description['fr'] ?? null;
+        $html = $this->description[$locale] ?? $this->description['fr'] ?? null;
+
+        if (! is_string($html) || trim($html) === '') {
+            return null;
+        }
+
+        $text = trim(html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $text = preg_replace('/\s+/u', ' ', $text) ?? $text;
+
+        return $text === '' ? null : $text;
+    }
+
+    public function publicThumbnailUrl(): ?string
+    {
+        $path = trim((string) $this->thumbnail_url);
+
+        if ($path === '') {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url($path);
     }
 
     public function getStreamUrl(): string
     {
-        return $this->channel->whep_url . '/' . $this->publish_key;
+        $base = $this->channel?->whep_url;
+
+        return filled($base) ? $base.'/'.$this->publish_key : '';
     }
 
     public function getHlsUrl(): string
     {
-        return $this->channel->hls_url . '/' . $this->publish_key . '/index.m3u8';
+        $base = $this->channel?->hls_url;
+
+        return filled($base) ? $base.'/'.$this->publish_key.'/index.m3u8' : '';
     }
 
     public function getRtmpIngestUrl(): string
     {
-        return $this->channel->rtmp_ingest_url . '/' . $this->publish_key;
+        $base = $this->channel?->rtmp_ingest_url;
+
+        return filled($base) ? $base.'/'.$this->publish_key : '';
+    }
+
+    /**
+     * Adresse lisible dans un iframe quand la séance passe par YouTube ou Facebook.
+     */
+    public function getEmbedUrl(): ?string
+    {
+        $url = trim((string) $this->external_url);
+
+        if ($url === '') {
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $path = (string) parse_url($url, PHP_URL_PATH);
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+        if (str_contains($host, 'youtu.be')) {
+            $id = trim($path, '/');
+
+            return $id === '' ? null : "https://www.youtube.com/embed/{$id}?autoplay=1";
+        }
+
+        if (str_contains($host, 'youtube.com')) {
+            if (str_contains($path, '/embed/')) {
+                return $url;
+            }
+
+            if (filled($query['v'] ?? null)) {
+                return 'https://www.youtube.com/embed/'.$query['v'].'?autoplay=1';
+            }
+
+            if (str_starts_with($path, '/live/')) {
+                return 'https://www.youtube.com/embed/'.trim(substr($path, 6), '/').'?autoplay=1';
+            }
+
+            return null;
+        }
+
+        if (str_contains($host, 'facebook.com') || str_contains($host, 'fb.watch')) {
+            return 'https://www.facebook.com/plugins/video.php?href='.urlencode($url).'&autoplay=1';
+        }
+
+        return null;
     }
 }

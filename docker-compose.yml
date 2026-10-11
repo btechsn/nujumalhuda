@@ -16,7 +16,6 @@ services:
       - app
       - next
       - reverb
-      - mediamtx
     networks:
       - nujumalhuda
     restart: unless-stopped
@@ -197,24 +196,9 @@ services:
       - internal
     restart: unless-stopped
 
-  # ── MediaMTX : streaming server ───────────────────────────────────────────
-  mediamtx:
-    build:
-      context: ./infra/mediamtx
-      dockerfile: Dockerfile
-    container_name: nujumalhuda_mediamtx
-    environment:
-      - MEDIAMTX_WEBHOOK_SECRET=${MEDIAMTX_WEBHOOK_SECRET}
-    volumes:
-      - mediamtx_recordings:/recordings
-    networks:
-      - nujumalhuda
-    restart: unless-stopped
-
 volumes:
   postgres_data:
   redis_data:
-  mediamtx_recordings:
 
 networks:
   nujumalhuda:

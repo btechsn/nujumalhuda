@@ -45,10 +45,12 @@ class LiveServiceProvider extends ServiceProvider
             Console\Commands\CheckStreamHealthCommand::class,
             Console\Commands\ArchiveOldStreamsCommand::class,
             Console\Commands\CleanupExpiredChatsCommand::class,
+            Console\Commands\SyncYoutubeLivesCommand::class,
         ]);
 
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
+            $schedule->command('live:sync-youtube')->everyMinute()->withoutOverlapping();
             $schedule->command('live:check-health')->everyMinute();
             $schedule->command('live:archive-old')->daily();
             $schedule->command('live:cleanup-chats')->weekly();

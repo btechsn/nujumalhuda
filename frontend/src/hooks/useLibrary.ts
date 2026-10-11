@@ -14,6 +14,7 @@ export interface LibraryItem {
   kind: string;
   language?: string | null;
   external_url?: string | null;
+  cover_url?: string | null;
   download_count?: number;
   display_order?: number;
   cover_tone?: 'gold' | 'green' | 'cream' | string;

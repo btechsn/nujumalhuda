@@ -10,6 +10,11 @@ class ListMeetings extends ListRecords
 {
     protected static string $resource = MeetingResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Réunions';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\CreateAction::make()];

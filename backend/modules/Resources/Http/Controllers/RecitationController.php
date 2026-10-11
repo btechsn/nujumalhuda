@@ -36,7 +36,7 @@ class RecitationController extends Controller
                 'surah_number' => $item->surah_number,
                 'surah_name' => $item->surah_name_i18n,
                 'reciter' => $item->reciter,
-                'audio_url' => $item->audio_url,
+                'audio_url' => $item->playbackUrl(),
                 'duration_seconds' => $item->duration_seconds,
                 'play_count' => $item->play_count,
             ]),
@@ -49,7 +49,7 @@ class RecitationController extends Controller
         $recitation->increment('play_count');
 
         return response()->json([
-            'audio_url' => $recitation->audio_url,
+            'audio_url' => $recitation->playbackUrl(),
         ]);
     }
 }

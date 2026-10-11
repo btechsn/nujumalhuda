@@ -8,4 +8,9 @@ use Modules\Dahira\Filament\Resources\MeetingResource;
 class CreateMeeting extends CreateRecord
 {
     protected static string $resource = MeetingResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouvelle réunion';
+    }
 }

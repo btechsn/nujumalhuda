@@ -40,7 +40,14 @@ class JoinRequestResource extends Resource
             Forms\Components\TextInput::make('last_name')->label('Nom')->disabled(),
             Forms\Components\TextInput::make('phone')->label('Téléphone')->disabled(),
             Forms\Components\Textarea::make('message')->label('Message')->disabled(),
-            Forms\Components\TextInput::make('status')->label('Statut')->disabled(),
+            Forms\Components\Select::make('status')
+                ->label('Statut')
+                ->options([
+                    'pending' => 'En attente',
+                    'approved' => 'Acceptée',
+                    'rejected' => 'Refusée',
+                ])
+                ->disabled(),
             Forms\Components\Textarea::make('review_note')->label('Note de validation'),
         ]);
     }

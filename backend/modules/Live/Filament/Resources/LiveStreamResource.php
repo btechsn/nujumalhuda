@@ -10,7 +10,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Modules\Live\Filament\Resources\LiveStreamResource\Pages;
 use Modules\Live\Models\LiveStream;
-use Modules\Live\Services\MediaMtxService;
 
 class LiveStreamResource extends Resource
 {
@@ -18,7 +17,13 @@ class LiveStreamResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-signal';
 
-    protected static ?string $navigationGroup = 'Live Streaming';
+    protected static ?string $navigationGroup = 'Direct';
+
+    protected static ?string $navigationLabel = 'Séances en direct';
+
+    protected static ?string $modelLabel = 'séance';
+
+    protected static ?string $pluralModelLabel = 'Séances en direct';
 
     protected static ?int $navigationSort = 2;
 
@@ -26,128 +31,113 @@ class LiveStreamResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Stream Information')
+                Forms\Components\Section::make('La séance')
                     ->schema([
                         Forms\Components\Select::make('channel_id')
+                            ->label('Canal')
                             ->relationship('channel', 'slug')
+                            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->getLocalizedName('fr') ?: (string) $record->slug)
                             ->required()
                             ->preload(),
 
                         Forms\Components\Select::make('type')
-                            ->options([
-                                'general' => 'General',
-                                'khutba' => 'Khutba',
-                                'recitation' => 'Recitation',
-                                'lecture' => 'Lecture',
-                                'event' => 'Event',
-                            ])
+                            ->label('Type')
+                            ->options(self::typeOptions())
                             ->default('general')
                             ->required(),
 
                         Forms\Components\Select::make('status')
-                            ->options([
-                                'scheduled' => 'Scheduled',
-                                'live' => 'Live',
-                                'ended' => 'Ended',
-                                'archived' => 'Archived',
-                            ])
+                            ->label('Statut')
+                            ->options(self::statusOptions())
                             ->default('scheduled')
-                            ->disabled(fn ($record) => $record?->isLive()),
+                            ->helperText('Passez sur En direct au début. Le site passe tout seul sur Terminée quand YouTube coupe le direct. Vous pouvez aussi l’arrêter avec le bouton Terminer.'),
 
                         Forms\Components\DateTimePicker::make('scheduled_at')
-                            ->label('Scheduled Start Time')
+                            ->label('Début prévu')
                             ->seconds(false)
                             ->timezone('Africa/Dakar'),
+
+                        Forms\Components\TextInput::make('external_url')
+                            ->label('Lien du direct YouTube')
+                            ->url()
+                            ->maxLength(255)
+                            ->columnSpanFull()
+                            ->helperText('Collez le lien YouTube. C’est cette vidéo que le site affiche. Aucun serveur de diffusion n’est nécessaire.'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Translations')
+                Forms\Components\Section::make('Titre affiché')
                     ->schema([
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('title.fr')
-                                    ->label('Title (French)')
+                                    ->label('Titre (français)')
                                     ->required(),
 
                                 Forms\Components\TextInput::make('title.en')
-                                    ->label('Title (English)'),
+                                    ->label('Titre (anglais)'),
 
                                 Forms\Components\TextInput::make('title.ar')
-                                    ->label('Title (Arabic)'),
+                                    ->label('Titre (arabe)'),
                             ]),
 
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\RichEditor::make('description.fr')
-                                    ->label('Description (French)')
+                                    ->label('Description (français)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
 
                                 Forms\Components\RichEditor::make('description.en')
-                                    ->label('Description (English)')
+                                    ->label('Description (anglais)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
 
                                 Forms\Components\RichEditor::make('description.ar')
-                                    ->label('Description (Arabic)')
+                                    ->label('Description (arabe)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
                             ]),
                     ]),
 
-                Forms\Components\Section::make('Settings')
+                Forms\Components\Section::make('Options')
                     ->schema([
                         Forms\Components\Toggle::make('enable_chat')
-                            ->label('Enable Chat')
+                            ->label('Autoriser le chat')
                             ->default(true),
 
                         Forms\Components\Toggle::make('enable_reactions')
-                            ->label('Enable Reactions')
+                            ->label('Autoriser les réactions')
                             ->default(true),
 
                         Forms\Components\Toggle::make('is_featured')
-                            ->label('Featured Stream')
-                            ->helperText('Featured streams appear prominently on the homepage'),
+                            ->label('Mettre en avant')
+                            ->helperText('La séance apparaît en évidence sur la page d’accueil.'),
 
                         Forms\Components\FileUpload::make('thumbnail_url')
-                            ->label('Thumbnail')
+                            ->label('Image')
                             ->image()
                             ->directory('streams/thumbnails')
                             ->visibility('public'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Stream Key')
+                Forms\Components\Section::make('Statistiques')
                     ->schema([
-                        Forms\Components\TextInput::make('publish_key')
-                            ->label('Publish Key')
-                            ->disabled()
-                            ->helperText('This key is generated automatically and can be rotated for security'),
+                        Forms\Components\Placeholder::make('peak_viewers')
+                            ->label('Pic sur le site')
+                            ->content(fn ($record) => (string) ($record?->peak_viewers ?? 0))
+                            ->helperText('Personnes en même temps sur le site. YouTube ne transmet pas son propre pic.'),
 
-                        Forms\Components\Placeholder::make('rtmp_url')
-                            ->label('RTMP Ingest URL')
-                            ->content(function ($record) {
-                                return $record?->getRtmpIngestUrl() ?? 'Will be generated after save';
-                            }),
-                    ])
-                    ->visible(fn ($record) => $record !== null),
+                        Forms\Components\Placeholder::make('total_views')
+                            ->label('Vues YouTube')
+                            ->content(fn ($record) => (string) ($record?->total_views ?? 0))
+                            ->helperText('Nombre de vues comptées par YouTube.'),
 
-                Forms\Components\Section::make('Statistics')
-                    ->schema([
-                        Forms\Components\TextInput::make('peak_viewers')
-                            ->label('Peak Viewers')
-                            ->disabled()
-                            ->numeric(),
+                        Forms\Components\Placeholder::make('chat_messages_count')
+                            ->label('Messages du chat')
+                            ->content(fn ($record) => (string) ($record?->chat_messages_count ?? 0))
+                            ->helperText('Messages écrits dans le chat du site, pas celui de YouTube.'),
 
-                        Forms\Components\TextInput::make('total_views')
-                            ->label('Total Views')
-                            ->disabled()
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('chat_messages_count')
-                            ->label('Chat Messages')
-                            ->disabled()
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('duration_seconds')
-                            ->label('Duration (seconds)')
-                            ->disabled()
-                            ->numeric(),
+                        Forms\Components\Placeholder::make('duration_seconds')
+                            ->label('Durée')
+                            ->content(fn ($record) => self::formatDuration($record?->duration_seconds))
+                            ->helperText('Durée du direct sur YouTube, une fois qu’il est terminé.'),
                     ])
                     ->columns(4)
                     ->visible(fn ($record) => $record !== null),
@@ -159,99 +149,92 @@ class LiveStreamResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title.fr')
-                    ->label('Title')
+                    ->label('Titre')
                     ->searchable()
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('channel.slug')
-                    ->label('Channel')
+                Tables\Columns\TextColumn::make('channel.name')
+                    ->label('Canal')
+                    ->formatStateUsing(fn ($state): string => is_array($state) ? ($state['fr'] ?? '') : (string) $state)
+                    ->badge(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Statut')
                     ->badge()
-                    ->sortable(),
+                    ->formatStateUsing(fn (string $state): string => self::statusOptions()[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        'scheduled' => 'warning',
+                        'live' => 'success',
+                        'ended' => 'danger',
+                        default => 'gray',
+                    }),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => 'scheduled',
-                        'success' => 'live',
-                        'danger' => 'ended',
-                        'secondary' => 'archived',
-                    ]),
-
-                Tables\Columns\BadgeColumn::make('type')
-                    ->colors([
-                        'primary' => 'general',
-                        'success' => 'khutba',
-                        'info' => 'recitation',
-                        'warning' => 'lecture',
-                    ]),
-
-                Tables\Columns\TextColumn::make('current_viewers')
-                    ->label('Live Viewers')
-                    ->getStateUsing(fn ($record) => $record->isLive() ? $record->getCurrentViewerCount() : '-')
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Type')
                     ->badge()
-                    ->color('success'),
-
-                Tables\Columns\TextColumn::make('peak_viewers')
-                    ->label('Peak')
-                    ->sortable(),
+                    ->formatStateUsing(fn (string $state): string => self::typeOptions()[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        'khutba' => 'success',
+                        'recitation' => 'info',
+                        'lecture' => 'warning',
+                        default => 'primary',
+                    }),
 
                 Tables\Columns\TextColumn::make('scheduled_at')
-                    ->label('Scheduled')
+                    ->label('Prévue le')
                     ->dateTime()
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('is_featured')
-                    ->label('Featured')
+                    ->label('En avant')
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créée le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'scheduled' => 'Scheduled',
-                        'live' => 'Live',
-                        'ended' => 'Ended',
-                        'archived' => 'Archived',
-                    ]),
+                    ->label('Statut')
+                    ->options(self::statusOptions()),
 
                 Tables\Filters\SelectFilter::make('channel_id')
-                    ->relationship('channel', 'slug')
-                    ->label('Channel'),
+                    ->label('Canal')
+                    ->options(fn (): array => \Modules\Live\Models\LiveChannel::query()
+                        ->orderByDesc('priority')
+                        ->get()
+                        ->mapWithKeys(fn ($channel): array => [$channel->id => $channel->getLocalizedName('fr') ?: $channel->slug])
+                        ->all()),
 
                 Tables\Filters\SelectFilter::make('type')
-                    ->options([
-                        'general' => 'General',
-                        'khutba' => 'Khutba',
-                        'recitation' => 'Recitation',
-                        'lecture' => 'Lecture',
-                        'event' => 'Event',
-                    ]),
+                    ->label('Type')
+                    ->options(self::typeOptions()),
 
                 Tables\Filters\TernaryFilter::make('is_featured')
-                    ->label('Featured'),
+                    ->label('En avant'),
             ])
             ->actions([
-                Tables\Actions\Action::make('rotate_key')
-                    ->label('Rotate Key')
-                    ->icon('heroicon-o-arrow-path')
-                    ->color('warning')
+                Tables\Actions\Action::make('end_live')
+                    ->label('Terminer')
+                    ->icon('heroicon-o-stop')
+                    ->color('danger')
                     ->requiresConfirmation()
-                    ->disabled(fn ($record) => $record->isLive())
+                    ->modalHeading('Terminer le direct')
+                    ->modalDescription('La séance ne s’affichera plus comme étant en direct sur le site.')
+                    ->visible(fn ($record) => $record->isLive())
                     ->action(function ($record) {
-                        $service = app(MediaMtxService::class);
-                        $newKey = $service->rotateStreamKey($record);
+                        $record->markEnded();
 
                         Notification::make()
-                            ->title('Stream key rotated successfully')
+                            ->title('Direct terminé')
                             ->success()
                             ->send();
                     }),
 
                 Tables\Actions\Action::make('view_stream')
-                    ->label('View')
+                    ->label('Voir')
                     ->icon('heroicon-o-eye')
                     ->url(fn ($record) => route('filament.admin.resources.live-streams.view', $record))
                     ->visible(fn ($record) => $record->isLive()),
@@ -269,13 +252,56 @@ class LiveStreamResource extends Resource
                             }
 
                             Notification::make()
-                                ->title('Live streams cannot be deleted')
+                                ->title('Les séances en cours ne peuvent pas être supprimées')
                                 ->warning()
                                 ->send();
                         }),
                 ]),
             ])
             ->defaultSort('scheduled_at', 'desc');
+    }
+
+    public static function formatDuration(?int $seconds): string
+    {
+        if (! $seconds) {
+            return 'Pas encore connue';
+        }
+
+        $minutes = intdiv($seconds, 60);
+        $rest = $seconds % 60;
+
+        if ($minutes === 0) {
+            return $rest.' s';
+        }
+
+        return $rest > 0 ? "{$minutes} min {$rest} s" : "{$minutes} min";
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function typeOptions(): array
+    {
+        return [
+            'general' => 'Général',
+            'khutba' => 'Khutba',
+            'recitation' => 'Récitation',
+            'lecture' => 'Cours',
+            'event' => 'Événement',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function statusOptions(): array
+    {
+        return [
+            'scheduled' => 'Planifiée',
+            'live' => 'En direct',
+            'ended' => 'Terminée',
+            'archived' => 'Archivée',
+        ];
     }
 
     public static function getRelations(): array

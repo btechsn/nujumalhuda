@@ -97,8 +97,8 @@ class CommunityController extends Controller
                     'kind' => $item->kind,
                     'caption' => $item->caption_i18n[$locale] ?? $item->caption_i18n['fr'] ?? '',
                     'event_name' => $item->event_name,
-                    'media_url' => $item->media_url,
-                    'thumbnail_url' => $item->thumbnail_url ?: $item->media_url,
+                    'media_url' => $item->publicMediaUrl(),
+                    'thumbnail_url' => $item->publicThumbnailUrl() ?: $item->publicMediaUrl(),
                     'taken_on' => optional($item->taken_on)->toDateString(),
                 ];
             });

@@ -10,6 +10,11 @@ class ListContributionSchedules extends ListRecords
 {
     protected static string $resource = ContributionScheduleResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Échéances';
+    }
+
     protected function getHeaderActions(): array
     {
         return [];

@@ -99,7 +99,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'questions',
-                'label' => 'Questions',
+                'label' => 'FAQ',
                 'ids' => self::ids(Question::class, fn ($query) => $query->where('status', 'pending')),
                 'url' => self::url(QuestionResource::class),
                 'icon' => 'heroicon-o-question-mark-circle',
@@ -214,7 +214,7 @@ final class DashboardMetrics
                 'Autres entrées' => array_sum($otherIncome),
             ],
             'spaces' => [
-                'labels' => ['Élèves', 'Dahiras', 'Khutbas', 'Articles', 'Questions', 'Directs'],
+                'labels' => ['Élèves', 'Dahiras', 'Khutbas', 'Articles', 'FAQ', 'Directs'],
                 'values' => [
                     self::count(Enrollment::class, fn ($query) => $query->whereIn('status', ['active', 'approved'])),
                     self::count(DahiraGroup::class),
@@ -282,7 +282,7 @@ final class DashboardMetrics
                     'url' => self::url(QuestionResource::class),
                     'items' => [
                         ['label' => 'Discussions', 'value' => (string) self::count(Discussion::class)],
-                        ['label' => 'Questions', 'value' => (string) self::count(Question::class)],
+                        ['label' => 'FAQ', 'value' => (string) self::count(Question::class)],
                         ['label' => 'Messages nouveaux', 'value' => (string) self::count(ContactMessage::class, fn ($query) => $query->where('status', 'new'))],
                     ],
                 ],

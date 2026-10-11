@@ -8,4 +8,9 @@ use Modules\Dahira\Filament\Resources\ContributionPlanResource;
 class CreateContributionPlan extends CreateRecord
 {
     protected static string $resource = ContributionPlanResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Nouveau plan';
+    }
 }

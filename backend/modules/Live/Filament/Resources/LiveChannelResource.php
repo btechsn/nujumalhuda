@@ -16,7 +16,13 @@ class LiveChannelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tv';
 
-    protected static ?string $navigationGroup = 'Live Streaming';
+    protected static ?string $navigationGroup = 'Direct';
+
+    protected static ?string $navigationLabel = 'Canaux';
+
+    protected static ?string $modelLabel = 'canal';
+
+    protected static ?string $pluralModelLabel = 'Canaux';
 
     protected static ?int $navigationSort = 1;
 
@@ -24,90 +30,69 @@ class LiveChannelResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Channel Information')
+                Forms\Components\Section::make('Le canal')
+                    ->description('Un regroupement de séances (cours, récitation, khutba). Le direct se lit sur le site depuis YouTube.')
                     ->schema([
                         Forms\Components\TextInput::make('slug')
+                            ->label('Identifiant')
                             ->required()
                             ->unique(ignoreRecord: true)
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->helperText('Nom technique, par exemple main ou recitation. Il ne s’affiche pas au public.'),
 
                         Forms\Components\Select::make('type')
+                            ->label('Type')
                             ->options([
-                                'video' => 'Video',
-                                'audio' => 'Audio Only',
+                                'video' => 'Vidéo',
+                                'audio' => 'Audio seul',
                             ])
                             ->required(),
 
                         Forms\Components\TextInput::make('priority')
+                            ->label('Priorité')
                             ->numeric()
                             ->default(0)
-                            ->helperText('Higher priority channels appear first'),
+                            ->helperText('Le canal le plus prioritaire s’affiche en premier.'),
 
                         Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
+                            ->label('Actif')
                             ->default(true),
 
                         Forms\Components\Toggle::make('requires_moderation')
-                            ->label('Requires Chat Moderation')
+                            ->label('Modérer le chat')
                             ->default(false),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Translations')
+                Forms\Components\Section::make('Nom affiché')
                     ->schema([
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('name.fr')
-                                    ->label('Name (French)')
+                                    ->label('Nom (français)')
                                     ->required(),
 
                                 Forms\Components\TextInput::make('name.en')
-                                    ->label('Name (English)'),
+                                    ->label('Nom (anglais)'),
 
                                 Forms\Components\TextInput::make('name.ar')
-                                    ->label('Name (Arabic)'),
+                                    ->label('Nom (arabe)'),
                             ]),
 
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\Textarea::make('description.fr')
-                                    ->label('Description (French)')
+                                    ->label('Description (français)')
                                     ->rows(3),
 
                                 Forms\Components\Textarea::make('description.en')
-                                    ->label('Description (English)')
+                                    ->label('Description (anglais)')
                                     ->rows(3),
 
                                 Forms\Components\Textarea::make('description.ar')
-                                    ->label('Description (Arabic)')
+                                    ->label('Description (arabe)')
                                     ->rows(3),
                             ]),
                     ]),
-
-                Forms\Components\Section::make('Technical Configuration')
-                    ->schema([
-                        Forms\Components\TextInput::make('rtmp_ingest_url')
-                            ->label('RTMP Ingest URL')
-                            ->required()
-                            ->url()
-                            ->helperText('e.g., rtmp://ingest.nujumalhuda.com:1935/main'),
-
-                        Forms\Components\TextInput::make('whep_url')
-                            ->label('WHEP URL (WebRTC)')
-                            ->required()
-                            ->url()
-                            ->helperText('e.g., https://stream.nujumalhuda.com/whep/main'),
-
-                        Forms\Components\TextInput::make('hls_url')
-                            ->label('HLS URL')
-                            ->required()
-                            ->url()
-                            ->helperText('e.g., https://stream.nujumalhuda.com/hls/main'),
-
-                        Forms\Components\TextInput::make('max_bitrate')
-                            ->label('Max Bitrate (kbps)')
-                            ->numeric()
-                            ->helperText('Maximum allowed bitrate in kilobits per second'),
-                    ])->columns(2),
             ]);
     }
 
@@ -116,49 +101,53 @@ class LiveChannelResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Identifiant')
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('name.fr')
-                    ->label('Name')
+                    ->label('Nom')
                     ->searchable(),
 
-                Tables\Columns\BadgeColumn::make('type')
-                    ->colors([
-                        'primary' => 'video',
-                        'warning' => 'audio',
-                    ]),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => $state === 'audio' ? 'Audio' : 'Vidéo')
+                    ->color(fn (string $state): string => $state === 'audio' ? 'warning' : 'primary'),
 
                 Tables\Columns\TextColumn::make('streams_count')
                     ->counts('streams')
-                    ->label('Total Streams'),
+                    ->label('Séances'),
 
                 Tables\Columns\TextColumn::make('active_streams_count')
                     ->counts('activeStreams')
-                    ->label('Live Now')
+                    ->label('En direct')
                     ->badge()
                     ->color('success'),
 
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
+                    ->label('Actif')
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('priority')
+                    ->label('Priorité')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active'),
+                    ->label('Actif'),
 
                 Tables\Filters\SelectFilter::make('type')
+                    ->label('Type')
                     ->options([
-                        'video' => 'Video',
-                        'audio' => 'Audio Only',
+                        'video' => 'Vidéo',
+                        'audio' => 'Audio seul',
                     ]),
             ])
             ->actions([

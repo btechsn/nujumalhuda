@@ -78,7 +78,7 @@ class LibraryController extends Controller
         $item->increment('download_count');
 
         return response()->json([
-            'url' => $item->external_url ?: ($item->file_path ? url('storage/'.$item->file_path) : null),
+            'url' => $item->downloadUrl(),
         ]);
     }
 
@@ -106,6 +106,7 @@ class LibraryController extends Controller
             'language' => $item->language,
             'external_url' => $item->external_url,
             'file_path' => $item->file_path,
+            'cover_url' => $item->coverUrl(),
             'download_count' => $item->download_count,
             'display_order' => $item->display_order,
             'cover_tone' => match ($item->tradition) {

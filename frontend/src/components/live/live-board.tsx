@@ -11,11 +11,10 @@ import type { LiveStream } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 const TYPES = ["lecture", "khutba", "recitation", "event", "general"] as const;
-const STATUSES = ["live", "scheduled", "ended"] as const;
 const PLATFORM_KEYS = ["youtube", "facebook", "tiktok", "instagram"] as const;
 
 function formatWhen(value: string | null | undefined, locale: string) {
-  if (!value) return "—";
+  if (!value) return null;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat(locale, {
@@ -59,15 +58,15 @@ export function LiveBoard() {
   const t = useTranslations("live");
   const pages = useTranslations("pages.live");
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [searchDraft, setSearchDraft] = useState("");
   const [search, setSearch] = useState("");
   const [embedAccount, setEmbedAccount] = useState<SocialAccount | null>(null);
 
+  const { data: liveData } = useLiveStreams({ status: "live", perPage: 9 });
   const { data, meta, isLoading, error } = useLiveStreams({
     page,
-    status: status || undefined,
+    status: "scheduled",
     type: type || undefined,
     search: search || undefined,
     perPage: 9,
@@ -76,10 +75,13 @@ export function LiveBoard() {
 
   useEffect(() => {
     setPage(1);
-  }, [status, type, search]);
+  }, [type, search]);
 
-  const liveNow = useMemo(() => data.filter((item) => item.status === "live"), [data]);
-  const hasFilters = Boolean(status || type || search);
+  const liveNow = useMemo(
+    () => liveData.filter((item) => Boolean(item.embed_url)),
+    [liveData],
+  );
+  const hasFilters = Boolean(type || search);
 
   const openSocial = (account: SocialAccount) => {
     const canEmbed =
@@ -101,7 +103,7 @@ export function LiveBoard() {
         <div className="nh-container py-10 sm:py-12">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div className="min-w-0 space-y-8">
-              {!status && (liveNow.length > 0 || socials.length > 0) ? (
+              {liveNow.length > 0 || socials.length > 0 ? (
                 <section>
                   <h2 className="mb-4 font-sans text-lg font-extrabold text-content">
                     {liveNow.length > 0 ? t("liveNow") : t("socialSidebarTitle")}
@@ -176,20 +178,12 @@ export function LiveBoard() {
                 clearLabel={t("clearFilters")}
                 hasFilters={hasFilters}
                 onClear={() => {
-                  setStatus("");
                   setType("");
                   setSearch("");
                   setSearchDraft("");
                 }}
               >
-                <p className="text-sm font-semibold text-content">{t("filterStatus")}</p>
-                <FilterButtons
-                  value={status}
-                  onChange={setStatus}
-                  allLabel={t("allStatuses")}
-                  options={STATUSES.map((item) => ({ value: item, label: t(`statuses.${item}`) }))}
-                />
-                <p className="mt-4 text-sm font-semibold text-content">{t("filterType")}</p>
+                <p className="text-sm font-semibold text-content">{t("filterType")}</p>
                 <FilterButtons
                   value={type}
                   onChange={setType}
@@ -376,7 +370,7 @@ function SocialNetworksCard({
   );
 }
 
-function StreamCard({
+export function StreamCard({
   stream,
   locale,
   highlight = false,
@@ -388,34 +382,41 @@ function StreamCard({
   const t = useTranslations("live");
   const href = `/${locale}/direct/${stream.id}`;
   const thumb = stream.thumbnail_url || "/brand/slide-live.jpg";
-  const when =
+  const isLive = stream.status === "live";
+  const whenLabel = formatWhen(
     stream.status === "live"
-      ? stream.started_at
+      ? stream.started_at || stream.scheduled_at
       : stream.status === "scheduled"
         ? stream.scheduled_at
-        : stream.ended_at || stream.scheduled_at;
+        : stream.ended_at || stream.scheduled_at,
+    locale,
+  );
 
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md",
-        highlight && "ring-2 ring-gold-300",
+        "group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md",
+        isLive ? "nh-live-frame" : "ring-1 ring-black/5",
+        highlight && !isLive && "ring-2 ring-gold-300",
       )}
     >
-      <Link href={href} className="relative block aspect-[16/10] overflow-hidden bg-brand-900">
+      <Link href={href} className="relative block aspect-video overflow-hidden bg-[#f3f4f6]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={thumb} alt="" className="size-full object-cover transition duration-500 group-hover:scale-105" />
+        <img src={thumb} alt="" className="size-full object-contain" />
         <span
           className={cn(
-            "absolute start-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
-            stream.status === "live" ? "bg-red-600 text-white" : "bg-gold-300 text-brand-950",
+            "absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+            isLive ? "bg-red-600 text-white" : "bg-gold-300 text-brand-950",
           )}
         >
+          {isLive ? <span className="nh-live-dot size-2 rounded-full bg-white" aria-hidden /> : null}
           {t(`statuses.${stream.status}`, { defaultValue: stream.status })}
         </span>
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <p className="text-xs font-medium text-content-secondary">{formatWhen(when, locale)}</p>
+        {whenLabel ? (
+          <p className="text-xs font-medium text-content-secondary">{whenLabel}</p>
+        ) : null}
         <Link href={href}>
           <h3 className="mt-2 font-sans text-base font-extrabold uppercase tracking-wide text-content line-clamp-2 group-hover:text-brand-700">
             {stream.title}

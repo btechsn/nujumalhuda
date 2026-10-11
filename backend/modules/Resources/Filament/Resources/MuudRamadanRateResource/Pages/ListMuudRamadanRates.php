@@ -10,6 +10,11 @@ class ListMuudRamadanRates extends ListRecords
 {
     protected static string $resource = MuudRamadanRateResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Muud Ramadan';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

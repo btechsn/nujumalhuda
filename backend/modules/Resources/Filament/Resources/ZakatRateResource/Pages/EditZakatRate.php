@@ -10,6 +10,11 @@ class EditZakatRate extends EditRecord
 {
     protected static string $resource = ZakatRateResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier le barème';
+    }
+
     protected function getHeaderActions(): array
     {
         return [\Filament\Actions\DeleteAction::make()];

@@ -907,6 +907,24 @@
   }
 }
 
+@keyframes nh-live-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+@keyframes nh-live-border {
+  0%, 100% { box-shadow: 0 0 0 3px #dc2626; }
+  50% { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); }
+}
+
+.nh-live-dot {
+  animation: nh-live-dot 1.1s ease-in-out infinite;
+}
+
+.nh-live-frame {
+  animation: nh-live-border 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nh-rise,
   .nh-intro,
@@ -915,7 +933,13 @@
   .nh-logo-in,
   .nh-ring,
   .nh-glow,
-  .nh-drift {
+  .nh-drift,
+  .nh-live-dot,
+  .nh-live-frame {
     animation: none;
+  }
+
+  .nh-live-frame {
+    box-shadow: 0 0 0 3px #dc2626;
   }
 }

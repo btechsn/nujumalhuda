@@ -10,6 +10,11 @@ class EditLibraryItem extends EditRecord
 {
     protected static string $resource = LibraryItemResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier la ressource';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

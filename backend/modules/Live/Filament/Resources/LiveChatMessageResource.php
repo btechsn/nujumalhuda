@@ -18,11 +18,22 @@ class LiveChatMessageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationGroup = 'Live Streaming';
+    protected static ?string $navigationGroup = 'Direct';
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationLabel = 'Chat Moderation';
+    protected static ?string $navigationLabel = 'Modération du chat';
+
+    protected static ?string $modelLabel = 'message';
+
+    protected static ?string $pluralModelLabel = 'Messages du chat';
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function canViewAny(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

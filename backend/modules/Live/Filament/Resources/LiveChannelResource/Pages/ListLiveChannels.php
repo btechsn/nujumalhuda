@@ -10,6 +10,11 @@ class ListLiveChannels extends ListRecords
 {
     protected static string $resource = LiveChannelResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'Les canaux servent à classer les séances. Le direct affiché sur le site vient de YouTube.';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

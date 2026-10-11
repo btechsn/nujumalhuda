@@ -10,6 +10,11 @@ class ListDahiraGroups extends ListRecords
 {
     protected static string $resource = DahiraGroupResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Dahiras';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\CreateAction::make()];

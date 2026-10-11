@@ -10,6 +10,11 @@ class ListContributionPlans extends ListRecords
 {
     protected static string $resource = ContributionPlanResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Plans de cotisation';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\CreateAction::make()];

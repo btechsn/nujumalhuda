@@ -10,6 +10,11 @@ class EditTreasuryEntry extends EditRecord
 {
     protected static string $resource = TreasuryEntryResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier l’écriture';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

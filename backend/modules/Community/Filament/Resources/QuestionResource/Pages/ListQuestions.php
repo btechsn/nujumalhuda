@@ -10,8 +10,13 @@ class ListQuestions extends ListRecords
 {
     protected static string $resource = QuestionResource::class;
 
+    public function getTitle(): string
+    {
+        return 'FAQ';
+    }
+
     protected function getHeaderActions(): array
     {
-        return [];
+        return [Actions\CreateAction::make()];
     }
 }

@@ -209,9 +209,9 @@
   "live": {
     "errors": { "loading": "Live streams could not be loaded." },
     "liveNow": "Live now",
-    "listTitle": "Broadcasts",
+    "listTitle": "Upcoming broadcasts",
     "resultsCount": "{count} results",
-    "empty": "No live streams yet.",
+    "empty": "No upcoming broadcast for the moment.",
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {current} of {total}",
@@ -256,16 +256,18 @@
     "detail": {
       "back": "Back to live",
       "notFound": "This stream could not be found.",
-      "playerHint": "The stream appears when the studio is broadcasting (HLS).",
+      "playerHint": "The live appears once the YouTube link is set.",
       "scheduledHint": "This broadcast is scheduled. Come back at the stated time.",
-      "openReplay": "Open replay"
+      "youtubeMissing": "The YouTube link for this session is not set yet.",
+      "openReplay": "Open replay",
+      "openSource": "Open on YouTube"
     }
   },
   "replay": {
     "errors": { "loading": "Replays could not be loaded." },
     "listTitle": "Replays",
     "resultsCount": "{count} results",
-    "empty": "No replay published yet.",
+    "empty": "No finished broadcast for the moment.",
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {current} of {total}",
@@ -273,7 +275,7 @@
     "searchPlaceholder": "Search a replay…",
     "searchSubmit": "Search",
     "filterTitle": "Filter",
-    "filterHint": "Use search to find a recorded session.",
+    "filterHint": "Use search to find a finished broadcast.",
     "clearFilters": "Clear filters",
     "watch": "Watch",
     "badge": "Replay",

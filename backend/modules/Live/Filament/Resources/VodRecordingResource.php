@@ -16,129 +16,140 @@ class VodRecordingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-video-camera';
 
-    protected static ?string $navigationGroup = 'Live Streaming';
+    protected static ?string $navigationGroup = 'Direct';
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationLabel = 'VOD Recordings';
+    protected static ?string $navigationLabel = 'Enregistrements';
+
+    protected static ?string $modelLabel = 'enregistrement';
+
+    protected static ?string $pluralModelLabel = 'Enregistrements';
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function canViewAny(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Recording Information')
+                Forms\Components\Section::make('L’enregistrement')
                     ->schema([
                         Forms\Components\Select::make('stream_id')
+                            ->label('Séance')
                             ->relationship('stream', 'id')
+                            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->title['fr'] ?? (string) $record->id)
                             ->required()
                             ->disabled()
-                            ->helperText('Recordings are automatically created from ended streams'),
+                            ->helperText('L’enregistrement est créé automatiquement quand une séance se termine.'),
 
                         Forms\Components\TextInput::make('slug')
+                            ->label('Identifiant')
                             ->required()
                             ->unique(ignoreRecord: true)
-                            ->helperText('URL-friendly identifier'),
+                            ->helperText('Texte utilisé dans l’adresse de la page.'),
 
                         Forms\Components\Select::make('status')
-                            ->options([
-                                'processing' => 'Processing',
-                                'ready' => 'Ready',
-                                'failed' => 'Failed',
-                            ])
+                            ->label('Statut')
+                            ->options(self::statusOptions())
                             ->required(),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Translations')
+                Forms\Components\Section::make('Titre affiché')
                     ->schema([
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('title.fr')
-                                    ->label('Title (French)')
+                                    ->label('Titre (français)')
                                     ->required(),
 
                                 Forms\Components\TextInput::make('title.en')
-                                    ->label('Title (English)'),
+                                    ->label('Titre (anglais)'),
 
                                 Forms\Components\TextInput::make('title.ar')
-                                    ->label('Title (Arabic)'),
+                                    ->label('Titre (arabe)'),
                             ]),
 
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\RichEditor::make('description.fr')
-                                    ->label('Description (French)')
+                                    ->label('Description (français)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
 
                                 Forms\Components\RichEditor::make('description.en')
-                                    ->label('Description (English)')
+                                    ->label('Description (anglais)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
 
                                 Forms\Components\RichEditor::make('description.ar')
-                                    ->label('Description (Arabic)')
+                                    ->label('Description (arabe)')
                                     ->toolbarButtons(['bold', 'italic', 'link', 'bulletList']),
                             ]),
                     ]),
 
-                Forms\Components\Section::make('Video Files')
+                Forms\Components\Section::make('Fichiers vidéo')
                     ->schema([
                         Forms\Components\TextInput::make('hls_url')
-                            ->label('HLS URL')
+                            ->label('Adresse HLS')
                             ->url()
                             ->required(),
 
                         Forms\Components\TextInput::make('mp4_url')
-                            ->label('MP4 URL (Optional)')
+                            ->label('Adresse MP4 (facultative)')
                             ->url(),
 
                         Forms\Components\FileUpload::make('thumbnail_url')
-                            ->label('Thumbnail')
+                            ->label('Image')
                             ->image()
                             ->directory('vod/thumbnails')
                             ->visibility('public'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Settings')
+                Forms\Components\Section::make('Publication')
                     ->schema([
                         Forms\Components\Toggle::make('is_public')
-                            ->label('Public')
+                            ->label('Visible au public')
                             ->default(true),
 
                         Forms\Components\Toggle::make('is_downloadable')
-                            ->label('Downloadable')
+                            ->label('Téléchargeable')
                             ->default(false),
 
                         Forms\Components\DateTimePicker::make('published_at')
-                            ->label('Publish Date')
+                            ->label('Date de publication')
                             ->timezone('Africa/Dakar'),
                     ])->columns(3),
 
-                Forms\Components\Section::make('Technical Details')
+                Forms\Components\Section::make('Détails techniques')
                     ->schema([
                         Forms\Components\TextInput::make('duration_seconds')
-                            ->label('Duration (seconds)')
+                            ->label('Durée (secondes)')
                             ->numeric()
                             ->required(),
 
                         Forms\Components\TextInput::make('file_size_bytes')
-                            ->label('File Size (bytes)')
+                            ->label('Taille du fichier (octets)')
                             ->numeric(),
 
                         Forms\Components\TextInput::make('resolution')
-                            ->label('Resolution')
-                            ->helperText('e.g., 1080p, 720p'),
+                            ->label('Résolution')
+                            ->helperText('Par exemple 1080p ou 720p.'),
 
                         Forms\Components\TextInput::make('bitrate')
-                            ->label('Bitrate (kbps)')
+                            ->label('Débit (kbit/s)')
                             ->numeric(),
                     ])->columns(4),
 
-                Forms\Components\Section::make('Chapters')
+                Forms\Components\Section::make('Chapitres')
                     ->schema([
                         Forms\Components\KeyValue::make('chapters')
-                            ->label('Video Chapters')
-                            ->keyLabel('Time (seconds)')
-                            ->valueLabel('Chapter Title')
-                            ->helperText('Add chapters for navigation (e.g., 0: Introduction, 300: Main Topic)'),
+                            ->label('Chapitres de la vidéo')
+                            ->keyLabel('Temps (secondes)')
+                            ->valueLabel('Titre du chapitre')
+                            ->helperText('Par exemple 0 pour l’introduction, 300 pour le sujet principal.'),
                     ]),
             ]);
     }
@@ -148,36 +159,41 @@ class VodRecordingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail_url')
-                    ->label('Thumbnail')
+                    ->label('Image')
                     ->square()
                     ->size(60),
 
                 Tables\Columns\TextColumn::make('title.fr')
-                    ->label('Title')
+                    ->label('Titre')
                     ->searchable()
                     ->limit(40),
 
-                Tables\Columns\TextColumn::make('stream.channel.slug')
-                    ->label('Channel')
+                Tables\Columns\TextColumn::make('stream.channel.name')
+                    ->label('Canal')
+                    ->formatStateUsing(fn ($state): string => is_array($state) ? ($state['fr'] ?? '') : (string) $state)
                     ->badge(),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => 'processing',
-                        'success' => 'ready',
-                        'danger' => 'failed',
-                    ]),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Statut')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => self::statusOptions()[$state] ?? $state)
+                    ->color(fn (string $state): string => match ($state) {
+                        'processing' => 'warning',
+                        'ready' => 'success',
+                        'failed' => 'danger',
+                        default => 'gray',
+                    }),
 
                 Tables\Columns\TextColumn::make('duration_formatted')
-                    ->label('Duration')
+                    ->label('Durée')
                     ->getStateUsing(fn ($record) => $record->getFormattedDuration()),
 
                 Tables\Columns\TextColumn::make('file_size_formatted')
-                    ->label('Size')
+                    ->label('Taille')
                     ->getStateUsing(fn ($record) => $record->getFormattedFileSize()),
 
                 Tables\Columns\TextColumn::make('views_count')
-                    ->label('Views')
+                    ->label('Vues')
                     ->sortable()
                     ->badge()
                     ->color('info'),
@@ -187,28 +203,25 @@ class VodRecordingResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('published_at')
-                    ->label('Published')
+                    ->label('Publié le')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'processing' => 'Processing',
-                        'ready' => 'Ready',
-                        'failed' => 'Failed',
-                    ]),
+                    ->label('Statut')
+                    ->options(self::statusOptions()),
 
                 Tables\Filters\TernaryFilter::make('is_public')
                     ->label('Public'),
 
                 Tables\Filters\TernaryFilter::make('is_downloadable')
-                    ->label('Downloadable'),
+                    ->label('Téléchargeable'),
 
                 Tables\Filters\Filter::make('published_at')
                     ->form([
-                        Forms\Components\DatePicker::make('published_from'),
-                        Forms\Components\DatePicker::make('published_until'),
+                        Forms\Components\DatePicker::make('published_from')->label('Publié à partir du'),
+                        Forms\Components\DatePicker::make('published_until')->label('Publié jusqu’au'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
@@ -218,7 +231,7 @@ class VodRecordingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
-                    ->label('View')
+                    ->label('Voir')
                     ->icon('heroicon-o-eye')
                     ->url(fn ($record) => $record->hls_url)
                     ->openUrlInNewTab(),
@@ -231,6 +244,18 @@ class VodRecordingResource extends Resource
                 ]),
             ])
             ->defaultSort('published_at', 'desc');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function statusOptions(): array
+    {
+        return [
+            'processing' => 'En traitement',
+            'ready' => 'Prêt',
+            'failed' => 'Échec',
+        ];
     }
 
     public static function getRelations(): array

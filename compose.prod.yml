@@ -62,10 +62,3 @@ services:
         limits:
           cpus: '0.5'
           memory: 512M
-
-  mediamtx:
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 2G

@@ -22,22 +22,31 @@ class MeetingResource extends Resource
 
     protected static ?string $navigationLabel = 'Réunions';
 
+    protected static ?string $modelLabel = 'réunion';
+
+    protected static ?string $pluralModelLabel = 'Réunions';
+
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('dahira_group_id')->relationship('group', 'id')->required(),
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\DateTimePicker::make('starts_at')->required(),
-            Forms\Components\TextInput::make('location'),
-            Forms\Components\Textarea::make('agenda'),
+            Forms\Components\Select::make('dahira_group_id')
+                ->label('Dahira')
+                ->relationship('group', 'id')
+                ->getOptionLabelFromRecordUsing(fn ($record) => $record->name_i18n['fr'] ?? $record->id)
+                ->searchable()
+                ->required(),
+            Forms\Components\TextInput::make('title')->label('Titre')->required(),
+            Forms\Components\DateTimePicker::make('starts_at')->label('Début')->required(),
+            Forms\Components\TextInput::make('location')->label('Lieu'),
+            Forms\Components\Textarea::make('agenda')->label('Ordre du jour'),
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('title')->searchable(),
-            Tables\Columns\TextColumn::make('starts_at')->dateTime(),
+            Tables\Columns\TextColumn::make('title')->label('Titre')->searchable(),
+            Tables\Columns\TextColumn::make('starts_at')->label('Début')->dateTime(),
             Tables\Columns\TextColumn::make('attendances_count')->counts('attendances')->label('Présences'),
             Tables\Columns\TextColumn::make('convened_at')->dateTime()->label('Convoquée'),
         ])->actions([

@@ -10,6 +10,11 @@ class EditMeeting extends EditRecord
 {
     protected static string $resource = MeetingResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Modifier la réunion';
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];
