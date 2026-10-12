@@ -13,6 +13,11 @@ use Modules\Mosque\Models\Khutba;
 
 class KhutbaResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = Khutba::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';

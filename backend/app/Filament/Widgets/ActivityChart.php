@@ -9,6 +9,11 @@ use Filament\Widgets\ChartWidget;
 
 class ActivityChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_activity');
+    }
+
     protected static ?string $heading = 'Activité';
 
     protected static ?string $description = 'Comptes, inscriptions, questions et messages reçus.';

@@ -20,6 +20,11 @@ use Modules\Education\Models\Teacher;
 
 class IjazaResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = Ijaza::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-check';

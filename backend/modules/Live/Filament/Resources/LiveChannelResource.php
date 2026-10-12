@@ -12,6 +12,11 @@ use Modules\Live\Models\LiveChannel;
 
 class LiveChannelResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('live_setup');
+    }
+
     protected static ?string $model = LiveChannel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tv';

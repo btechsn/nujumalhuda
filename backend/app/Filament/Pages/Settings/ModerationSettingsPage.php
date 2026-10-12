@@ -18,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Modules\Core\Support\ContributionDesk;
+use Modules\Core\Support\PanelAccess;
 
 class ModerationSettingsPage extends Page implements HasForms
 {
@@ -35,6 +36,11 @@ class ModerationSettingsPage extends Page implements HasForms
     protected static ?int $navigationSort = 45;
 
     protected static string $view = 'filament.pages.manage-settings';
+
+    public static function canAccess(): bool
+    {
+        return PanelAccess::allows('settings_editorial');
+    }
 
     /**
      * @var array<string, mixed>|null

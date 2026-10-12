@@ -9,6 +9,11 @@ use Filament\Widgets\ChartWidget;
 
 class FinanceChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_money');
+    }
+
     protected static ?string $heading = 'Évolution financière';
 
     protected static ?string $description = 'Dons, cotisations et mouvements de trésorerie, en XOF.';

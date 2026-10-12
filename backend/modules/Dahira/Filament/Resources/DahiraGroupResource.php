@@ -9,11 +9,30 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Modules\Core\Enums\OrganizationType;
 use Modules\Core\Models\Organization;
+use Modules\Dahira\Filament\Concerns\ScopesToDahira;
 use Modules\Dahira\Filament\Resources\DahiraGroupResource\Pages;
 use Modules\Dahira\Models\DahiraGroup;
+use Modules\Dahira\Services\DahiraAccess;
 
 class DahiraGroupResource extends Resource
 {
+    use ScopesToDahira;
+
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dahira_office');
+    }
+
+    protected static function officerRoles(): array
+    {
+        return DahiraAccess::OFFICER_ROLES;
+    }
+
+    protected static function dahiraScope(): string
+    {
+        return 'organization';
+    }
+
     protected static ?string $model = DahiraGroup::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';

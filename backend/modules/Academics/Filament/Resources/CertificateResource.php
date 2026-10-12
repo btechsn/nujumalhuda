@@ -21,6 +21,11 @@ use Modules\Core\Models\AuditLog;
  */
 class CertificateResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = Certificate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';

@@ -24,7 +24,7 @@ export function CommuniqueBar({
   const durationSeconds = Math.min(180, Math.max(80, Math.round(characters * 0.28)));
 
   return (
-    <div className="absolute inset-x-0 top-3 z-30 flex items-center gap-3 px-4 sm:px-8">
+    <div className="absolute inset-x-0 top-3 z-30 flex max-w-full items-center gap-2 overflow-hidden px-3 sm:gap-3 sm:px-8">
       <Link
         href={listHref}
         className="shrink-0 rounded-full bg-gold-300 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-neutral-900 transition hover:bg-gold-200"

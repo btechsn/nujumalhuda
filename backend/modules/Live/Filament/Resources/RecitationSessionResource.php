@@ -23,6 +23,11 @@ use Modules\Live\Models\RecitationSession;
  */
 class RecitationSessionResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('live');
+    }
+
     protected static ?string $model = RecitationSession::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-musical-note';

@@ -16,6 +16,11 @@ use Modules\Core\Models\User;
 
 class StudentProgressResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = StudentProgress::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';

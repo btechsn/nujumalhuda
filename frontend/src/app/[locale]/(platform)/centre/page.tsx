@@ -187,7 +187,7 @@ export default async function CentrePage({
 
   return (
     <article>
-      <div className="relative">
+      <div className="relative overflow-x-clip">
         <LiveAnnouncementBar />
         <BannerSlider slides={featuredSlides.length > 0 ? featuredSlides : fallbackSlides} />
 

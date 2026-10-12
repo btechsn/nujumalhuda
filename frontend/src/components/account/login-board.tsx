@@ -59,10 +59,12 @@ export function LoginBoard() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder={t("emailPh")}
+                  placeholder={t("loginIdentifierPh")}
                   className={FIELD}
                   autoComplete="username"
+                  inputMode="text"
                 />
+                <span className="mt-1.5 block text-xs text-content-secondary">{t("loginIdentifierHint")}</span>
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-sm font-semibold text-content">{t("password")}</span>

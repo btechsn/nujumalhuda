@@ -15,6 +15,11 @@ use Modules\Education\Models\ProgramType;
 
 class ProgramTypeResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('education');
+    }
+
     protected static ?string $model = ProgramType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';

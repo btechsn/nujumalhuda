@@ -24,6 +24,11 @@ use Modules\Core\Models\User;
  */
 class MinorResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('compliance');
+    }
+
     protected static ?string $model = User::class;
 
     protected static ?string $slug = 'eleves-mineurs';

@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Http;
+use Modules\Core\Support\PanelAccess;
 use Modules\Core\Support\SiteSettings;
 
 abstract class SettingsSectionPage extends Page implements HasForms
@@ -37,6 +38,15 @@ abstract class SettingsSectionPage extends Page implements HasForms
     public ?array $data = [];
 
     abstract protected static function section(): string;
+
+    public static function canAccess(): bool
+    {
+        $area = in_array(static::section(), ['contact', 'footer', 'links'], true)
+            ? 'settings_public'
+            : 'settings_technical';
+
+        return PanelAccess::allows($area);
+    }
 
     public function mount(): void
     {

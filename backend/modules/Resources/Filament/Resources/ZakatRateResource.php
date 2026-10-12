@@ -12,6 +12,11 @@ use Modules\Resources\Models\ZakatRate;
 
 class ZakatRateResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('resources');
+    }
+
     protected static ?string $model = ZakatRate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';

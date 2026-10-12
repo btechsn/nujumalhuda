@@ -13,6 +13,7 @@ use App\Filament\Widgets\SpacesBoard;
 use App\Filament\Widgets\SpacesChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Illuminate\Contracts\Support\Htmlable;
+use Modules\Core\Support\PanelAccess;
 
 class Dashboard extends BaseDashboard
 {
@@ -26,6 +27,10 @@ class Dashboard extends BaseDashboard
 
     public function getSubheading(): string|Htmlable|null
     {
+        if (!PanelAccess::allows('dashboard_money') && !PanelAccess::allows('dashboard_activity')) {
+            return 'Demandes, réunions et cotisations de votre dahira.';
+        }
+
         return 'Chiffres, évolutions et points d’attention de l’institut.';
     }
 

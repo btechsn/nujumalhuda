@@ -12,6 +12,11 @@ use Modules\Community\Models\DiscussionMessage;
 
 class DiscussionMessageResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = DiscussionMessage::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';

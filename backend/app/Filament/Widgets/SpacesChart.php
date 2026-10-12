@@ -9,6 +9,11 @@ use Filament\Widgets\ChartWidget;
 
 class SpacesChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_money');
+    }
+
     protected static ?string $heading = 'Volume par espace';
 
     protected static ?string $description = 'Ce que chaque partie de l’institut contient aujourd’hui.';

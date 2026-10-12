@@ -15,6 +15,11 @@ use Modules\Academics\Models\QuizTopic;
 
 class QuizTopicResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = QuizTopic::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';

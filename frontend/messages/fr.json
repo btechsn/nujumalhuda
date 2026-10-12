@@ -24,7 +24,23 @@
     "announcements": "Annonces",
     "prayers": "Prières",
     "live": "Direct",
-    "close": "Fermer"
+    "close": "Fermer",
+    "skip": "Aller au contenu",
+    "installText": "Installez Nujum Al-Huda sur cet appareil pour l’ouvrir comme une application.",
+    "installAccept": "Installer l'app Nujum Al-Huda",
+    "installLater": "Plus tard",
+    "installIos": "Sur iPhone, ouvrez le menu Partager, puis « Sur l’écran d’accueil ».",
+    "alertsLede": "Tout est éteint au départ. Activez seulement ce que vous voulez recevoir.",
+    "alertsOn": "Activé",
+    "alertsOff": "Désactivé",
+    "alertsDenied": "Le navigateur a refusé les notifications.",
+    "alertsUnsupported": "Ce navigateur ne reçoit pas les notifications.",
+    "alertsNeedPush": "Les notifications ne sont pas encore configurées sur le serveur.",
+    "lessonEmpty": "Aucune leçon n’est disponible pour votre inscription, et rien n’est encore gardé sur cet appareil.",
+    "lessonCached": "Cette leçon, son audio et ses documents sont gardés sur cet appareil.",
+    "lessonOffline": "Vous êtes hors ligne. Voici la leçon gardée sur cet appareil.",
+    "lessonAudio": "Audio",
+    "lessonFile": "Ouvrir le document"
   },
   "search": {
     "title": "Recherche",
@@ -93,6 +109,8 @@
     "firstNamePh": "Votre prénom",
     "lastNamePh": "Votre nom",
     "identifierHint": "Renseignez un email ou un numéro de téléphone (au moins l'un des deux).",
+    "loginIdentifierPh": "vous@exemple.com ou 77 123 45 67",
+    "loginIdentifierHint": "Le même mot de passe sert pour l'e-mail et pour le téléphone.",
     "submitLogin": "Se connecter",
     "submitRegister": "Créer mon compte",
     "noAccount": "Pas encore de compte ?",
@@ -120,6 +138,8 @@
     "memberSince": "Membre depuis {date}",
     "welcome": "Bonjour {name}",
     "sectionProfile": "Mon profil",
+    "sectionLesson": "Ma leçon",
+    "sectionAlerts": "Notifications",
     "saveProfile": "Enregistrer",
     "savingProfile": "Enregistrement…",
     "profileSaved": "Profil mis à jour.",
@@ -176,11 +196,15 @@
     "statusNotStarted": "À venir",
     "certificateCode": "Certificat {code}",
     "roles": {
-      "admin": "Administrateur général",
-      "director": "Direction",
-      "secretary": "Administration communication",
+      "admin": "Administrateur",
+      "director": "Directeur",
+      "secretary": "Secrétaire",
       "teacher": "Enseignant",
-      "academic_admin": "Administration académique"
+      "academic_admin": "Responsable pédagogique",
+      "dahira_muqaddam": "Muqaddam",
+      "dahira_secretary": "Secrétaire du dahira",
+      "dahira_treasurer": "Trésorier",
+      "dahira_member": "Membre"
     }
   },
   "announcements": {

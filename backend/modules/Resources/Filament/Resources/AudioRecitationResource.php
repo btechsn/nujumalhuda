@@ -13,6 +13,11 @@ use Modules\Resources\Models\AudioRecitation;
 
 class AudioRecitationResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('resources');
+    }
+
     protected static ?string $model = AudioRecitation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-musical-note';

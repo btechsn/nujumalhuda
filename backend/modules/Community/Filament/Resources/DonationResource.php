@@ -12,6 +12,11 @@ use Modules\Community\Models\Donation;
 
 class DonationResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = Donation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-heart';

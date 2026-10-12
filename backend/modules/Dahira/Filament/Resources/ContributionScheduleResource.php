@@ -8,12 +8,31 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\Dahira\Filament\Concerns\ScopesToDahira;
 use Modules\Dahira\Filament\Resources\ContributionScheduleResource\Pages;
 use Modules\Dahira\Models\ContributionSchedule;
 use Modules\Dahira\Services\ContributionRecorder;
+use Modules\Dahira\Services\DahiraAccess;
 
 class ContributionScheduleResource extends Resource
 {
+    use ScopesToDahira;
+
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dahira_money');
+    }
+
+    protected static function officerRoles(): array
+    {
+        return DahiraAccess::TREASURER_ROLES;
+    }
+
+    protected static function dahiraScope(): string
+    {
+        return 'plan';
+    }
+
     protected static ?string $model = ContributionSchedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';

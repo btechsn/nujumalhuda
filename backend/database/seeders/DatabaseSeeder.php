@@ -4,10 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Core\Enums\OrganizationType;
-use Modules\Core\Models\Membership;
 use Modules\Core\Models\Organization;
-use Modules\Core\Models\Role;
-use Modules\Core\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,33 +38,8 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info("   ✅ Organisation créée : {$org->name}");
 
-        $this->command->info('2️⃣  Création de l\'utilisateur admin...');
-
-        $role = Role::query()->firstOrCreate(['name' => 'admin'], [
-            'display_name' => 'Administrateur',
-            'description' => 'Accès au panneau d\'administration',
-            'is_system' => true,
-        ]);
-
-        $admin = User::query()->firstOrCreate(['email' => 'admin@nujumalhuda.com'], [
-            'first_name' => 'Admin',
-            'last_name' => 'Nujum Al-Huda',
-            'password' => 'password',
-            'locale' => 'fr',
-            'timezone' => 'Africa/Dakar',
-            'email_verified_at' => now(),
-        ]);
-
-        Membership::query()->firstOrCreate([
-            'user_id' => $admin->id,
-            'organization_id' => $org->id,
-            'role_id' => $role->id,
-        ], [
-            'status' => 'active',
-            'joined_at' => now(),
-        ]);
-
-        $this->command->info("   ✅ Admin créé : {$admin->email} / password: password");
+        $this->command->info('2️⃣  Comptes par rôle...');
+        $this->call(RoleAccountsSeeder::class);
 
         // 3. Module Education
         $this->command->info('3️⃣  Module Education...');

@@ -74,15 +74,15 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="border-b border-line bg-surface">
-          <div className="nh-container flex h-16 items-center justify-between gap-4">
-            <Link href={hrefOf("")} className="flex shrink-0 items-center gap-3">
-              <span className="relative size-11 shrink-0 overflow-hidden rounded-full border border-gold-300 bg-white">
+        <div className="overflow-x-clip border-b border-line bg-surface">
+          <div className="mx-auto flex h-14 w-full max-w-[var(--container-wide)] items-center gap-2 px-3 sm:h-16 sm:px-8">
+            <Link href={hrefOf("")} className="flex min-w-0 items-center gap-2 sm:gap-3">
+              <span className="relative size-9 shrink-0 overflow-hidden rounded-full border border-gold-300 bg-white sm:size-11">
                 <Image src={logoSrc} alt="" fill sizes="44px" data-essential="" className="object-cover object-[center_28%]" />
               </span>
-              <span className="hidden flex-col leading-none sm:flex">
-                <span className="whitespace-nowrap font-sans text-xs font-extrabold tracking-tight">Nujum Al-Huda</span>
-                <span className={`mt-1 whitespace-nowrap text-[0.6rem] font-semibold text-primary ${locale === "ar" ? "font-arabic" : "font-sans"}`}>
+              <span className="hidden min-w-0 flex-col leading-none sm:flex">
+                <span className="truncate font-sans text-xs font-extrabold tracking-tight">Nujum Al-Huda</span>
+                <span className={`mt-1 truncate text-[0.6rem] font-semibold text-primary ${locale === "ar" ? "font-arabic" : "font-sans"}`}>
                   {t("quranic")}
                 </span>
               </span>
@@ -130,22 +130,31 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               })}
             </nav>
 
-            <div className="flex items-center gap-2">
+            <div className="ms-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
               <AccountMenu hrefOf={hrefOf} />
               <Link
                 href={hrefOf("/academique/inscription")}
-                className="inline-flex rounded-full bg-gold-300 px-4 py-2.5 text-small font-semibold tracking-wide text-neutral-900 uppercase transition hover:bg-gold-200"
+                className="inline-flex shrink-0 whitespace-nowrap rounded-full bg-gold-300 px-3 py-2 text-[0.7rem] font-semibold text-neutral-900 uppercase transition hover:bg-gold-200 sm:px-4 sm:py-2.5 sm:text-small sm:tracking-wide"
               >
                 {t("items.enroll")}
               </Link>
               <button
                 type="button"
-                className="inline-flex h-10 items-center rounded-full border border-line px-3 text-small font-semibold lg:hidden"
+                className="inline-flex size-10 items-center justify-center rounded-full border border-line lg:hidden"
                 aria-expanded={open}
                 aria-controls="platform-menu"
+                aria-label={open ? t("close") : t("open")}
                 onClick={() => setOpen((value) => !value)}
               >
-                {open ? t("close") : t("open")}
+                {open ? (
+                  <span aria-hidden="true" className="text-lg leading-none">×</span>
+                ) : (
+                  <span aria-hidden="true" className="flex w-4 flex-col gap-1">
+                    <span className="h-0.5 w-full bg-current" />
+                    <span className="h-0.5 w-full bg-current" />
+                    <span className="h-0.5 w-full bg-current" />
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -185,7 +194,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           ) : null}
         </div>
       </header>
-      <div aria-hidden="true" className="h-16 shrink-0 sm:h-[6.25rem]" />
+      <div aria-hidden="true" className="h-14 shrink-0 sm:h-[6.25rem]" />
 
       <div id="nh-main" className="flex-1">
         <TranslationFallbackNote />
@@ -293,7 +302,7 @@ function AccountMenu({
   const { user, loading, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
-  if (loading) return mobile ? null : <span className="size-9" aria-hidden="true" />;
+  if (loading) return mobile ? null : <span className="hidden size-9 lg:inline-block" aria-hidden="true" />;
 
   if (mobile) {
     return (

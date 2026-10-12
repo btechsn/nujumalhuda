@@ -12,6 +12,11 @@ use Modules\News\Models\ArticleCategory;
 
 class CategoryResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('news');
+    }
+
     protected static ?string $model = ArticleCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';

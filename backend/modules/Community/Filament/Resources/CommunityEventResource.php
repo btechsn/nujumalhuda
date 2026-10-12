@@ -13,6 +13,11 @@ use Modules\Community\Models\CommunityEvent;
 
 class CommunityEventResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = CommunityEvent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';

@@ -8,12 +8,38 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\Dahira\Filament\Concerns\ScopesToDahira;
 use Modules\Dahira\Filament\Resources\JoinRequestResource\Pages;
 use Modules\Dahira\Models\DahiraJoinRequest;
+use Modules\Dahira\Services\DahiraAccess;
 use Modules\Dahira\Services\JoinRequestService;
 
 class JoinRequestResource extends Resource
 {
+    use ScopesToDahira;
+
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dahira_office');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getEloquentQuery()->where('status', 'pending')->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    protected static function officerRoles(): array
+    {
+        return DahiraAccess::OFFICER_ROLES;
+    }
+
     protected static ?string $model = DahiraJoinRequest::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';

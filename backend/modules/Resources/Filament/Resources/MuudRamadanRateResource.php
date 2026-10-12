@@ -12,6 +12,11 @@ use Modules\Resources\Models\MuudRamadanRate;
 
 class MuudRamadanRateResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('resources');
+    }
+
     protected static ?string $model = MuudRamadanRate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';

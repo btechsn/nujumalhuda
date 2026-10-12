@@ -12,6 +12,11 @@ use Modules\Mosque\Models\EventRegistration;
 
 class EventRegistrationResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = EventRegistration::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';

@@ -12,6 +12,11 @@ use Modules\Resources\Models\DailyContent;
 
 class DailyContentResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('resources');
+    }
+
     protected static ?string $model = DailyContent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-sun';

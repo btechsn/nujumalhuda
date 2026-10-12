@@ -13,6 +13,11 @@ use Modules\Resources\Models\LibraryResource;
 
 class LibraryItemResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('resources');
+    }
+
     protected static ?string $model = LibraryResource::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';

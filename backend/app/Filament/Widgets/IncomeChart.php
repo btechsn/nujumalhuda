@@ -10,6 +10,11 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class IncomeChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_money');
+    }
+
     protected static ?string $heading = 'D’où vient l’argent';
 
     protected static ?string $maxHeight = '16rem';

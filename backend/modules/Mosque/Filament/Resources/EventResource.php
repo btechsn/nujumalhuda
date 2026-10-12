@@ -15,6 +15,11 @@ use Modules\Mosque\Models\MosqueEvent;
 
 class EventResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = MosqueEvent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';

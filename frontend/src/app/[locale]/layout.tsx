@@ -4,10 +4,11 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 
 import { OrnamentDefs } from "@/components/brand/ornaments";
 import { ComfortControls } from "@/components/layout/comfort-controls";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { AuthProvider } from "@/hooks/useAuth";
 import { fontVariables } from "@/lib/fonts";
@@ -73,6 +74,7 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as Locale)) notFound();
 
   const messages = await getMessages();
+  const t = await getTranslations({ locale, namespace: "comfort" });
   const dir = LOCALE_DIRECTION[locale as Locale];
 
   return (
@@ -100,7 +102,7 @@ export default async function LocaleLayout({
           href="#nh-main"
           className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"
         >
-          Aller au contenu
+          {t("skip")}
         </a>
 
         <NextIntlClientProvider messages={messages}>
@@ -110,6 +112,7 @@ export default async function LocaleLayout({
             </Suspense>
             {children}
             <ComfortControls />
+            <InstallPrompt />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

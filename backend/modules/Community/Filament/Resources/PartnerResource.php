@@ -12,6 +12,11 @@ use Modules\Community\Models\Partner;
 
 class PartnerResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = Partner::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';

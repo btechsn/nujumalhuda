@@ -16,11 +16,39 @@ import {
   type DahiraScheduleItem,
 } from "@/hooks/useDahiraGroup";
 import { cn } from "@/lib/utils";
+import { AlertSection, LessonSection } from "@/components/account/account-extras";
 
 const ADMIN_URL =
   process.env.NEXT_PUBLIC_ADMIN_URL || "http://127.0.0.1:8000/institut/administration";
 
-const KNOWN_ROLES = ["admin", "director", "secretary", "teacher", "academic_admin"] as const;
+const KNOWN_ROLES = [
+  "admin",
+  "director",
+  "secretary",
+  "teacher",
+  "academic_admin",
+  "dahira_muqaddam",
+  "dahira_secretary",
+  "dahira_treasurer",
+  "dahira_member",
+] as const;
+
+const PANEL_ROLES = new Set<string>([
+  "admin",
+  "director",
+  "secretary",
+  "teacher",
+  "academic_admin",
+  "dahira_muqaddam",
+  "dahira_secretary",
+  "dahira_treasurer",
+]);
+
+function opensAdmin(user: { is_staff?: boolean; roles?: string[] } | null | undefined): boolean {
+  if (!user) return false;
+  if (user.is_staff) return true;
+  return (user.roles ?? []).some((role) => PANEL_ROLES.has(role));
+}
 
 function roleLabel(role: string, t: ReturnType<typeof useTranslations>): string {
   return (KNOWN_ROLES as readonly string[]).includes(role) ? t(`roles.${role}` as any) : role;
@@ -30,7 +58,7 @@ function i18nText(field: Record<string, string> | string | undefined | null, loc
   return readEditorial(field, locale).text;
 }
 
-type SectionId = "profile" | "children" | "progress" | "dahira" | "staff";
+type SectionId = "profile" | "lesson" | "alerts" | "children" | "progress" | "dahira" | "staff";
 
 export function DashboardBoard() {
   const locale = useLocale();
@@ -54,10 +82,12 @@ export function DashboardBoard() {
 
   const menu: { id: SectionId; label: string; show: boolean }[] = [
     { id: "profile", label: t("sectionProfile"), show: true },
+    { id: "lesson", label: t("sectionLesson"), show: true },
+    { id: "alerts", label: t("sectionAlerts"), show: true },
     { id: "children", label: t("sectionChildren"), show: !!user?.is_guardian },
     { id: "progress", label: t("sectionProgress"), show: !!selfEntry?.steps?.length },
     { id: "dahira", label: t("sectionDahira"), show: !!user?.is_dahira_member },
-    { id: "staff", label: t("sectionStaff"), show: !!user?.is_staff },
+    { id: "staff", label: t("sectionStaff"), show: opensAdmin(user) },
   ];
 
   if (loading || !user) {
@@ -131,7 +161,7 @@ export function DashboardBoard() {
                       </Link>
                     </li>
                   ) : null}
-                  {user.is_staff ? (
+                  {opensAdmin(user) ? (
                     <li>
                       <a
                         href={ADMIN_URL}
@@ -159,6 +189,10 @@ export function DashboardBoard() {
             <div className="rounded-3xl bg-white p-6 shadow-xl shadow-brand-950/5 ring-1 ring-black/5 sm:p-8">
               {section === "profile" ? (
                 <ProfileSection user={user} t={t} locale={locale} />
+              ) : section === "lesson" ? (
+                <LessonSection locale={locale} />
+              ) : section === "alerts" ? (
+                <AlertSection />
               ) : section === "children" ? (
                 <ChildrenSection user={user} students={wardEntries} loading={portalLoading} t={t} locale={locale} />
               ) : section === "progress" ? (

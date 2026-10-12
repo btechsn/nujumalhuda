@@ -21,6 +21,11 @@ use Modules\Education\Models\Promotion;
 
 class AnnouncementResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('news');
+    }
+
     protected static ?string $model = Announcement::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';

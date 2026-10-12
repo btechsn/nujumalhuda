@@ -13,6 +13,11 @@ use Modules\Live\Models\LiveStream;
 
 class LiveStreamResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('live');
+    }
+
     protected static ?string $model = LiveStream::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-signal';

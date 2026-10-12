@@ -55,7 +55,7 @@ export function AiSupportFab() {
   };
 
   return (
-    <div className="pointer-events-none fixed bottom-5 end-5 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:end-6">
+    <div className="pointer-events-none fixed end-5 bottom-[5.5rem] z-[60] flex flex-col items-end gap-3 sm:end-6 sm:bottom-[5.75rem]">
       {open ? (
         <div
           id={panelId}

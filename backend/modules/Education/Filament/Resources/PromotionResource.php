@@ -14,6 +14,11 @@ use Modules\Education\Models\Teacher;
 
 class PromotionResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('education');
+    }
+
     protected static ?string $model = Promotion::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';

@@ -21,6 +21,11 @@ use Modules\Education\Models\EnrollmentDocument;
 
 class EnrollmentResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('education');
+    }
+
     protected static ?string $model = Enrollment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';

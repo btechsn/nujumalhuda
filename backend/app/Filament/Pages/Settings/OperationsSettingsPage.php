@@ -19,6 +19,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Modules\Core\Support\OperationsDesk;
 use Modules\Core\Support\OperationsReport;
+use Modules\Core\Support\PanelAccess;
 
 class OperationsSettingsPage extends Page implements HasForms
 {
@@ -36,6 +37,11 @@ class OperationsSettingsPage extends Page implements HasForms
     protected static ?int $navigationSort = 46;
 
     protected static string $view = 'filament.pages.manage-settings';
+
+    public static function canAccess(): bool
+    {
+        return PanelAccess::allows('settings_editorial');
+    }
 
     /**
      * @var array<string, mixed>|null

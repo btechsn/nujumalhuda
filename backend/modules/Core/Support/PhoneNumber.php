@@ -21,6 +21,10 @@ final class PhoneNumber
             return '+' . $digits;
         }
 
+        if (str_starts_with($digits, '0') && strlen($digits) === 10) {
+            $digits = substr($digits, 1);
+        }
+
         if (strlen($digits) === 9 && str_starts_with($digits, '7')) {
             return '+221' . $digits;
         }

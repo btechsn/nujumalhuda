@@ -7,11 +7,25 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\Dahira\Filament\Concerns\ScopesToDahira;
 use Modules\Dahira\Filament\Resources\TreasuryEntryResource\Pages;
 use Modules\Dahira\Models\TreasuryEntry;
+use Modules\Dahira\Services\DahiraAccess;
 
 class TreasuryEntryResource extends Resource
 {
+    use ScopesToDahira;
+
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dahira_money');
+    }
+
+    protected static function officerRoles(): array
+    {
+        return DahiraAccess::TREASURER_ROLES;
+    }
+
     protected static ?string $model = TreasuryEntry::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';

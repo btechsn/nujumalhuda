@@ -24,7 +24,23 @@
     "announcements": "Announcements",
     "prayers": "Prayers",
     "live": "Live",
-    "close": "Close"
+    "close": "Close",
+    "skip": "Skip to content",
+    "installText": "Install Nujum Al-Huda on this device to open it like an app.",
+    "installAccept": "Install the Nujum Al-Huda app",
+    "installLater": "Later",
+    "installIos": "On iPhone, open the Share menu, then “Add to Home Screen”.",
+    "alertsLede": "Everything starts off. Turn on only what you want to receive.",
+    "alertsOn": "On",
+    "alertsOff": "Off",
+    "alertsDenied": "The browser refused notifications.",
+    "alertsUnsupported": "This browser cannot receive notifications.",
+    "alertsNeedPush": "Notifications are not configured on the server yet.",
+    "lessonEmpty": "No lesson is available for your enrolment, and nothing is saved on this device yet.",
+    "lessonCached": "This lesson, its audio and its documents are saved on this device.",
+    "lessonOffline": "You are offline. This is the lesson saved on this device.",
+    "lessonAudio": "Audio",
+    "lessonFile": "Open the document"
   },
   "search": {
     "title": "Search",
@@ -93,6 +109,8 @@
     "firstNamePh": "Your first name",
     "lastNamePh": "Your last name",
     "identifierHint": "Provide an email or a phone number (at least one of the two).",
+    "loginIdentifierPh": "you@example.com or 77 123 45 67",
+    "loginIdentifierHint": "The same password works with the email and with the phone number.",
     "submitLogin": "Sign in",
     "submitRegister": "Create my account",
     "noAccount": "No account yet?",
@@ -120,6 +138,8 @@
     "memberSince": "Member since {date}",
     "welcome": "Hello {name}",
     "sectionProfile": "My profile",
+    "sectionLesson": "My lesson",
+    "sectionAlerts": "Notifications",
     "saveProfile": "Save",
     "savingProfile": "Saving…",
     "profileSaved": "Profile updated.",
@@ -176,11 +196,15 @@
     "statusNotStarted": "Upcoming",
     "certificateCode": "Certificate {code}",
     "roles": {
-      "admin": "General administrator",
-      "director": "Management",
-      "secretary": "Communication administration",
+      "admin": "Administrator",
+      "director": "Director",
+      "secretary": "Secretary",
       "teacher": "Teacher",
-      "academic_admin": "Academic administration"
+      "academic_admin": "Academic lead",
+      "dahira_muqaddam": "Muqaddam",
+      "dahira_secretary": "Dahira secretary",
+      "dahira_treasurer": "Treasurer",
+      "dahira_member": "Member"
     }
   },
   "announcements": {

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Education\Http\Controllers\CurrentLessonController;
 use Modules\Education\Http\Controllers\EnrollmentController;
 use Modules\Education\Http\Controllers\IndicatorController;
 use Modules\Education\Http\Controllers\EnrollmentDocumentController;
@@ -38,6 +39,7 @@ Route::prefix('api/v1/education')->middleware('api')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         
         // Inscriptions (entonnoir public)
+        Route::get('lessons/current', CurrentLessonController::class);
         Route::get('enrollments', [EnrollmentController::class, 'index']);
         Route::post('enrollments', [EnrollmentController::class, 'store']);
         Route::get('enrollments/{id}', [EnrollmentController::class, 'show']);

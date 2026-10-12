@@ -9,6 +9,11 @@ use Filament\Widgets\Widget;
 
 class SpacesBoard extends Widget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_money');
+    }
+
     protected static ?int $sort = 7;
 
     protected static string $view = 'filament.widgets.spaces-board';

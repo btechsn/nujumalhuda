@@ -12,6 +12,11 @@ use Modules\Academics\Models\HifzMilestone;
 
 class HifzMilestoneResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = HifzMilestone::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';

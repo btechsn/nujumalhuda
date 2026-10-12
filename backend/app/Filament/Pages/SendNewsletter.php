@@ -27,6 +27,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Modules\Community\Models\NewsletterSubscriber;
+use Modules\Core\Support\PanelAccess;
 use Modules\Core\Support\SiteSettings;
 use Throwable;
 
@@ -47,6 +48,11 @@ class SendNewsletter extends Page implements HasForms, HasTable
     protected static ?int $navigationSort = 40;
 
     protected static string $view = 'filament.pages.send-newsletter';
+
+    public static function canAccess(): bool
+    {
+        return PanelAccess::allows('newsletter');
+    }
 
     /**
      * @var array<string, mixed>|null

@@ -126,7 +126,7 @@ export function CentreShortcuts({
   return (
     <div
       ref={ref}
-      className="nh-container relative z-20 -mt-16 grid grid-cols-2 gap-3 lg:grid-cols-4"
+      className="nh-container relative z-20 -mt-14 grid grid-cols-2 gap-2 sm:-mt-16 sm:gap-3 lg:grid-cols-4"
     >
       {SHORTCUTS.map((item, index) => (
         <Link
@@ -135,22 +135,22 @@ export function CentreShortcuts({
           style={{ transitionDelay: settled ? "0ms" : visible ? `${index * 90}ms` : "0ms" }}
           className={`nh-shortcut-card ${visible ? "nh-shortcut-card--visible" : ""}`}
         >
-          <span className={`nh-shortcut-card__inner ${item.tone} flex min-h-36 flex-col items-center justify-center gap-2 px-4 py-5 text-center text-white`}>
+          <span className={`nh-shortcut-card__inner ${item.tone} flex min-h-32 flex-col items-center justify-center gap-1.5 px-2 py-4 text-center text-white sm:min-h-36 sm:gap-2 sm:px-4 sm:py-5`}>
             <ShortcutIcon name={item.icon} />
-            <span className="flex items-end justify-center gap-4">
+            <span className="flex max-w-full flex-wrap items-end justify-center gap-x-3 gap-y-1">
               {item.figures.map((figure) => (
-                <span key={figure} className="flex flex-col items-center">
-                  <span className="nh-numeric text-2xl font-extrabold leading-none text-white">
+                <span key={figure} className="flex min-w-0 flex-col items-center">
+                  <span className="nh-numeric text-xl font-extrabold leading-none text-white sm:text-2xl">
                     <FigureValue
                       target={indicators ? indicators[figure] : null}
                       active={visible}
                     />
                   </span>
-                  <span className="mt-1 text-xs text-white/80">{menu(`indicators.${figure}`)}</span>
+                  <span className="mt-1 max-w-full text-[0.65rem] leading-tight text-white/80 sm:text-xs">{menu(`indicators.${figure}`)}</span>
                 </span>
               ))}
             </span>
-            <span className="text-small font-semibold">{menu(item.name)}</span>
+            <span className="max-w-full text-xs font-semibold leading-tight sm:text-small">{menu(item.name)}</span>
           </span>
         </Link>
       ))}

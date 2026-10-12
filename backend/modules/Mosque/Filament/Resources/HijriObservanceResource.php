@@ -12,6 +12,11 @@ use Modules\Mosque\Models\HijriObservance;
 
 class HijriObservanceResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = HijriObservance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';

@@ -17,6 +17,11 @@ use Modules\News\Models\Article;
 
 class ArticleResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('news');
+    }
+
     protected static ?string $model = Article::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';

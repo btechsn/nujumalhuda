@@ -7,9 +7,21 @@ namespace App\Filament\Widgets;
 use App\Filament\Support\DashboardMetrics;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Modules\Core\Support\PanelAccess;
 
 class AttentionStats extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        foreach (['education', 'dahira_office', 'dahira_money', 'community', 'news'] as $section) {
+            if (PanelAccess::allows($section)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected static ?int $sort = 6;
 
     protected ?string $heading = 'À traiter';
@@ -34,6 +46,9 @@ class AttentionStats extends StatsOverviewWidget
                 ->color($waiting ? 'warning' : 'gray')
                 ->icon($waiting ? 'heroicon-o-exclamation-circle' : 'heroicon-o-check-circle')
                 ->url($item['url']);
-        }, DashboardMetrics::get()['attention']);
+        }, array_values(array_filter(
+            DashboardMetrics::get()['attention'],
+            fn (array $item): bool => PanelAccess::allows($item['section']),
+        )));
     }
 }

@@ -18,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Modules\Core\Support\PanelAccess;
 use Modules\Core\Support\PlatformPages;
 
 abstract class PlatformPage extends Page implements HasForms
@@ -35,6 +36,11 @@ abstract class PlatformPage extends Page implements HasForms
     public ?array $data = [];
 
     abstract protected static function pageId(): string;
+
+    public static function canAccess(): bool
+    {
+        return PanelAccess::allows('pages');
+    }
 
     public static function getSlug(): string
     {

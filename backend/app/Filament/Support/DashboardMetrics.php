@@ -64,13 +64,14 @@ final class DashboardMetrics
     /**
      * Dossiers en attente, avec le lien vers leur page d'administration.
      *
-     * @return list<array{key: string, label: string, value: int, ids: list<string>, url: ?string, icon: string}>
+     * @return list<array{key: string, section: string, label: string, value: int, ids: list<string>, url: ?string, icon: string}>
      */
     public static function attention(): array
     {
         $items = [
             [
                 'key' => 'enrollments',
+                'section' => 'education',
                 'label' => 'Inscriptions',
                 'ids' => self::ids(Enrollment::class, fn ($query) => $query->where('status', 'pending')),
                 'url' => self::url(EnrollmentResource::class),
@@ -78,6 +79,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'join_requests',
+                'section' => 'dahira_office',
                 'label' => 'Adhésions dahira',
                 'ids' => self::ids(DahiraJoinRequest::class, fn ($query) => $query->where('status', 'pending')),
                 'url' => self::url(\Modules\Dahira\Filament\Resources\JoinRequestResource::class),
@@ -85,6 +87,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'messages',
+                'section' => 'community',
                 'label' => 'Messages',
                 'ids' => self::ids(ContactMessage::class, fn ($query) => $query->where('status', 'new')),
                 'url' => self::url(\Modules\Community\Filament\Resources\ContactMessageResource::class),
@@ -92,6 +95,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'dues',
+                'section' => 'dahira_money',
                 'label' => 'Cotisations dues',
                 'ids' => self::ids(ContributionSchedule::class, fn ($query) => $query->whereIn('status', ['due', 'overdue'])),
                 'url' => self::url(\Modules\Dahira\Filament\Resources\ContributionScheduleResource::class),
@@ -99,6 +103,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'questions',
+                'section' => 'community',
                 'label' => 'FAQ',
                 'ids' => self::ids(Question::class, fn ($query) => $query->where('status', 'pending')),
                 'url' => self::url(QuestionResource::class),
@@ -106,6 +111,7 @@ final class DashboardMetrics
             ],
             [
                 'key' => 'comments',
+                'section' => 'news',
                 'label' => 'Commentaires',
                 'ids' => self::ids(ArticleComment::class, fn ($query) => $query->where('status', 'pending')),
                 'url' => self::url(\Modules\News\Filament\Resources\CommentResource::class),

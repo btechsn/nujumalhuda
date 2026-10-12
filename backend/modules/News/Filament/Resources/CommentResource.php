@@ -14,6 +14,11 @@ use Modules\News\Models\ArticleComment;
 
 class CommentResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('news');
+    }
+
     protected static ?string $model = ArticleComment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';

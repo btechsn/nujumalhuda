@@ -233,17 +233,47 @@ class User extends Authenticatable implements HasAvatar, HasName
         return (bool) ($this->minorConsent?->{$column} ?? false);
     }
 
+    /** @var list<string>|null */
+    private ?array $activeRoleNames = null;
+
     public function isStaff(): bool
     {
-        return $this->memberships()
+        return $this->hasAnyRole([
+            'admin',
+            'director',
+            'secretary',
+            'teacher',
+            'academic_admin',
+        ]);
+    }
+
+    /**
+     * @param  list<string>  $roles
+     */
+    public function hasAnyRole(array $roles): bool
+    {
+        return array_intersect($this->activeRoleNames(), $roles) !== [];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function activeRoleNames(): array
+    {
+        if ($this->activeRoleNames !== null) {
+            return $this->activeRoleNames;
+        }
+
+        $this->activeRoleNames = $this->memberships()
             ->where('status', 'active')
-            ->whereHas('role', fn ($query) => $query->whereIn('name', [
-                'admin',
-                'director',
-                'secretary',
-                'teacher',
-                'academic_admin',
-            ]))
-            ->exists();
+            ->with('role')
+            ->get()
+            ->pluck('role.name')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return $this->activeRoleNames;
     }
 }

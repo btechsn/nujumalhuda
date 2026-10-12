@@ -11,6 +11,11 @@ use Modules\Mosque\Models\IqamaAdjustment;
 
 class IqamaAdjustmentResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = IqamaAdjustment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';

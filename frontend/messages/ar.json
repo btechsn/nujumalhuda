@@ -24,7 +24,23 @@
     "announcements": "الإعلانات",
     "prayers": "الصلوات",
     "live": "البث",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "skip": "انتقل إلى المحتوى",
+    "installText": "ثبّت نجوم الهدى على هذا الجهاز لفتحه كتطبيق.",
+    "installAccept": "ثبّت تطبيق نجوم الهدى",
+    "installLater": "لاحقًا",
+    "installIos": "على آيفون، افتح قائمة المشاركة ثم «إضافة إلى الشاشة الرئيسية».",
+    "alertsLede": "كل شيء متوقف في البداية. فعّل فقط ما تريد استلامه.",
+    "alertsOn": "مفعّل",
+    "alertsOff": "متوقف",
+    "alertsDenied": "رفض المتصفح التنبيهات.",
+    "alertsUnsupported": "هذا المتصفح لا يستقبل التنبيهات.",
+    "alertsNeedPush": "التنبيهات غير مهيأة على الخادم بعد.",
+    "lessonEmpty": "لا يوجد درس متاح لتسجيلك، ولم يُحفظ شيء على هذا الجهاز بعد.",
+    "lessonCached": "هذا الدرس وصوته ووثائقه محفوظة على هذا الجهاز.",
+    "lessonOffline": "أنت غير متصل. هذا هو الدرس المحفوظ على هذا الجهاز.",
+    "lessonAudio": "صوت",
+    "lessonFile": "فتح المستند"
   },
   "search": {
     "title": "بحث",
@@ -93,6 +109,8 @@
     "firstNamePh": "الاسم الأول",
     "lastNamePh": "اسم العائلة",
     "identifierHint": "أدخل بريدًا إلكترونيًا أو رقم هاتف (واحد منهما على الأقل).",
+    "loginIdentifierPh": "anta@example.com أو 77 123 45 67",
+    "loginIdentifierHint": "كلمة المرور نفسها تصلح للبريد ورقم الهاتف.",
     "submitLogin": "تسجيل الدخول",
     "submitRegister": "إنشاء حسابي",
     "noAccount": "ليس لديك حساب بعد؟",
@@ -120,6 +138,8 @@
     "memberSince": "عضو منذ {date}",
     "welcome": "مرحبًا {name}",
     "sectionProfile": "ملفي الشخصي",
+    "sectionLesson": "درسي",
+    "sectionAlerts": "التنبيهات",
     "saveProfile": "حفظ",
     "savingProfile": "جارٍ الحفظ…",
     "profileSaved": "تم تحديث الملف الشخصي.",
@@ -176,11 +196,15 @@
     "statusNotStarted": "قادم",
     "certificateCode": "الشهادة {code}",
     "roles": {
-      "admin": "إداري عام",
-      "director": "الإدارة",
-      "secretary": "إدارة التواصل",
+      "admin": "إداري",
+      "director": "مدير",
+      "secretary": "أمين السر",
       "teacher": "معلم",
-      "academic_admin": "الإدارة الأكاديمية"
+      "academic_admin": "مسؤول تربوي",
+      "dahira_muqaddam": "مقدم",
+      "dahira_secretary": "أمين سر الدائرة",
+      "dahira_treasurer": "أمين الصندوق",
+      "dahira_member": "عضو"
     }
   },
   "announcements": {

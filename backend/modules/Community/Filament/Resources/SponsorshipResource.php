@@ -12,6 +12,11 @@ use Modules\Community\Models\Sponsorship;
 
 class SponsorshipResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = Sponsorship::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';

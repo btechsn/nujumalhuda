@@ -10,6 +10,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class OverviewStats extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dashboard_money');
+    }
+
     protected static ?int $sort = 1;
 
     protected ?string $heading = 'Indicateurs';

@@ -8,12 +8,26 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\Dahira\Filament\Concerns\ScopesToDahira;
 use Modules\Dahira\Filament\Resources\MeetingResource\Pages;
 use Modules\Dahira\Models\Meeting;
+use Modules\Dahira\Services\DahiraAccess;
 use Modules\Dahira\Services\DahiraNotifier;
 
 class MeetingResource extends Resource
 {
+    use ScopesToDahira;
+
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('dahira_office');
+    }
+
+    protected static function officerRoles(): array
+    {
+        return DahiraAccess::OFFICER_ROLES;
+    }
+
     protected static ?string $model = Meeting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';

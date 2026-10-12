@@ -12,6 +12,11 @@ use Modules\Live\Models\SocialAccount;
 
 class SocialAccountResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('social');
+    }
+
     protected static ?string $model = SocialAccount::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-link';

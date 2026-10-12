@@ -166,6 +166,34 @@ class ApiClient {
     return this.get('/academics/portal');
   }
 
+  async getNotificationPreferences() {
+    return this.get<{ preferences: { category: string; enabled: boolean }[] }>('/notifications/preferences');
+  }
+
+  async updateNotificationPreference(category: string, enabled: boolean) {
+    return this.put('/notifications/preferences', { category, enabled });
+  }
+
+  async subscribePush(data: {
+    endpoint: string;
+    public_key: string;
+    auth_token: string;
+    content_encoding?: string;
+  }) {
+    return this.post('/notifications/push-subscriptions', data);
+  }
+
+  async unsubscribePush(endpoint: string) {
+    return this.request('/notifications/push-subscriptions', {
+      method: 'DELETE',
+      body: JSON.stringify({ endpoint }),
+    });
+  }
+
+  async getCurrentLesson() {
+    return this.get('/education/lessons/current');
+  }
+
   // Méthodes « Mon dahira »
   // Ces endpoints renvoient leur JSON à plat (pas dans l'enveloppe
   // { success, data } du reste de l'API) : les appelants lisent la

@@ -12,6 +12,11 @@ use Modules\Community\Models\SmsDigestSubscriber;
 
 class SmsDigestSubscriberResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = SmsDigestSubscriber::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-device-phone-mobile';

@@ -13,6 +13,11 @@ use Modules\Mosque\Services\PrayerTimeService;
 
 class PrayerTimeResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('zawiya');
+    }
+
     protected static ?string $model = PrayerTime::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';

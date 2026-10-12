@@ -16,6 +16,11 @@ use Modules\Core\Models\User;
 
 class GalleryItemResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('community');
+    }
+
     protected static ?string $model = GalleryItem::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';

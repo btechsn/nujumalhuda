@@ -36,7 +36,7 @@ export function BannerSlider({ slides }: { slides: BannerSlide[] }) {
   return (
     <section
       aria-roledescription="carousel"
-      className="relative min-h-[28rem] overflow-hidden bg-brand-950 text-white sm:min-h-[34rem]"
+      className="relative min-h-[24rem] overflow-hidden bg-brand-950 text-white sm:min-h-[34rem]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -62,9 +62,9 @@ export function BannerSlider({ slides }: { slides: BannerSlide[] }) {
               />
             ) : null}
             <div aria-hidden="true" className={cn("absolute inset-0", slide.image ? "bg-brand-950/70" : "bg-brand-800")} />
-            <div className="relative flex min-h-[28rem] flex-col items-center justify-center px-16 pb-28 pt-16 text-center sm:min-h-[34rem]">
-              <p className="type-eyebrow text-gold-300">{slide.eyebrow}</p>
-              <h2 className="nh-banner-title mt-3 max-w-4xl font-sans font-extrabold tracking-tight text-white uppercase">
+            <div className="relative flex min-h-[24rem] w-full min-w-0 max-w-full flex-col items-center justify-center px-4 pb-28 pt-14 text-center sm:min-h-[34rem] sm:px-16 sm:pb-28 sm:pt-16">
+              <p className="type-eyebrow max-w-full px-2 text-center text-gold-300">{slide.eyebrow}</p>
+              <h2 className="nh-banner-title mt-3 font-sans font-extrabold tracking-tight text-white uppercase">
                 {slide.title}
               </h2>
               <Link
@@ -83,7 +83,7 @@ export function BannerSlider({ slides }: { slides: BannerSlide[] }) {
         type="button"
         onClick={() => go(index - 1)}
         aria-label={t("previous")}
-        className="absolute start-3 top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-brand-900 transition hover:bg-white sm:start-6"
+        className="absolute bottom-24 start-2 z-20 inline-flex size-9 items-center justify-center rounded-full bg-white/90 text-xl text-brand-900 transition hover:bg-white sm:start-6 sm:top-1/2 sm:bottom-auto sm:size-11 sm:-translate-y-1/2 sm:text-2xl"
       >
         ‹
       </button>
@@ -91,7 +91,7 @@ export function BannerSlider({ slides }: { slides: BannerSlide[] }) {
         type="button"
         onClick={() => go(index + 1)}
         aria-label={t("next")}
-        className="absolute end-3 top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-brand-900 transition hover:bg-white sm:end-6"
+        className="absolute bottom-24 end-2 z-20 inline-flex size-9 items-center justify-center rounded-full bg-white/90 text-xl text-brand-900 transition hover:bg-white sm:end-6 sm:top-1/2 sm:bottom-auto sm:size-11 sm:-translate-y-1/2 sm:text-2xl"
       >
         ›
       </button>

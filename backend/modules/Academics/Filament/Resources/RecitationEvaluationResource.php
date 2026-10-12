@@ -19,6 +19,11 @@ use Modules\Live\Models\LiveStream;
 
 class RecitationEvaluationResource extends Resource
 {
+    public static function canViewAny(): bool
+    {
+        return \Modules\Core\Support\PanelAccess::allows('academics');
+    }
+
     protected static ?string $model = RecitationEvaluation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-microphone';
