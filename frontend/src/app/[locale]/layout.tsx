@@ -46,6 +46,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     alternates: { languages },
+    appleWebApp: {
+      capable: true,
+      title: "Nujum Al-Huda",
+      statusBarStyle: "black-translucent",
+    },
+    icons: {
+      apple: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
+    },
   };
 }
 

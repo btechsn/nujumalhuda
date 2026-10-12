@@ -8,16 +8,33 @@ type InstallEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+type Sheet = "ios" | "inapp" | "menu" | "started";
+
 declare global {
   interface Window {
     __nhInstallPrompt?: InstallEvent;
   }
 }
 
+function browserKind(): "ios" | "inapp" | "android" | "other" {
+  const ua = navigator.userAgent;
+  if (/iphone|ipad|ipod/i.test(ua)) return "ios";
+  const inApp = /WhatsApp|Instagram|FBAN|FBAV|FB_IAB|Line\/|TikTok|Snapchat|Twitter|MicroMessenger|; wv\)/i.test(ua);
+  if (inApp) return "inapp";
+  if (/android/i.test(ua)) return "android";
+  return "other";
+}
+
+function openInChrome() {
+  const path = `${location.host}${location.pathname}${location.search}`;
+  const fallback = encodeURIComponent(location.href);
+  location.href = `intent://${path}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallback};end`;
+}
+
 export function InstallPrompt() {
   const t = useTranslations("comfort");
   const [visible, setVisible] = useState(false);
-  const [hint, setHint] = useState<string | null>(null);
+  const [sheet, setSheet] = useState<Sheet | null>(null);
   const eventRef = useRef<InstallEvent | null>(null);
   const waitingRef = useRef(false);
 
@@ -33,7 +50,7 @@ export function InstallPrompt() {
       eventRef.current = promptEvent;
       if (!waitingRef.current) return;
       waitingRef.current = false;
-      void openSheet(promptEvent);
+      void runPrompt(promptEvent);
     };
 
     if (window.__nhInstallPrompt) store(window.__nhInstallPrompt);
@@ -47,13 +64,17 @@ export function InstallPrompt() {
     window.addEventListener("beforeinstallprompt", onPrompt);
     return () => window.removeEventListener("beforeinstallprompt", onPrompt);
 
-    async function openSheet(promptEvent: InstallEvent) {
-      setHint(null);
-      await promptEvent.prompt();
-      const choice = await promptEvent.userChoice;
-      window.__nhInstallPrompt = undefined;
-      eventRef.current = null;
-      if (choice.outcome === "accepted") setVisible(false);
+    async function runPrompt(promptEvent: InstallEvent) {
+      setSheet(null);
+      try {
+        await promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
+        window.__nhInstallPrompt = undefined;
+        eventRef.current = null;
+        if (choice.outcome === "accepted") setSheet("started");
+      } catch {
+        setSheet(browserKind() === "ios" ? "ios" : "menu");
+      }
     }
   }, []);
 
@@ -63,18 +84,27 @@ export function InstallPrompt() {
     const current = eventRef.current ?? window.__nhInstallPrompt ?? null;
     if (current) {
       eventRef.current = current;
-      setHint(null);
-      await current.prompt();
-      const choice = await current.userChoice;
-      window.__nhInstallPrompt = undefined;
-      eventRef.current = null;
-      if (choice.outcome === "accepted") setVisible(false);
-      return;
+      setSheet(null);
+      try {
+        await current.prompt();
+        const choice = await current.userChoice;
+        window.__nhInstallPrompt = undefined;
+        eventRef.current = null;
+        if (choice.outcome === "accepted") setSheet("started");
+        return;
+      } catch {
+        window.__nhInstallPrompt = undefined;
+        eventRef.current = null;
+      }
     }
 
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (ios) {
-      setHint(t("installIos"));
+    const kind = browserKind();
+    if (kind === "ios") {
+      setSheet("ios");
+      return;
+    }
+    if (kind === "inapp") {
+      setSheet("inapp");
       return;
     }
 
@@ -82,25 +112,51 @@ export function InstallPrompt() {
     window.setTimeout(() => {
       if (!waitingRef.current) return;
       waitingRef.current = false;
-      setHint(t("installMenu"));
-    }, 1200);
+      setSheet("menu");
+    }, 700);
   }
+
+  const text =
+    sheet === "ios"
+      ? t("installIos")
+      : sheet === "inapp"
+        ? t("installChrome")
+        : sheet === "started"
+          ? t("installStarted")
+          : sheet === "menu"
+            ? t("installMenu")
+            : null;
 
   return (
     <>
-      {hint ? (
-        <p
-          role="status"
-          className="fixed inset-x-4 bottom-44 z-50 rounded-full bg-brand-950 px-4 py-2 text-center text-sm text-white shadow-lg sm:inset-x-auto sm:end-6 sm:max-w-sm"
-        >
-          {hint}
-        </p>
+      {text ? (
+        <div className="fixed inset-x-4 bottom-24 z-[80] rounded-2xl bg-brand-950 px-4 py-4 text-white shadow-2xl sm:inset-x-auto sm:end-6 sm:max-w-sm">
+          <p role="status" className="text-sm leading-6">
+            {text}
+          </p>
+          {sheet === "inapp" ? (
+            <button
+              type="button"
+              onClick={openInChrome}
+              className="mt-3 inline-flex rounded-full bg-gold-400 px-4 py-2 text-sm font-semibold text-brand-950"
+            >
+              {t("installOpenChrome")}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setSheet(null)}
+            className="mt-3 block text-xs font-semibold text-gold-300"
+          >
+            {t("close")}
+          </button>
+        </div>
       ) : null}
       <button
         type="button"
         onClick={() => void install()}
         aria-label={t("installAccept")}
-        className="fixed end-5 bottom-5 z-40 inline-flex size-14 items-center justify-center rounded-full bg-gold-400 text-brand-950 shadow-lg sm:end-6 sm:bottom-6"
+        className="fixed end-5 bottom-5 z-[70] inline-flex size-14 items-center justify-center rounded-full bg-gold-400 text-brand-950 shadow-lg sm:end-6 sm:bottom-6"
       >
         <DownloadArrowIcon />
       </button>
