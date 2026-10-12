@@ -102,7 +102,7 @@ export default async function LocaleLayout({
           {`(function(){try{var path=(location.pathname||"/").replace(/\\/$/,"")||"/";if(!/^\\/(fr|en|ar)$/.test(path))return;if(sessionStorage.getItem("nh-app-open"))return;if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;sessionStorage.setItem("nh-app-open","1");document.documentElement.setAttribute("data-app-open","play");}catch(e){}})();`}
         </Script>
         <Script id="nh-install" strategy="beforeInteractive">
-          {`(function(){window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__nhInstallPrompt=e;});if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(function(){});}})();`}
+          {`(function(){window.addEventListener("beforeinstallprompt",function(e){window.__nhInstallPrompt=e;});if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(function(){});}})();`}
         </Script>
         <Script id="nh-comfort" strategy="beforeInteractive">
           {`(function(){try{var raw=localStorage.getItem("nh-comfort");var p=raw?JSON.parse(raw):{};var root=document.documentElement;var theme=p.theme==="dark"||p.theme==="system"?p.theme:"light";var dark=theme==="dark"||(theme==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);root.classList.toggle("dark",dark);if(p.text==="125")root.setAttribute("data-text","125");if(p.arabic==="uthmani")root.setAttribute("data-arabic","uthmani");var save=navigator.connection&&navigator.connection.saveData;if(p.bandwidth==="low"||(p.bandwidth!=="full"&&save))root.setAttribute("data-bandwidth","low");}catch(e){}})();`}

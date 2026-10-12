@@ -56,7 +56,6 @@ export function InstallPrompt() {
     if (window.__nhInstallPrompt) store(window.__nhInstallPrompt);
 
     const onPrompt = (promptEvent: Event) => {
-      promptEvent.preventDefault();
       const installEvent = promptEvent as InstallEvent;
       window.__nhInstallPrompt = installEvent;
       store(installEvent);
@@ -108,12 +107,7 @@ export function InstallPrompt() {
       return;
     }
 
-    waitingRef.current = true;
-    window.setTimeout(() => {
-      if (!waitingRef.current) return;
-      waitingRef.current = false;
-      setSheet("menu");
-    }, 700);
+    setSheet("menu");
   }
 
   const text =
@@ -130,8 +124,10 @@ export function InstallPrompt() {
   return (
     <>
       {text ? (
-        <div className="fixed inset-x-4 bottom-24 z-[80] rounded-2xl bg-brand-950 px-4 py-4 text-white shadow-2xl sm:inset-x-auto sm:end-6 sm:max-w-sm">
-          <p role="status" className="text-sm leading-6">
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-brand-950/80 p-4 sm:items-center">
+          <div className="w-full max-w-md rounded-2xl bg-brand-950 px-5 py-5 text-white shadow-2xl">
+          <p className="text-lg font-semibold">{t("installTitle")}</p>
+          <p role="status" className="mt-3 text-base leading-7">
             {text}
           </p>
           {sheet === "inapp" ? (
@@ -146,10 +142,11 @@ export function InstallPrompt() {
           <button
             type="button"
             onClick={() => setSheet(null)}
-            className="mt-3 block text-xs font-semibold text-gold-300"
+            className="mt-4 text-sm font-semibold text-gold-300"
           >
             {t("close")}
           </button>
+          </div>
         </div>
       ) : null}
       <button
