@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { EightPointStar } from "@/components/brand/ornaments";
 import { useProgram } from "@/hooks/usePrograms";
 import { cn } from "@/lib/utils";
+import { markEditorialFallback, readEditorial } from "@/lib/editorial";
 import type { I18nField, Program } from "@/types/api";
 
 const TYPE_IMAGES: Record<string, string> = {
@@ -18,18 +19,20 @@ const TYPE_IMAGES: Record<string, string> = {
 };
 
 function i18nText(field: I18nField | undefined, locale: string): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr;
-  if (locale === "ar") return field.ar || field.fr;
-  return field.fr;
+  return readEditorial(field, locale).text;
 }
 
 function objectivesOf(program: Program, locale: string): string[] {
   const raw = program.objectives;
   if (!raw) return [];
   if (Array.isArray(raw)) return raw.filter(Boolean);
-  const localized = raw[locale] ?? raw.fr ?? [];
-  return Array.isArray(localized) ? localized.filter(Boolean) : [];
+  const own = Array.isArray(raw[locale]) ? raw[locale].filter(Boolean) : [];
+  const french = Array.isArray(raw.fr) ? raw.fr.filter(Boolean) : [];
+  if ((locale === "en" || locale === "ar") && own.length === 0 && french.length > 0) {
+    markEditorialFallback();
+    return french;
+  }
+  return locale === "fr" ? french : own;
 }
 
 function moneyOf(program: Program, kind: "tuition" | "registration"): string {

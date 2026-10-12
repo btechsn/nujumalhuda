@@ -7,15 +7,14 @@ import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 import { EightPointStar } from "@/components/brand/ornaments";
+import { WhatsAppShare } from "@/components/share/whatsapp-share";
 import { useArticle } from "@/hooks/useArticles";
+import { useAuth } from "@/hooks/useAuth";
+import { readEditorial } from "@/lib/editorial";
 import type { I18nField } from "@/types/api";
 
 function i18nText(field: I18nField | string | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 export function ArticleDetail() {
@@ -23,6 +22,7 @@ export function ArticleDetail() {
   const slug = params?.slug ?? "";
   const locale = useLocale();
   const t = useTranslations("news");
+  const share = useTranslations("common");
   const { data: article, isLoading, error } = useArticle(slug);
   const listHref = `/${locale}/actualites`;
 
@@ -85,6 +85,10 @@ export function ArticleDetail() {
             {title}
           </h1>
 
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <WhatsAppShare title={title} label={share("shareWhatsApp")} />
+          </div>
+
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-content-secondary">
             {publishedDate ? (
               <span className="inline-flex items-center gap-2">
@@ -143,14 +147,25 @@ type PublicComment = {
   author_name?: string;
   user?: { name?: string };
   created_at?: string;
+  replies?: PublicComment[] | { data?: PublicComment[] };
 };
+
+type CommentDesk = { open: boolean; charter: string };
+
+function commentReplies(comment: PublicComment): PublicComment[] {
+  if (Array.isArray(comment.replies)) return comment.replies;
+  if (Array.isArray(comment.replies?.data)) return comment.replies.data;
+  return [];
+}
 
 function ArticleComments({ articleId }: { articleId: string }) {
   const t = useTranslations("news.detail");
   const locale = useLocale();
+  const { user, loading } = useAuth();
   const [comments, setComments] = useState<PublicComment[]>([]);
-  const [name, setName] = useState("");
+  const [desk, setDesk] = useState<CommentDesk | null>(null);
   const [content, setContent] = useState("");
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -179,32 +194,81 @@ function ArticleComments({ articleId }: { articleId: string }) {
     };
   }, [articleId]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const loadDesk = async () => {
+      for (const base of API_BASES) {
+        try {
+          const response = await fetch(`${base}/settings/public`, {
+            headers: { Accept: "application/json" },
+            cache: "no-store",
+          });
+          if (!response.ok) continue;
+          const body = (await response.json()) as {
+            moderation?: { comments?: { open?: boolean; charter?: Record<string, string> } };
+          };
+          const commentsDesk = body.moderation?.comments;
+          const charter = commentsDesk?.charter;
+          const text =
+            commentsDesk?.open === true
+              ? charter?.[locale] || charter?.fr || ""
+              : "";
+          if (!cancelled) setDesk({ open: commentsDesk?.open === true, charter: text });
+          return;
+        } catch {
+          continue;
+        }
+      }
+      if (!cancelled) setDesk({ open: false, charter: "" });
+    };
+    void loadDesk();
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (busy || name.trim().length < 2 || content.trim().length < 10) return;
+    if (busy || !user || content.trim().length < 10) return;
     setBusy(true);
     setError(null);
     setNotice(null);
+    const token = localStorage.getItem("auth_token");
 
     try {
       for (const base of API_BASES) {
         try {
           const response = await fetch(`${base}/news/comments`, {
             method: "POST",
-            headers: { Accept: "application/json", "Content-Type": "application/json" },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
             body: JSON.stringify({
               article_id: articleId,
-              author_name: name.trim(),
               content: content.trim(),
+              ...(replyTo ? { parent_id: replyTo } : {}),
             }),
           });
-          if (response.status === 422 || response.status === 403) {
+          if (response.status === 401) {
+            setError(t("commentSignIn"));
+            setBusy(false);
+            return;
+          }
+          if (response.status === 403) {
+            setDesk({ open: false, charter: "" });
+            setBusy(false);
+            return;
+          }
+          if (response.status === 422) {
             setError(t("commentError"));
             setBusy(false);
             return;
           }
           if (!response.ok) continue;
           setContent("");
+          setReplyTo(null);
           setNotice(t("commentPending"));
           setBusy(false);
           return;
@@ -228,38 +292,62 @@ function ArticleComments({ articleId }: { articleId: string }) {
         <ul className="mt-4 space-y-4">
           {comments.map((comment) => (
             <li key={comment.id} className="rounded-2xl bg-[#f3f4f6] px-4 py-3">
-              <p className="text-sm font-semibold text-content">
-                {comment.author_name || comment.user?.name || "—"}
-              </p>
-              <p className="mt-1 text-sm text-content-secondary">{comment.content}</p>
-              {comment.created_at ? (
-                <p className="mt-2 text-xs text-content-secondary">
-                  {new Date(comment.created_at).toLocaleDateString(locale === "ar" ? "ar-SA" : locale, {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
+              <CommentBody comment={comment} locale={locale} />
+              {desk?.open && user ? (
+                <button
+                  type="button"
+                  className="mt-2 text-xs font-semibold uppercase tracking-wide text-brand-700"
+                  onClick={() => {
+                    setReplyTo(comment.id);
+                    setNotice(null);
+                  }}
+                >
+                  {t("commentReply")}
+                </button>
+              ) : null}
+              {commentReplies(comment).length > 0 ? (
+                <ul className="mt-3 space-y-3 border-s border-line ps-4">
+                  {commentReplies(comment).map((reply) => (
+                    <li key={reply.id}>
+                      <CommentBody comment={reply} locale={locale} />
+                    </li>
+                  ))}
+                </ul>
               ) : null}
             </li>
           ))}
         </ul>
       )}
 
+      {desk?.open === false ? (
+        <p className="mt-6 text-sm text-content-secondary">{t("commentClosed")}</p>
+      ) : null}
+
+      {desk?.open === true && !loading && !user ? (
+        <p className="mt-6 text-sm text-content-secondary">
+          <Link href={`/${locale}/compte/connexion`} className="font-semibold text-brand-700 underline">
+            {t("commentSignIn")}
+          </Link>
+        </p>
+      ) : null}
+
+      {desk?.open === true && user ? (
       <form onSubmit={submit} className="mt-6 space-y-4">
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-semibold text-content">{t("commentName")}</span>
-          <input
-            required
-            minLength={2}
-            maxLength={80}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={t("commentNamePh")}
-            autoComplete="name"
-            className="h-11 w-full rounded-xl border border-line bg-[#f8f9fa] px-3 text-sm text-content outline-none ring-primary/30 placeholder:text-content-secondary focus:bg-white focus:ring-2"
-          />
-        </label>
+        {desk.charter ? (
+          <p className="rounded-2xl bg-brand-50 px-4 py-3 text-sm text-content">
+            <span className="font-semibold">{t("commentCharter")}. </span>
+            {desk.charter}
+          </p>
+        ) : null}
+        {replyTo ? (
+          <p className="text-sm text-content-secondary">
+            {t("commentReplying")}{" "}
+            <button type="button" className="font-semibold text-brand-700 underline" onClick={() => setReplyTo(null)}>
+              {t("commentCancel")}
+            </button>
+          </p>
+        ) : null}
+        <p className="text-sm font-semibold text-content">{user.full_name}</p>
         <label className="block">
           <span className="mb-1.5 block text-sm font-semibold text-content">{t("commentBody")}</span>
           <textarea
@@ -277,13 +365,34 @@ function ArticleComments({ articleId }: { articleId: string }) {
         {error ? <p className="text-sm text-red-800">{error}</p> : null}
         <button
           type="submit"
-          disabled={busy || name.trim().length < 2 || content.trim().length < 10}
+          disabled={busy || content.trim().length < 10}
           className="inline-flex items-center rounded-full bg-brand-700 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-brand-800 disabled:opacity-40"
         >
           {busy ? "…" : t("commentSubmit")}
         </button>
       </form>
+      ) : null}
     </section>
+  );
+}
+
+function CommentBody({ comment, locale }: { comment: PublicComment; locale: string }) {
+  return (
+    <>
+      <p className="text-sm font-semibold text-content">
+        {comment.author_name || comment.user?.name || "—"}
+      </p>
+      <p className="mt-1 text-sm text-content-secondary">{comment.content}</p>
+      {comment.created_at ? (
+        <p className="mt-2 text-xs text-content-secondary">
+          {new Date(comment.created_at).toLocaleDateString(locale === "ar" ? "ar-SA" : locale, {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
+      ) : null}
+    </>
   );
 }
 

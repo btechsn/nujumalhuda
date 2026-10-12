@@ -4,6 +4,8 @@ namespace Modules\Academics\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Modules\Academics\Filament\Resources\IjazaResource\Pages;
 use Modules\Academics\Models\Ijaza;
 use Modules\Academics\Models\StudentProgress;
+use Modules\Core\Models\AuditLog;
 use Modules\Core\Models\User;
 use Modules\Education\Models\Enrollment;
 use Modules\Education\Models\Teacher;
@@ -54,7 +57,8 @@ class IjazaResource extends Resource
                 ))
                 ->searchable()
                 ->preload()
-                ->required(),
+                ->required()
+                ->live(),
             Forms\Components\Textarea::make('scope_i18n.fr')
                 ->label('Matière autorisée')
                 ->helperText('Ce que l’élève a le droit de transmettre. Exemple : récitation du Coran selon Hafs, tajwid, ou Juz Amma.')
@@ -76,8 +80,55 @@ class IjazaResource extends Resource
                 ->required(),
             Forms\Components\Toggle::make('is_public')
                 ->label('Visible sur le site')
-                ->default(false),
+                ->default(false)
+                ->helperText(fn (Get $get): string => self::consentHelperText($get('student_id'))),
         ])->columns(2);
+    }
+
+    /**
+     * Verrou technique (cahier des charges §8.3, point 1) : le nom de
+     * l'élève figure sur l'ijaza publiée ; sans consentement « nom public »
+     * enregistré, la publication reste refusée.
+     */
+    public static function enforceConsent(array $data): array
+    {
+        if (!($data['is_public'] ?? false) || blank($data['student_id'] ?? null)) {
+            return $data;
+        }
+
+        $student = User::find($data['student_id']);
+
+        $allowed = $student && $student->hasConsent('public_name');
+
+        if (!$allowed) {
+            $data['is_public'] = false;
+            Notification::make()
+                ->title('Publication refusée')
+                ->body('Le consentement « nom public » n\'est pas enregistré pour cet élève. L\'ijaza reste masquée du site.')
+                ->warning()
+                ->send();
+        }
+
+        AuditLog::log(
+            $allowed ? 'ijaza.published' : 'ijaza.publication_refused',
+            $student,
+            context: ['student_id' => $data['student_id']],
+        );
+
+        return $data;
+    }
+
+    public static function consentHelperText(?string $studentId): string
+    {
+        if (blank($studentId)) {
+            return 'Choisissez d\'abord un élève : la publication dépend de son consentement enregistré.';
+        }
+
+        $student = User::find($studentId);
+
+        return $student && $student->hasConsent('public_name')
+            ? 'Consentement enregistré : la publication est possible.'
+            : 'Aucun consentement enregistré pour cet élève (Conformité & RGPD → Élèves mineurs). La publication sera automatiquement refusée.';
     }
 
     public static function table(Table $table): Table

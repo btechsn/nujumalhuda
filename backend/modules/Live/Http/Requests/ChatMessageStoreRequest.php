@@ -3,12 +3,19 @@
 namespace Modules\Live\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Modules\Core\Support\ContributionDesk;
 
 class ChatMessageStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return ContributionDesk::isOpen('live_chat');
+    }
+
+    protected function failedAuthorization(): void
+    {
+        throw new HttpResponseException(ContributionDesk::refusal());
     }
 
     public function rules(): array

@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Modules\Core\Models\User;
+use Modules\Core\Models\Guardianship;
 use Modules\Education\Http\Requests\EnrollmentStoreRequest;
 use Modules\Education\Http\Requests\PublicEnrollmentStoreRequest;
 use Modules\Education\Http\Resources\EnrollmentResource;
 use Modules\Education\Models\Enrollment;
 use Modules\Education\Models\Promotion;
+use Modules\Education\Support\EnrollmentTracker;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnrollmentController extends Controller
@@ -95,10 +97,12 @@ class EnrollmentController extends Controller
         ]);
 
         $promotion->updateEnrollmentCount();
+        $trackingCode = EnrollmentTracker::issue($enrollment);
 
         return response()->json([
             'id' => $enrollment->id,
             'status' => $enrollment->status,
+            'tracking_code' => $trackingCode,
             'message' => 'Votre demande d\'inscription a été soumise avec succès.',
         ], Response::HTTP_CREATED);
     }
@@ -145,9 +149,11 @@ class EnrollmentController extends Controller
 
         // Mettre à jour le compteur de la promotion
         $promotion->updateEnrollmentCount();
+        $trackingCode = EnrollmentTracker::issue($enrollment);
 
         return response()->json([
             'message' => 'Votre demande d\'inscription a été soumise avec succès.',
+            'tracking_code' => $trackingCode,
             'data' => new EnrollmentResource($enrollment->load('promotion.program')),
         ], Response::HTTP_CREATED);
     }
@@ -172,14 +178,21 @@ class EnrollmentController extends Controller
      */
     public function index(): JsonResponse
     {
+        $wardIds = Guardianship::query()
+            ->where('guardian_id', Auth::id())
+            ->pluck('ward_id');
+
         $enrollments = Enrollment::query()
-            ->with(['promotion.program', 'promotion.mainTeacher'])
-            ->where('user_id', Auth::id())
+            ->with(['user', 'promotion.program'])
+            ->where(function ($query) use ($wardIds) {
+                $query->where('user_id', Auth::id());
+                if ($wardIds->isNotEmpty()) {
+                    $query->orWhereIn('user_id', $wardIds);
+                }
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json([
-            'data' => EnrollmentResource::collection($enrollments),
-        ]);
+        return EnrollmentResource::collection($enrollments)->response();
     }
 }

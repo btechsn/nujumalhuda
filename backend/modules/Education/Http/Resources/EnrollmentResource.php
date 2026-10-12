@@ -34,7 +34,8 @@ class EnrollmentResource extends JsonResource
             
             // Documents
             'documents' => $this->documents,
-            'application_data' => $this->application_data,
+            'application_data' => collect($this->application_data ?? [])->except('tracking_code_hash')->all(),
+            'student_name' => $this->whenLoaded('user', fn () => trim(($this->user->first_name ?? '').' '.($this->user->last_name ?? ''))),
             
             // Paiement
             'fees_paid' => $this->fees_paid,

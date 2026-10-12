@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Modules\Core\Contracts\NotificationChannel as NotificationChannelContract;
 use Modules\Core\Data\NotificationData;
+use Modules\Core\Enums\NotificationChannel;
+use Modules\Core\Models\NotificationPreference;
 use Modules\Core\Models\PushSubscription;
 use Modules\Core\Models\User;
 
@@ -20,6 +22,17 @@ class WebPushChannel implements NotificationChannelContract
         if ($privateKey === '' || $publicKey === '') {
             Log::info('Push non envoyé : clés VAPID absentes.');
 
+            return false;
+        }
+
+        $category = $this->category($notification->type);
+        $allowed = NotificationPreference::query()
+            ->where('user_id', $user->id)
+            ->where('channel', NotificationChannel::PUSH)
+            ->where('category', $category)
+            ->where('enabled', true)
+            ->exists();
+        if (!$allowed) {
             return false;
         }
 
@@ -71,6 +84,22 @@ class WebPushChannel implements NotificationChannelContract
     public function getName(): string
     {
         return 'push';
+    }
+
+    private function category(string $type): string
+    {
+        $type = strtolower($type);
+        if (str_contains($type, 'announcement')) {
+            return 'announcements';
+        }
+        if (str_contains($type, 'prayer')) {
+            return 'prayers';
+        }
+        if (str_contains($type, 'live')) {
+            return 'live';
+        }
+
+        return 'general';
     }
 
     public function isAvailableFor(User $user): bool

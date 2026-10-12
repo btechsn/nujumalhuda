@@ -1,16 +1,18 @@
 import createMiddleware from 'next-intl/middleware';
+import { NextRequest } from 'next/server';
 import { locales } from './i18n/request';
 
-export default createMiddleware({
-  // Liste des locales supportées
+const handleI18n = createMiddleware({
   locales,
-
-  // Locale par défaut
   defaultLocale: 'fr',
-
-  // Détection automatique de la locale depuis le header Accept-Language
   localeDetection: true,
 });
+
+export default function middleware(request: NextRequest) {
+  const headers = new Headers(request.headers);
+  headers.set('x-pathname', request.nextUrl.pathname);
+  return handleI18n(new NextRequest(request, { headers }));
+}
 
 export const config = {
   // Matcher qui exclut les routes d'API, assets, etc.

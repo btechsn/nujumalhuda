@@ -62,7 +62,7 @@ final class SiteSettings
             'footer.newsletter_button_en' => self::field('Bouton (anglais)', 'newsletter', default: 'Subscribe', public: true),
             'footer.newsletter_button_ar' => self::field('Bouton (arabe)', 'newsletter', default: 'اشترك', public: true),
 
-            'analytics.measurement_id' => self::field('Identifiant de mesure', 'analytics', public: true, span: 'full'),
+            'analytics.plausible_domain' => self::field('Domaine Plausible', 'analytics', public: true, span: 'full'),
 
             'mail.host' => self::field('Serveur SMTP', 'mail'),
             'mail.port' => self::field('Port', 'mail', type: 'integer', default: '587'),
@@ -106,8 +106,8 @@ final class SiteSettings
                 'description' => 'Colonnes « Liens utiles » et « Autres liens ». Les textes sont préremplis en français, anglais et arabe.',
             ],
             'analytics' => [
-                'title' => 'Google Analytics',
-                'description' => 'Identifiant de mesure, par exemple G-XXXXXXXX. Laisser vide pour ne pas charger Analytics.',
+                'title' => 'Plausible',
+                'description' => 'Domaine du site suivi par Plausible, par exemple nujumalhuda.com. Laisser vide pour ne rien charger. Aucun script Google n’est utilisé.',
             ],
             'mail' => [
                 'title' => 'E-mail',
@@ -235,7 +235,7 @@ final class SiteSettings
             'latitude' => $latitude,
             'longitude' => $longitude,
             'footer_note' => (string) self::value('site.footer_note', ''),
-            'analytics_id' => (string) self::value('analytics.measurement_id', ''),
+            'plausible_domain' => self::plausibleDomain(),
             'logo_url' => self::logoUrl(),
             'footer_title' => self::localeTrio('footer.title'),
             'footer_blurb' => self::localeTrio('footer.blurb'),
@@ -310,6 +310,15 @@ final class SiteSettings
         }
 
         return $value === null ? null : (string) $value;
+    }
+
+    private static function plausibleDomain(): string
+    {
+        $raw = strtolower(trim((string) self::value('analytics.plausible_domain', '')));
+
+        return preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/', $raw) === 1
+            ? $raw
+            : '';
     }
 
     private static function boolValue(string $key, bool $default): bool

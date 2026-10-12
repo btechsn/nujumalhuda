@@ -6,21 +6,59 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { EightPointStar } from "@/components/brand/ornaments";
 import { PageHeading } from "@/components/layout/page-heading";
-import { submitPublicEnrollment } from "@/hooks/useEnrollment";
+import {
+  submitPublicEnrollment,
+  trackEnrollment,
+  uploadEnrollmentDocument,
+  type TrackedDossier,
+} from "@/hooks/useEnrollment";
 import { usePrograms } from "@/hooks/usePrograms";
 import { usePromotions } from "@/hooks/usePromotions";
+import { markEditorialFallback, readEditorial } from "@/lib/editorial";
 import type { I18nField, Promotion } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 const FIELD =
   "h-11 w-full rounded-xl border border-black/10 bg-[#f8f9fa] px-3 text-sm text-content outline-none transition placeholder:text-content-secondary/70 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-gold-300/50";
 
+function FileField({
+  label,
+  accept,
+  file,
+  chooseLabel,
+  emptyLabel,
+  onPick,
+}: {
+  label: string;
+  accept: string;
+  file: File | null;
+  chooseLabel: string;
+  emptyLabel: string;
+  onPick: (file: File | null) => void;
+}) {
+  return (
+    <div>
+      <span className="mb-1.5 block text-sm font-semibold text-content">{label}</span>
+      <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-black/10 bg-[#f8f9fa] p-2 transition hover:border-brand-500 hover:bg-white">
+        <span className="inline-flex h-9 shrink-0 items-center rounded-full bg-brand-800 px-4 text-xs font-semibold uppercase tracking-wide text-white">
+          {chooseLabel}
+        </span>
+        <span className={`min-w-0 truncate text-sm ${file ? "font-medium text-content" : "text-content-secondary"}`}>
+          {file ? file.name : emptyLabel}
+        </span>
+        <input
+          type="file"
+          accept={accept}
+          className="sr-only"
+          onChange={(event) => onPick(event.target.files?.[0] ?? null)}
+        />
+      </label>
+    </div>
+  );
+}
+
 function i18nText(field: I18nField | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 export function EnrollmentBoard() {
@@ -44,9 +82,18 @@ export function EnrollmentBoard() {
   const [hasQuran, setHasQuran] = useState(false);
   const [quranLevel, setQuranLevel] = useState("none");
   const [arabicLevel, setArabicLevel] = useState("none");
+  const [idCard, setIdCard] = useState<File | null>(null);
+  const [birthCertificate, setBirthCertificate] = useState<File | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [trackingCode, setTrackingCode] = useState("");
+  const [uploadWarning, setUploadWarning] = useState(false);
+  const [lookupCode, setLookupCode] = useState("");
+  const [lookupBusy, setLookupBusy] = useState(false);
+  const [dossier, setDossier] = useState<TrackedDossier | null>(null);
+  const [lookupError, setLookupError] = useState("");
 
   const programOptions = useMemo(() => {
     const ids = new Set(promotions.map((promo) => promo.program_id));
@@ -110,7 +157,23 @@ export function EnrollmentBoard() {
         quran_level: quranLevel,
         arabic_level: arabicLevel,
       });
-      if (result?.id) {
+      if (result?.id && result.tracking_code) {
+        const uploads: Array<[string, File | null]> = [
+          ["id_card", idCard],
+          ["birth_certificate", birthCertificate],
+          ["photo", photo],
+        ];
+        let failed = false;
+        for (const [type, file] of uploads) {
+          if (!file) continue;
+          const ok = await uploadEnrollmentDocument(result.tracking_code, type, file);
+          if (!ok) failed = true;
+        }
+        setTrackingCode(result.tracking_code);
+        setUploadWarning(failed);
+        setStatus("ok");
+      } else if (result?.id) {
+        setTrackingCode("");
         setStatus("ok");
       } else {
         setStatus("error");
@@ -208,9 +271,23 @@ export function EnrollmentBoard() {
                 ) : status === "ok" ? (
                   <div className="mt-8 rounded-2xl bg-brand-50 p-5">
                     <p className="text-sm font-semibold text-brand-900">{t("success")}</p>
+                    {trackingCode ? (
+                      <p className="mt-3 text-sm text-brand-950">
+                        {t("trackingHint")}
+                        <span className="mt-2 block break-all font-mono text-base font-bold">{trackingCode}</span>
+                      </p>
+                    ) : null}
+                    {uploadWarning ? <p className="mt-3 text-sm text-red-700">{t("uploadWarning")}</p> : null}
                     <button
                       type="button"
-                      onClick={() => setStatus("idle")}
+                      onClick={() => {
+                        setStatus("idle");
+                        setTrackingCode("");
+                        setUploadWarning(false);
+                        setIdCard(null);
+                        setBirthCertificate(null);
+                        setPhoto(null);
+                      }}
                       className="mt-4 inline-flex h-10 items-center justify-center rounded-full bg-brand-800 px-5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-brand-900"
                     >
                       {t("another")}
@@ -415,6 +492,37 @@ export function EnrollmentBoard() {
                       </label>
                     </div>
 
+                    <div id="pieces">
+                      <p className="mb-1 text-sm font-semibold text-content">{t("documentsTitle")}</p>
+                      <p className="mb-3 text-xs text-content-secondary">{t("documentsHint")}</p>
+                      <div className="grid gap-4">
+                        <FileField
+                          label={t("idCard")}
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png"
+                          file={idCard}
+                          chooseLabel={t("chooseFile")}
+                          emptyLabel={t("noFile")}
+                          onPick={setIdCard}
+                        />
+                        <FileField
+                          label={t("birthCertificate")}
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png"
+                          file={birthCertificate}
+                          chooseLabel={t("chooseFile")}
+                          emptyLabel={t("noFile")}
+                          onPick={setBirthCertificate}
+                        />
+                        <FileField
+                          label={t("photo")}
+                          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                          file={photo}
+                          chooseLabel={t("chooseFile")}
+                          emptyLabel={t("noFile")}
+                          onPick={setPhoto}
+                        />
+                      </div>
+                    </div>
+
                     {status === "error" ? (
                       <p className="text-sm text-red-700">{errorMessage || t("errors.send")}</p>
                     ) : null}
@@ -431,6 +539,62 @@ export function EnrollmentBoard() {
               </div>
             </div>
           </div>
+
+          <form
+            className="mt-6 rounded-3xl bg-white p-6 shadow-xl shadow-brand-950/5 ring-1 ring-black/5 sm:p-8"
+            onSubmit={async (event) => {
+              event.preventDefault();
+              setLookupBusy(true);
+              setLookupError("");
+              setDossier(null);
+              const found = await trackEnrollment(lookupCode.trim());
+              if (found === "missing" || !found) {
+                setLookupError(t("trackingMissing"));
+              } else {
+                if (found.program_fell_back || found.promotion_fell_back) markEditorialFallback();
+                setDossier(found);
+              }
+              setLookupBusy(false);
+            }}
+          >
+            <h2 className="font-sans text-2xl font-extrabold text-content">{t("trackingTitle")}</h2>
+            <p className="mt-2 text-sm text-content-secondary">{t("trackingLede")}</p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <input
+                required
+                value={lookupCode}
+                onChange={(event) => setLookupCode(event.target.value)}
+                placeholder={t("trackingPh")}
+                className={FIELD}
+              />
+              <button
+                type="submit"
+                disabled={lookupBusy}
+                className="inline-flex h-11 items-center justify-center rounded-full bg-brand-900 px-6 text-xs font-semibold uppercase tracking-wide text-white hover:bg-brand-800 disabled:opacity-60"
+              >
+                {lookupBusy ? t("loading") : t("trackingSubmit")}
+              </button>
+            </div>
+            {lookupError ? <p className="mt-3 text-sm text-red-700">{lookupError}</p> : null}
+            {dossier ? (
+              <div className="mt-5 rounded-2xl bg-[#f8f9fa] p-4 text-sm text-content">
+                <p className="font-semibold">{dossier.student_name || t("trackingStudent")}</p>
+                <p className="mt-1">{dossier.program} · {dossier.promotion}</p>
+                <p className="mt-1">{t("trackingStatus")}: {t(`statuses.${dossier.status}`)}</p>
+                <ul className="mt-3 space-y-1">
+                  {dossier.documents.length === 0 ? (
+                    <li>{t("trackingNoDocuments")}</li>
+                  ) : (
+                    dossier.documents.map((document) => (
+                      <li key={document.id}>
+                        {t(`docTypes.${document.type}`)} — {t(`docStatus.${document.verification_status}`)}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            ) : null}
+          </form>
         </div>
       </section>
     </article>

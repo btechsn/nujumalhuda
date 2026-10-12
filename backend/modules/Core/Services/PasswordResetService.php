@@ -21,11 +21,11 @@ class PasswordResetService
     ) {
     }
 
-    public function request(string $identifier): void
+    public function request(string $identifier): ?string
     {
         $user = $this->findUser($identifier);
         if (!$user) {
-            return;
+            return null;
         }
 
         $phone = PhoneNumber::e164($identifier);
@@ -40,10 +40,10 @@ class PasswordResetService
             'expires_at' => now()->addMinutes($minutes),
         ]);
 
+        $link = $this->frontendBase() . '/fr/reinitialiser?token=' . $token;
         $message = $channel === 'sms'
             ? 'Nujum Al-Huda — code de reinitialisation : ' . $token
-            : 'Reinitialisez votre mot de passe Nujum Al-Huda : ' . rtrim((string) config('app.frontend_url', env('FRONTEND_URL', 'https://nujumalhuda.com')), '/')
-                . '/reinitialiser?token=' . $token;
+            : 'Reinitialisez votre mot de passe Nujum Al-Huda : ' . $link;
 
         $data = new NotificationData(
             user_id: $user->id,
@@ -54,9 +54,29 @@ class PasswordResetService
         );
 
         $sent = $channel === 'sms' ? $this->sms->send($user, $data) : $this->mail->send($user, $data);
-        if (!$sent) {
-            $reset->delete();
+        $delivered = $sent && config('mail.default') !== 'log';
+        if ($delivered) {
+            return null;
         }
+
+        if (app()->environment('local') && $channel === 'email') {
+            return $link;
+        }
+
+        $reset->delete();
+
+        return null;
+    }
+
+    private function frontendBase(): string
+    {
+        $base = rtrim((string) config('app.frontend_url'), '/');
+        $api = rtrim((string) config('app.url'), '/');
+        if ($base === '' || $base === $api) {
+            return 'http://localhost:3000';
+        }
+
+        return $base;
     }
 
     public function reset(string $identifier, string $token, string $password): bool
@@ -87,13 +107,13 @@ class PasswordResetService
 
     private function findUser(string $identifier): ?User
     {
-        $phone = PhoneNumber::e164($identifier);
+        $phones = PhoneNumber::storedForms($identifier);
 
         return User::query()
-            ->where(function ($query) use ($identifier, $phone): void {
+            ->where(function ($query) use ($identifier, $phones): void {
                 $query->where('email', $identifier);
-                if ($phone) {
-                    $query->orWhere('phone', $phone);
+                if ($phones !== []) {
+                    $query->orWhereIn('phone', $phones);
                 }
             })
             ->first();

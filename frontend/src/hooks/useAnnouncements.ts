@@ -1,15 +1,16 @@
-/**
- * Hook pour récupérer et écouter les annonces en temps réel
- */
+"use client";
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { getEcho } from '@/lib/reverb';
+import { useEffect, useState } from "react";
+
+import { markEditorialFallback } from "@/lib/editorial";
+import { getEcho } from "@/lib/reverb";
 
 export interface Announcement {
   id: string;
   title: string;
   message: string;
+  title_fell_back?: boolean;
+  message_fell_back?: boolean;
   category: {
     value: string;
     label: string;
@@ -19,62 +20,81 @@ export interface Announcement {
     value: string;
     label: string;
   };
-  action_url?: string;
+  action_url?: string | null;
   starts_at?: string;
   ends_at?: string;
   created_at: string;
 }
 
-export function useAnnouncements() {
+const API_BASES = [
+  process.env.NEXT_PUBLIC_API_URL,
+  "http://127.0.0.1:8000/api/v1",
+  "http://localhost:8000/api/v1",
+].filter((base): base is string => Boolean(base));
+
+async function loadAnnouncements(locale: string): Promise<Announcement[]> {
+  const token = typeof window === "undefined" ? null : localStorage.getItem("auth_token");
+
+  for (const base of API_BASES) {
+    try {
+      const response = await fetch(`${base}/announcements`, {
+        headers: {
+          Accept: "application/json",
+          "Accept-Language": locale,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        cache: "no-store",
+      });
+      if (!response.ok) continue;
+      const body = (await response.json()) as { data?: Announcement[] };
+      return Array.isArray(body.data) ? body.data : [];
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error("Annonces indisponibles");
+}
+
+export function useAnnouncements(locale: string) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Récupérer les annonces initiales
-    api
-      .get<Announcement[]>('/announcements')
-      .then((response) => {
-        if (response.data) {
-          setAnnouncements(response.data);
+    let cancelled = false;
+
+    const refresh = async () => {
+      try {
+        const items = await loadAnnouncements(locale);
+        if (cancelled) return;
+        if (items.some((item) => item.message_fell_back || item.title_fell_back)) {
+          markEditorialFallback();
         }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
+        setAnnouncements(items);
+      } catch {
+        if (!cancelled) setAnnouncements([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void refresh();
+
+    let echo: ReturnType<typeof getEcho> | null = null;
+    try {
+      echo = getEcho();
+      echo.channel("announcements").listen(".announcement.new", () => {
+        void refresh();
       });
-
-    // S'abonner au canal WebSocket
-    try {
-      const echo = getEcho();
-      
-      echo
-        .channel('announcements')
-        .listen('.announcement.new', (event: { announcement: Announcement }) => {
-          setAnnouncements((prev) => [event.announcement, ...prev]);
-        });
-
-      return () => {
-        echo.leave('announcements');
-      };
-    } catch (err) {
-      console.error('Failed to connect to WebSocket:', err);
+    } catch {
+      echo = null;
     }
-  }, []);
 
-  const markAsRead = async (announcementId: string) => {
-    try {
-      await api.post(`/announcements/${announcementId}/read`, {});
-    } catch (err) {
-      console.error('Failed to mark announcement as read:', err);
-    }
-  };
+    return () => {
+      cancelled = true;
+      echo?.leave("announcements");
+    };
+  }, [locale]);
 
-  return {
-    announcements,
-    loading,
-    error,
-    markAsRead,
-  };
+  return { announcements, loading };
 }

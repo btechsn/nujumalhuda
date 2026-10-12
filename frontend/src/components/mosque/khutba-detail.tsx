@@ -6,7 +6,9 @@ import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 import { EightPointStar } from "@/components/brand/ornaments";
+import { WhatsAppShare } from "@/components/share/whatsapp-share";
 import { fetchApiJson, unwrapItem } from "@/lib/api-fetch";
+import { readEditorial } from "@/lib/editorial";
 import type { I18nField } from "@/types/api";
 
 type RelatedLive = {
@@ -34,11 +36,7 @@ type KhutbaDetailData = {
 };
 
 function i18nText(field: I18nField | string | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 function youtubeEmbed(url: string | null | undefined): string | null {
@@ -170,6 +168,10 @@ export function KhutbaDetail() {
           >
             {title}
           </h1>
+
+          <div className="mt-4">
+            <WhatsAppShare title={title} label={common("shareWhatsApp")} />
+          </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-content-secondary">
             {dateLabel ? (

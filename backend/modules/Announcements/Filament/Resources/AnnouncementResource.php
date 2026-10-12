@@ -6,13 +6,18 @@ namespace Modules\Announcements\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Modules\Announcements\Enums\AnnouncementCategory;
 use Modules\Announcements\Enums\AnnouncementPriority;
+use Modules\Announcements\Enums\AudienceType;
 use Modules\Announcements\Filament\Resources\AnnouncementResource\Pages;
 use Modules\Announcements\Models\Announcement;
+use Modules\Core\Models\Organization;
+use Modules\Core\Models\Role;
+use Modules\Education\Models\Promotion;
 
 class AnnouncementResource extends Resource
 {
@@ -90,6 +95,24 @@ class AnnouncementResource extends Resource
                         ->maxLength(255)
                         ->placeholder('https://youtube.com/… ou /centre/khutbas')
                         ->helperText('Adresse externe (https://…) ou page du site (/centre/khutbas).'),
+                    Forms\Components\Select::make('audience_type')
+                        ->label('Public')
+                        ->options(collect(AudienceType::cases())->mapWithKeys(
+                            fn (AudienceType $type): array => [$type->value => $type->label()],
+                        )->all())
+                        ->default(AudienceType::PUBLIC->value)
+                        ->required()
+                        ->live()
+                        ->dehydrated(false)
+                        ->helperText('« Tout public » est le choix par défaut. Un autre public ne voit l’annonce que s’il est concerné.'),
+                    Forms\Components\Select::make('audience_target')
+                        ->label('Cible')
+                        ->options(fn (Get $get): array => self::audienceTargets((string) $get('audience_type')))
+                        ->searchable()
+                        ->preload()
+                        ->dehydrated(false)
+                        ->required(fn (Get $get): bool => in_array($get('audience_type'), ['role', 'organization', 'cohort'], true))
+                        ->visible(fn (Get $get): bool => in_array($get('audience_type'), ['role', 'organization', 'cohort'], true)),
                 ])
                 ->columns(2),
         ]);
@@ -149,6 +172,29 @@ class AnnouncementResource extends Resource
             'create' => Pages\CreateAnnouncement::route('/create'),
             'edit' => Pages\EditAnnouncement::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function audienceTargets(string $type): array
+    {
+        return match ($type) {
+            'role' => Role::query()->orderBy('display_name')->get()
+                ->mapWithKeys(fn (Role $role): array => [$role->getKey() => $role->display_name ?: $role->name])
+                ->all(),
+            'organization' => Organization::query()->orderBy('name')->get()
+                ->mapWithKeys(fn (Organization $organization): array => [$organization->getKey() => (string) $organization->name])
+                ->all(),
+            'cohort' => Promotion::query()->orderByDesc('start_date')->limit(80)->get()
+                ->mapWithKeys(function (Promotion $promotion): array {
+                    $name = $promotion->name_i18n['fr'] ?? $promotion->code ?? $promotion->getKey();
+
+                    return [$promotion->getKey() => (string) $name];
+                })
+                ->all(),
+            default => [],
+        };
     }
 
     /**

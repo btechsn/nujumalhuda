@@ -20,7 +20,11 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
     Route::prefix('live')->group(function () {
         Route::get('social-accounts', [SocialAccountController::class, 'index']);
         Route::get('recitation-sessions', [RecitationSessionController::class, 'index']);
-        Route::middleware('auth:sanctum')->post('recitation-sessions', [RecitationSessionController::class, 'store']);
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('recitation-sessions/mine', [RecitationSessionController::class, 'mine']);
+            Route::post('recitation-sessions', [RecitationSessionController::class, 'store']);
+            Route::post('recitation-sessions/{id}/start', [RecitationSessionController::class, 'start']);
+        });
 
         Route::get('streams', [LiveStreamController::class, 'index']);
         Route::get('streams/live', [LiveStreamController::class, 'live']);

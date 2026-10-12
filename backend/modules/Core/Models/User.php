@@ -9,6 +9,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -195,6 +196,41 @@ class User extends Authenticatable implements HasAvatar, HasName
             ->where('status', 'active')
             ->whereHas('role.permissions', fn($q) => $q->where('name', $permission))
             ->exists();
+    }
+
+    /**
+     * Consentements parentaux (cahier des charges, §8.3, point 1).
+     */
+    public function minorConsent(): HasOne
+    {
+        return $this->hasOne(MinorConsent::class);
+    }
+
+    /**
+     * Candidat « élève mineur » au sens de la plateforme : un tuteur est
+     * déclaré pour lui. Sert à distinguer qui a besoin d'un consentement.
+     */
+    public function isMinorCandidate(): bool
+    {
+        return $this->guardians()->exists();
+    }
+
+    /**
+     * Vérifie un consentement précis avant toute diffusion publique.
+     * `$usage` ∈ {gallery_image, recitation_audio, public_name}.
+     *
+     * Un adulte (sans tuteur déclaré) n'a pas besoin de ce consentement :
+     * seule une fiche d'élève mineur en a une.
+     */
+    public function hasConsent(string $usage): bool
+    {
+        if (!$this->isMinorCandidate()) {
+            return true;
+        }
+
+        $column = $usage.'_consent';
+
+        return (bool) ($this->minorConsent?->{$column} ?? false);
     }
 
     public function isStaff(): bool

@@ -1,4 +1,43 @@
 {
+  "editorial": {
+    "fallback": "تُعرض هذه الصفحة بالفرنسية : الترجمة غير متوفرة بعد."
+  },
+  "comfort": {
+    "open": "الراحة",
+    "title": "راحة القراءة",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام",
+    "text": "النص",
+    "textNormal": "100٪",
+    "textLarge": "125٪",
+    "arabic": "الرسم العربي",
+    "naskh": "مبسّط",
+    "uthmani": "عثماني",
+    "bandwidth": "الاتصال",
+    "full": "كامل",
+    "low": "خفيف",
+    "push": "التنبيهات",
+    "signIn": "سجّل الدخول لاختيار التنبيهات.",
+    "pushPending": "الخادم لا يرسل التنبيهات بعد. تم حفظ اختيارك.",
+    "announcements": "الإعلانات",
+    "prayers": "الصلوات",
+    "live": "البث",
+    "close": "إغلاق"
+  },
+  "search": {
+    "title": "بحث",
+    "placeholder": "آية، خطبة، برنامج…",
+    "submit": "بحث",
+    "empty": "لا توجد نتيجة عامة لهذا البحث.",
+    "hint": "حرفان على الأقل.",
+    "kinds": {
+      "article": "خبر",
+      "khutba": "خطبة",
+      "program": "برنامج"
+    }
+  },
   "common": {
     "appName": "مركز نجوم الهدى",
     "loading": "جارٍ التحميل...",
@@ -17,7 +56,8 @@
     "previous": "السابق",
     "home": "الرئيسية",
     "logout": "تسجيل الخروج",
-    "changeLanguage": "تغيير اللغة"
+    "changeLanguage": "تغيير اللغة",
+    "shareWhatsApp": "مشاركة عبر واتساب"
   },
   "nav": {
     "home": "الرئيسية",
@@ -28,7 +68,9 @@
     "news": "الأخبار",
     "contact": "اتصل بنا",
     "login": "تسجيل الدخول",
-    "register": "التسجيل"
+    "register": "التسجيل",
+    "support": "ادعم",
+    "enroll": "سجّل"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -44,11 +86,108 @@
     "rememberMe": "تذكرني",
     "loginSuccess": "تم تسجيل الدخول بنجاح",
     "logoutSuccess": "تم تسجيل الخروج بنجاح",
-    "registerSuccess": "تم التسجيل بنجاح"
+    "registerSuccess": "تم التسجيل بنجاح",
+    "emailPh": "anta@example.com",
+    "phonePh": "77 123 45 67",
+    "passwordPh": "••••••••",
+    "firstNamePh": "الاسم الأول",
+    "lastNamePh": "اسم العائلة",
+    "identifierHint": "أدخل بريدًا إلكترونيًا أو رقم هاتف (واحد منهما على الأقل).",
+    "submitLogin": "تسجيل الدخول",
+    "submitRegister": "إنشاء حسابي",
+    "noAccount": "ليس لديك حساب بعد؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "createAccount": "إنشاء حساب",
+    "backToLogin": "العودة إلى تسجيل الدخول",
+    "loginError": "بيانات الدخول غير صحيحة.",
+    "registerError": "لم يتم التسجيل.",
+    "genericError": "حدث خطأ ما.",
+    "sendResetLink": "إرسال التعليمات",
+    "resetSent": "إذا كان هناك حساب مطابق، فقد تم إرسال رسالة إعادة التعيين عبر الرسائل القصيرة أو البريد الإلكتروني.",
+    "resetLocal": "إرسال البريد غير مهيأ على هذا الجهاز. اختَر كلمة مرور جديدة عبر الرابط أدناه.",
+    "resetOpenLink": "اختيار كلمة مرور جديدة",
+    "resetIdentifier": "البريد الإلكتروني أو الهاتف المستخدم عند التسجيل",
+    "resetToken": "الرمز المستلم",
+    "resetTokenPh": "رمز الرسالة القصيرة أو رمز الرابط",
+    "resetTokenHint": "تحتوي الرسالة القصيرة على رمز من 6 أرقام. يحتوي البريد الإلكتروني على رابط: الرمز موجود في نهايته.",
+    "newPassword": "كلمة المرور الجديدة",
+    "resetSubmit": "إعادة تعيين كلمة المرور",
+    "resetSuccess": "تم تحديث كلمة المرور. يمكنك الآن تسجيل الدخول.",
+    "resetError": "الرمز غير صالح أو منتهي الصلاحية.",
+    "myAccount": "حسابي",
+    "goToDashboard": "لوحة التحكم",
+    "goToAdmin": "الإدارة",
+    "memberSince": "عضو منذ {date}",
+    "welcome": "مرحبًا {name}",
+    "sectionProfile": "ملفي الشخصي",
+    "saveProfile": "حفظ",
+    "savingProfile": "جارٍ الحفظ…",
+    "profileSaved": "تم تحديث الملف الشخصي.",
+    "profileError": "تعذّر حفظ الملف الشخصي.",
+    "emailReadOnly": "لا يمكن تغيير البريد الإلكتروني من هذه الصفحة.",
+    "localeLabel": "اللغة",
+    "localeFr": "الفرنسية",
+    "localeEn": "الإنجليزية",
+    "localeAr": "العربية",
+    "sectionChildren": "متابعة أبنائي",
+    "sectionProgress": "تقدمي",
+    "sectionDahira": "الدائرة الخاصة بي",
+    "sectionStaff": "مساحة الإدارة",
+    "teacherConsole": "منصة المدرّس",
+    "sectionStaffLede": "لديك دور في الفريق. تتم الإدارة الكاملة في لوحة الإدارة.",
+    "noChildren": "لا يوجد طفل مرتبط بحسابك حاليًا.",
+    "noProgress": "لا يوجد تتبع للتقدم حاليًا.",
+    "dossierTitle": "ملفات التسجيل",
+    "dossierStudent": "الطالب",
+    "dossierStatus": {
+      "pending": "الملف قيد الانتظار",
+      "approved": "الملف مقبول",
+      "rejected": "الملف مرفوض",
+      "active": "التسجيل جارٍ",
+      "completed": "المسار مكتمل",
+      "withdrawn": "الملف منسحب"
+    },
+    "noDahira": "أنت لست عضوًا في أي دائرة حاليًا.",
+    "dahiraTreasurerBadge": "أمين الصندوق",
+    "dahiraBalance": "رصيد الصندوق",
+    "dahiraUpcomingMeetings": "الاجتماعات القادمة",
+    "dahiraNoMeetings": "لا يوجد اجتماع مبرمج حاليًا.",
+    "dahiraContributions": "اشتراكاتي",
+    "dahiraNoContributions": "لا توجد استحقاقات اشتراك حاليًا.",
+    "dahiraStatusDue": "مستحقة",
+    "dahiraStatusOverdue": "متأخرة",
+    "dahiraStatusProcessing": "الدفع قيد المعالجة",
+    "dahiraStatusPaid": "مدفوعة",
+    "dahiraPay": "ادفع",
+    "dahiraChooseMethod": "اختر وسيلة الدفع",
+    "dahiraMethodWave": "Wave",
+    "dahiraMethodOrangeMoney": "Orange Money",
+    "dahiraMethodBankTransfer": "تحويل بنكي",
+    "dahiraMethodCash": "تم الدفع نقدًا بالفعل",
+    "dahiraPaying": "جارٍ تنفيذ الدفع…",
+    "dahiraPaymentError": "تعذّر بدء الدفع ({error}). أعد المحاولة أو اختر وسيلة أخرى.",
+    "dahiraPeriod": "الفترة ابتداءً من {date}",
+    "dahiraDueOn": "تاريخ الاستحقاق {date}",
+    "dahiraAmount": "{amount} فرنك إفريقي",
+    "dahiraTreasuryEntries": "آخر عمليات الصندوق",
+    "dahiraTreasuryEmpty": "لا توجد عملية مسجلة حاليًا.",
+    "statusCompleted": "مكتمل",
+    "statusInProgress": "قيد الإنجاز",
+    "statusNotStarted": "قادم",
+    "certificateCode": "الشهادة {code}",
+    "roles": {
+      "admin": "إداري عام",
+      "director": "الإدارة",
+      "secretary": "إدارة التواصل",
+      "teacher": "معلم",
+      "academic_admin": "الإدارة الأكاديمية"
+    }
   },
   "announcements": {
     "title": "الإعلانات",
     "communique": "بلاغ",
+    "pause": "إيقاف الشريط",
+    "resume": "استئناف الحركة",
     "noAnnouncements": "لا توجد إعلانات في الوقت الحالي",
     "markAsRead": "وضع علامة مقروء",
     "category": {
@@ -82,6 +221,10 @@
     "verse": "وَقُل رَّبِّ زِدْنِي عِلْمًا",
     "verseRef": "طه، ١١٤",
     "lead": "نور الهداية في دكار",
+    "fridayTitle": "خطبة الجمعة",
+    "fridayLatest": "آخر خطبة جمعة",
+    "fridayEmpty": "ستنشر خطبة هذه الجمعة من المركز.",
+    "fridayOpen": "قراءة الخطبة",
     "enter": "دخول",
     "centre": {
       "kicker": "المسجد وحياة المكان",
@@ -203,7 +346,13 @@
       "commentBodyPh": "اكتب رسالتك…",
       "commentSubmit": "نشر",
       "commentPending": "شكراً. سيظهر تعليقك بعد المراجعة.",
-      "commentError": "تعذّر إرسال التعليق. أعد المحاولة."
+      "commentError": "تعذّر إرسال التعليق. أعد المحاولة.",
+      "commentClosed": "التعليقات مغلقة إلى أن يسمّي المركز مشرفًا.",
+      "commentCharter": "الميثاق",
+      "commentSignIn": "سجّل الدخول للتعليق.",
+      "commentReply": "رد",
+      "commentReplying": "رد على التعليق.",
+      "commentCancel": "إلغاء"
     }
   },
   "live": {
@@ -476,6 +625,7 @@
     "next": "التالي",
     "replies": "{count} ردود",
     "answered": "مجاب",
+    "answeredBy": "أجاب {name}",
     "members": "{count} أعضاء",
     "joinGroup": "انضم",
     "emptyDiscussions": "لا نقاشات عامة حالياً.",
@@ -500,7 +650,7 @@
     "detail": {
       "back": "العودة إلى المجتمع",
       "notFound": "هذا النقاش غير موجود.",
-      "answer": "جواب المركز",
+      "answer": "جواب {name}",
       "pending": "الجواب لم يُنشر بعد."
     },
     "topics": {
@@ -579,6 +729,73 @@
     "another": "رسالة جديدة",
     "error": "تعذّر الإرسال. أدخل بريداً أو هاتفاً ثم أعد المحاولة."
   },
+  "teacherConsole": {
+    "title": "منصة المدرّس",
+    "lede": "افتح جلسة استماع ثم قيّم التلاوة. هذه الصفحة لا تفتح بثاً مباشراً.",
+    "closed": "هذه المنصة للمدرّسين.",
+    "back": "العودة إلى لوحة الحساب",
+    "student": "الطالب",
+    "studentPh": "اختر طالباً",
+    "titleField": "المقطع المتلو",
+    "titlePh": "مثال: سورة الملك",
+    "start": "بدء الجلسة",
+    "started": "الجلسة مفتوحة. تبقى محصورة في المدرّسين والأولياء.",
+    "evaluate": "تقييم التلاوة",
+    "memorization": "الحفظ",
+    "tajwid": "التجويد",
+    "fluency": "الطلاقة",
+    "comment": "ملاحظة",
+    "commentPh": "ما سُمع، وما يجب إعادته",
+    "milestone": "المرحلة",
+    "milestoneNone": "بدون مرحلة",
+    "save": "حفظ الدرجة",
+    "saved": "حُفظت الدرجة.",
+    "error": "لم يتم الإجراء.",
+    "loading": "جاري الإرسال…",
+    "noStudents": "لا طالب مسجّل للتقييم حالياً.",
+    "scoreHint": "1 للمراجعة، 5 ممتاز"
+  },
+  "support": {
+    "donateTitle": "تبرّع",
+    "donateLede": "النقد والتحويل تؤكدهما الأمانة. Wave و Orange Money يتطلبان حساباً متصلاً.",
+    "amount": "المبلغ (فرنك)",
+    "anonymous": "البقاء مجهولاً على جدار المتبرعين",
+    "donorName": "الاسم المعروض",
+    "donorNamePh": "اسمك",
+    "method": "الوسيلة",
+    "methods": {
+      "cash": "نقداً في المركز",
+      "bank_transfer": "تحويل",
+      "wave": "Wave",
+      "orange_money": "Orange Money"
+    },
+    "note": "رسالة (اختياري)",
+    "donateSubmit": "تسجيل التبرع",
+    "donateSuccess": "سُجّل التبرع. إن مرّ عبر مشغّل فافتح الدفع، وإلا تؤكد الأمانة القبض.",
+    "donateError": "تعذّر تسجيل التبرع.",
+    "checkout": "فتح الدفع",
+    "sponsorTitle": "كفالة طالب",
+    "sponsorLede": "يظهر فقط من يُسمح بنشر اسمه. الأمانة تؤكد الكفالة.",
+    "student": "الطالب",
+    "studentAny": "الأمانة تختار الطالب",
+    "pledge": "الالتزام (فرنك)",
+    "frequency": "الوتيرة",
+    "frequencies": {
+      "once": "مرة واحدة",
+      "monthly": "كل شهر",
+      "yearly": "كل سنة"
+    },
+    "sponsorSubmit": "اقتراح الكفالة",
+    "sponsorSuccess": "سُجّل الطلب. ستؤكد الأمانة الكفالة.",
+    "sponsorError": "لم يتم الطلب.",
+    "sponsorLogin": "سجّل الدخول لكفالة طالب.",
+    "login": "دخول",
+    "wallTitle": "جدار المتبرعين",
+    "wallLede": "التبرعات المؤكدة. التبرع المجهول لا يُظهر اسماً ولا مبلغاً.",
+    "wallEmpty": "لا تبرع مؤكد حالياً.",
+    "anonymousDonor": "متبرع مجهول",
+    "loading": "جاري الإرسال…"
+  },
   "enroll": {
     "infoTitle": "الملف",
     "infoLede": "اختر دفعة مفتوحة ثم أرسل طلبك. الأمانة تؤكد مقعدك بعد ذلك.",
@@ -628,8 +845,47 @@
     },
     "submit": "إرسال الطلب",
     "loading": "جاري الإرسال…",
-    "success": "تم إرسال الطلب. ستتواصل الأمانة بعد مراجعة الملف.",
+    "success": "تم إرسال الطلب. احتفظ برمز المتابعة لتطلع الأسرة على حالة الملف.",
     "another": "طلب جديد",
+    "documentsTitle": "الوثائق",
+    "documentsHint": "PDF أو JPG أو PNG، 10 ميغابايت كحد أقصى. تبقى هذه الملفات خاصة.",
+    "chooseFile": "اختيار ملف",
+    "noFile": "لم يُختر ملف",
+    "idCard": "وثيقة الهوية",
+    "birthCertificate": "شهادة الميلاد",
+    "photo": "صورة",
+    "uploadWarning": "سُجّل الطلب، لكن تعذّر إرفاق وثيقة. يمكن إرسالها لاحقاً برمز المتابعة.",
+    "trackingHint": "رمز المتابعة الذي يجب حفظه:",
+    "trackingTitle": "متابعة ملف",
+    "trackingLede": "أدخل الرمز المسلّم عند الإرسال لمعرفة حالة الطلب والوثائق المستلمة.",
+    "trackingPh": "رمز المتابعة",
+    "trackingSubmit": "عرض",
+    "trackingMissing": "لا ملف يطابق هذا الرمز.",
+    "trackingStudent": "الطالب",
+    "trackingStatus": "الحالة",
+    "trackingNoDocuments": "لا وثائق مرفقة حالياً.",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "approved": "مقبول",
+      "rejected": "مرفوض",
+      "active": "جارٍ",
+      "completed": "مكتمل",
+      "withdrawn": "منسحب"
+    },
+    "docTypes": {
+      "id_card": "وثيقة الهوية",
+      "birth_certificate": "شهادة الميلاد",
+      "photo": "صورة",
+      "diploma": "شهادة",
+      "cv": "سيرة",
+      "recommendation": "تزكية",
+      "other": "أخرى"
+    },
+    "docStatus": {
+      "pending": "بانتظار المراجعة",
+      "verified": "مؤكدة",
+      "rejected": "مرفوضة"
+    },
     "errors": {
       "promotion": "اختر دفعة مفتوحة.",
       "send": "تعذّر التسجيل. تحقق من الحقول وأعد المحاولة."
@@ -943,7 +1199,9 @@
       "muud": "مد رمضان",
       "community": "المجتمع",
       "dahira": "الدوائر",
-      "contact": "اتصل بنا"
+      "contact": "اتصل بنا",
+      "search": "بحث",
+      "support": "ادعم"
     },
     "indicators": {
       "teachers": "المدرّسون",
@@ -1067,6 +1325,31 @@
       "lede": "أرسل طلباً لدفعة مفتوحة. الأمانة تؤكد مقعدك بعد ذلك.",
       "points": ["اختيار البرنامج والدفعة المفتوحة.", "بيانات الطالب وجهة اتصال الطوارئ.", "الأمانة تصادق على الطلب."]
     },
+    "login": {
+      "eyebrow": "فضاء الأعضاء",
+      "title": "تسجيل الدخول",
+      "lede": "ادخل إلى لوحة التحكم الخاصة بك: متابعة الأبناء، تقدمك، ومساحة الإدارة."
+    },
+    "register": {
+      "eyebrow": "فضاء الأعضاء",
+      "title": "إنشاء حساب",
+      "lede": "الحساب يتيح لك متابعة تقدم أبنائك والعثور على طلباتك."
+    },
+    "forgotPassword": {
+      "eyebrow": "فضاء الأعضاء",
+      "title": "نسيت كلمة المرور",
+      "lede": "أدخل البريد الإلكتروني أو الهاتف المرتبط بحسابك، وسنرسل لك التعليمات."
+    },
+    "resetPassword": {
+      "eyebrow": "فضاء الأعضاء",
+      "title": "إعادة تعيين كلمة المرور",
+      "lede": "أدخل الرمز المستلم واختر كلمة مرور جديدة."
+    },
+    "dashboard": {
+      "eyebrow": "فضاء الأعضاء",
+      "title": "مساحتي",
+      "lede": "حسابك ومتابعتك والوصول الذي يناسب دورك."
+    },
     "promotions": {
       "eyebrow": "الطلاب",
       "title": "الدفعات",
@@ -1123,7 +1406,12 @@
       "eyebrow": "التذكير",
       "title": "اليوم",
       "lede": "الآية أو الحديث أو التذكير المختار لليوم.",
-      "points": ["محتوى واحد كل يوم.", "آية أو حديث أو تذكير من المركز.", "يتبدّل مع اليوم."]
+      "points": ["محتوى واحد كل يوم.", "آية أو حديث أو تذكير من المركز.", "يتبدّل مع اليوم."],
+      "verse": "آية اليوم",
+      "hadith": "حديث اليوم",
+      "empty": "لا آية ولا حديث منشور حالياً.",
+      "publishedOn": "نُشر في {date}",
+      "source": "المصدر"
     },
     "zakat": {
       "eyebrow": "الحساب",
@@ -1174,6 +1462,11 @@
       "title": "الدوائر",
       "lede": "اكتشف دوائر المركز واطلب الانضمام إلى ما يناسبك.",
       "points": ["اختر دائرة وأرسل طلباً.", "الأمانة تقبل أو ترفض.", "الاجتماعات والاشتراكات تُدار لاحقاً داخل كل دائرة."]
+    },
+    "support": {
+      "eyebrow": "الدعم",
+      "title": "ادعم المركز",
+      "lede": "صدقة، وكفالة طالب، وجدار من سبق أن أعطى."
     },
     "contact": {
       "eyebrow": "دكار",

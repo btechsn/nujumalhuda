@@ -78,6 +78,7 @@ export function SiteHeader({
               width={44}
               height={44}
               priority
+              data-essential=""
               className="size-10 lg:size-11"
             />
             <span className="hidden flex-col leading-tight sm:flex">

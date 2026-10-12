@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
+import { readEditorial } from "@/lib/editorial";
 import type { Program } from "@/types/api";
 import { PageHeading } from "@/components/layout/page-heading";
 
@@ -22,10 +23,7 @@ function i18nText(
   field: { fr: string; en?: string; ar?: string } | undefined,
   locale: string,
 ): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr;
-  if (locale === "ar") return field.ar || field.fr;
-  return field.fr;
+  return readEditorial(field, locale).text;
 }
 
 function plainText(value: string): string {

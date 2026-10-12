@@ -13,12 +13,13 @@ class Certificate extends Model
 
     protected $fillable = [
         'student_id', 'milestone_id', 'progress_id', 'verification_code',
-        'level_label_i18n', 'issued_at', 'document_path',
+        'level_label_i18n', 'issued_at', 'document_path', 'is_public',
     ];
 
     protected $casts = [
         'level_label_i18n' => 'array',
         'issued_at' => 'datetime',
+        'is_public' => 'boolean',
     ];
 
     public function student(): BelongsTo

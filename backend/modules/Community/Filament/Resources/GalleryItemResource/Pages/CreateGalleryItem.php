@@ -13,4 +13,9 @@ class CreateGalleryItem extends CreateRecord
     {
         return 'Nouveau média';
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return GalleryItemResource::enforceConsent($data);
+    }
 }

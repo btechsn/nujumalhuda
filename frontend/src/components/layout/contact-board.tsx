@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { PageHeading } from "@/components/layout/page-heading";
+import { PlaceMap } from "@/components/layout/place-map";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { fetchApiJson } from "@/lib/api-fetch";
 import { fullAddress, mapsDirectionsUrl, mapsSearchUrl, phoneHref } from "@/lib/site-settings";
@@ -123,12 +124,11 @@ export function ContactBoard() {
                 </ul>
 
                 <div className="mt-8 overflow-hidden rounded-2xl ring-1 ring-black/10">
-                  <iframe
-                    title={t("mapTitle")}
-                    className="h-56 w-full border-0 sm:h-64"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.012}%2C${place.latitude - 0.008}%2C${place.longitude + 0.012}%2C${place.latitude + 0.008}&layer=mapnik&marker=${place.latitude}%2C${place.longitude}`}
+                  <PlaceMap
+                    latitude={place.latitude}
+                    longitude={place.longitude}
+                    label={fullAddress(place)}
+                    className="h-56 w-full sm:h-64"
                   />
                   <a
                     href={mapsSearchUrl(place)}

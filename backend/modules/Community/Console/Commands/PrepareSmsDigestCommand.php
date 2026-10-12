@@ -14,7 +14,11 @@ class PrepareSmsDigestCommand extends Command
     public function handle(SmsDigestService $digests): int
     {
         $result = $digests->prepare();
-        $this->info("Digest préparé pour {$result['recipients']} abonné(s). Envoi SMS non effectué.");
+        if (($result['gateway'] ?? '') === 'not_configured') {
+            $this->warn('Orange SMS n’est pas configuré : aucun message n’est parti. '.$result['recipients'].' destinataire(s) restent en attente.');
+        } else {
+            $this->info($result['sent'].' SMS envoyé(s) sur '.$result['recipients'].'.');
+        }
         $this->line($result['message']);
 
         return self::SUCCESS;

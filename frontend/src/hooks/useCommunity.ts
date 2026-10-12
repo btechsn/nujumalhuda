@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { fetchApiJson, unwrapList } from '@/lib/api-fetch';
+import { markEditorialFallback } from '@/lib/editorial';
 
 export interface CommunityDiscussion {
   id: string;
   title: string;
+  title_fell_back?: boolean;
   author: string;
+  teacher?: string | null;
   replies: number;
   answered: boolean;
   topics: string[];
@@ -122,6 +125,7 @@ export function useCommunityDiscussions(page = 1, perPage = 12) {
           return;
         }
         const list = unwrapList<CommunityDiscussion>(body);
+        if (list.some((item) => item.title_fell_back)) markEditorialFallback();
         setData(list);
         setMeta(readPageMeta(body, list.length, perPage));
       } catch (err) {
@@ -146,7 +150,9 @@ export function useCommunityDiscussions(page = 1, perPage = 12) {
 export interface CommunityDiscussionDetail {
   id: string;
   title: string;
+  title_fell_back?: boolean;
   answer?: string | null;
+  answer_fell_back?: boolean;
   author: string;
   teacher?: string | null;
   replies: number;
@@ -188,6 +194,7 @@ export function useCommunityDiscussion(id: string) {
           return;
         }
         const item = (body as { data?: CommunityDiscussionDetail }).data ?? null;
+        if (item?.title_fell_back || item?.answer_fell_back) markEditorialFallback();
         setData(item);
         if (!item) setError(new Error('Discussion introuvable'));
       } catch (err) {

@@ -18,11 +18,6 @@ class CreateQuestion extends CreateRecord
     {
         $data['asker_id'] = auth()->id();
 
-        $answer = trim((string) ($data['answer_i18n']['fr'] ?? ''));
-        if ($answer !== '' && blank($data['answered_at'] ?? null)) {
-            $data['answered_at'] = now();
-        }
-
-        return $data;
+        return QuestionResource::enforceAttribution($data);
     }
 }

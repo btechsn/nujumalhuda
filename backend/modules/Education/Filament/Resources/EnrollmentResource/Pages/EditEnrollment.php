@@ -3,10 +3,12 @@
 namespace Modules\Education\Filament\Resources\EnrollmentResource\Pages;
 
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Validation\ValidationException;
 use Modules\Core\Models\User;
 use Modules\Education\Filament\Resources\EnrollmentResource;
+use Modules\Education\Models\EnrollmentDocument;
 
 class EditEnrollment extends EditRecord
 {
@@ -94,5 +96,42 @@ class EditEnrollment extends EditRecord
     protected function afterSave(): void
     {
         EnrollmentResource::syncFeePayment($this->record, $this->paymentInput);
+    }
+
+    public function verifyDocument(string $documentId): void
+    {
+        $this->ownedDocument($documentId)->verify();
+        $this->record->unsetRelation('uploadedDocuments');
+
+        Notification::make()
+            ->success()
+            ->title('Pièce vérifiée')
+            ->send();
+    }
+
+    public function rejectDocument(string $documentId, string $reason): void
+    {
+        $reason = trim($reason);
+        if ($reason === '') {
+            Notification::make()
+                ->warning()
+                ->title('Indiquez un motif de refus')
+                ->send();
+
+            return;
+        }
+
+        $this->ownedDocument($documentId)->reject($reason);
+        $this->record->unsetRelation('uploadedDocuments');
+
+        Notification::make()
+            ->warning()
+            ->title('Pièce refusée')
+            ->send();
+    }
+
+    private function ownedDocument(string $documentId): EnrollmentDocument
+    {
+        return $this->getRecord()->uploadedDocuments()->whereKey($documentId)->firstOrFail();
     }
 }

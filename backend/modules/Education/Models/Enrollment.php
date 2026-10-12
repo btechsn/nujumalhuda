@@ -77,6 +77,11 @@ class Enrollment extends Model
         return $this->hasMany(Attendance::class);
     }
 
+    public function uploadedDocuments(): HasMany
+    {
+        return $this->hasMany(EnrollmentDocument::class);
+    }
+
     /**
      * Scopes
      */

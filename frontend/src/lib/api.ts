@@ -60,13 +60,21 @@ class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers,
-      credentials: 'include', // Pour les cookies Sanctum
     });
 
     const data: ApiResponse<T> = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Une erreur est survenue');
+      // On attache le corps complet et le statut : certains endpoints
+      // (ex. paiement de cotisation dahira) renvoient des détails utiles
+      // (gateway_error, etc.) qui ne tiennent pas dans `message` seul.
+      const error = new Error(data.message || 'Une erreur est survenue') as Error & {
+        data?: ApiResponse<T>;
+        status?: number;
+      };
+      error.data = data;
+      error.status = response.status;
+      throw error;
     }
 
     return data;
@@ -126,6 +134,63 @@ class ApiClient {
 
   async getUser() {
     return this.get('/auth/user');
+  }
+
+  async updateProfile(data: {
+    first_name: string;
+    last_name: string;
+    phone?: string | null;
+    locale: string;
+  }) {
+    return this.put('/auth/profile', data);
+  }
+
+  async getMyDahiraGroups() {
+    return this.get('/dahira/groups');
+  }
+
+  async forgotPassword(identifier: string) {
+    return this.post('/auth/forgot-password', { identifier });
+  }
+
+  async resetPassword(data: {
+    identifier: string;
+    token: string;
+    password: string;
+    password_confirmation: string;
+  }) {
+    return this.post('/auth/reset-password', data);
+  }
+
+  async getPortal() {
+    return this.get('/academics/portal');
+  }
+
+  // Méthodes « Mon dahira »
+  // Ces endpoints renvoient leur JSON à plat (pas dans l'enveloppe
+  // { success, data } du reste de l'API) : les appelants lisent la
+  // réponse directement, pas `response.data`.
+  async getDahiraGroup(groupId: string) {
+    return this.get(`/dahira/groups/${groupId}`);
+  }
+
+  async getDahiraSchedules(groupId: string) {
+    return this.get(`/dahira/groups/${groupId}/schedules`);
+  }
+
+  async payDahiraSchedule(
+    scheduleId: string,
+    data: { method?: 'cash' | 'wave' | 'orange_money' | 'bank_transfer'; note?: string } = {},
+  ) {
+    return this.post(`/dahira/schedules/${scheduleId}/pay`, data);
+  }
+
+  async getDahiraMeetings(groupId: string) {
+    return this.get(`/dahira/groups/${groupId}/meetings`);
+  }
+
+  async getDahiraTreasury(groupId: string) {
+    return this.get(`/dahira/groups/${groupId}/treasury`);
   }
 }
 

@@ -8,16 +8,14 @@ import { useLocale, useTranslations } from "next-intl";
 import { EightPointStar } from "@/components/brand/ornaments";
 import { PageHeading } from "@/components/layout/page-heading";
 import { usePromotions } from "@/hooks/usePromotions";
+import { readEditorial } from "@/lib/editorial";
 import type { I18nField, Promotion } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 const DAY_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const;
 
 function i18nText(field: I18nField | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 function formatDate(value: string | undefined, locale: string): string {

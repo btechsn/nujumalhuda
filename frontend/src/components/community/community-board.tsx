@@ -144,7 +144,7 @@ export function CommunityBoard() {
                     topicLabel={topicLabel}
                     emptyLabel={t("emptyDiscussions")}
                     repliesLabel={(count) => t("replies", { count })}
-                    answeredLabel={t("answered")}
+                    answeredLabel={(name) => t("answeredBy", { name })}
                   />
                 </section>
 
@@ -438,7 +438,7 @@ export function RecentDiscussions({
   topicLabel: (topic: string) => string;
   emptyLabel: string;
   repliesLabel: (count: number) => string;
-  answeredLabel: string;
+  answeredLabel: (name: string) => string;
   excludeId?: string;
   limit?: number;
 }) {
@@ -468,9 +468,9 @@ export function RecentDiscussions({
           <p className="mt-3 flex items-center gap-1.5 text-xs text-content-secondary">
             <ChatIcon />
             {repliesLabel(item.replies)}
-            {item.answered ? (
+            {item.answered && item.teacher ? (
               <span className="ms-2 rounded-full bg-brand-50 px-2 py-0.5 font-semibold text-brand-800">
-                {answeredLabel}
+                {answeredLabel(item.teacher)}
               </span>
             ) : null}
           </p>

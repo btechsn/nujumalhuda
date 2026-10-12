@@ -10,14 +10,12 @@ import {
   SearchPanel,
 } from "@/components/live/live-board";
 import { playRecitation, useRecitations } from "@/hooks/useMediaLibrary";
+import { readEditorial } from "@/lib/editorial";
 import type { AudioRecitation, I18nField } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 function i18nText(field: I18nField | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 function formatDuration(seconds?: number | null) {

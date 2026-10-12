@@ -60,6 +60,7 @@ export const PLATFORM_NAV = [
     items: [
       { href: "/dahira", key: "dahira" },
       { href: "/communaute", key: "community" },
+      { href: "/soutien", key: "support" },
       { href: "/contact", key: "contact" },
     ],
   },

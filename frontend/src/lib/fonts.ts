@@ -1,4 +1,4 @@
-import { Amiri, Noto_Naskh_Arabic, Poppins } from "next/font/google";
+import { Amiri, Amiri_Quran, Noto_Naskh_Arabic, Poppins } from "next/font/google";
 
 /**
  * Système typographique trilingue selon la charte graphique v1.0.
@@ -40,8 +40,18 @@ export const fontQuran = Amiri({
   preload: false,
 });
 
+/** Graphie du mushaf (Amiri Quran), proposée à la place du naskh simplifié. */
+export const fontUthmani = Amiri_Quran({
+  subsets: ["arabic"],
+  weight: "400",
+  variable: "--nh-font-uthmani",
+  display: "swap",
+  preload: false,
+});
+
 export const fontVariables = [
   fontSans.variable,
   fontArabic.variable,
   fontQuran.variable,
+  fontUthmani.variable,
 ].join(" ");

@@ -55,6 +55,7 @@ class SmsDigestService
             'message' => $message,
             'file' => $file,
             'sent' => $sent,
+            'gateway' => $sms->isConfigured() ? 'orange' : 'not_configured',
         ];
     }
 }

@@ -17,12 +17,7 @@ class EditQuestion extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $answer = trim((string) ($data['answer_i18n']['fr'] ?? ''));
-        if ($answer !== '' && blank($data['answered_at'] ?? null)) {
-            $data['answered_at'] = now();
-        }
-
-        return $data;
+        return QuestionResource::enforceAttribution($data);
     }
 
     protected function getHeaderActions(): array

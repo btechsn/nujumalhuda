@@ -4,7 +4,11 @@ namespace Modules\Community\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Modules\Community\Models\Sponsorship;
+use Modules\Core\Models\User;
 use Modules\Community\Models\CommunityEvent;
 use Modules\Community\Models\ContactMessage;
 use Modules\Community\Models\Donation;
@@ -16,6 +20,8 @@ use Modules\Community\Models\Question;
 use Modules\Community\Models\Partner;
 use Modules\Community\Models\SmsDigestSubscriber;
 use Modules\Community\Models\Testimonial;
+use Modules\Core\Support\ContributionDesk;
+use Modules\Core\Support\EditorialText;
 
 class CommunityController extends Controller
 {
@@ -27,7 +33,8 @@ class CommunityController extends Controller
             ->limit(50)
             ->get()
             ->map(fn (Donation $donation) => [
-                'name' => $donation->publicName(),
+                'name' => $donation->is_anonymous ? null : ($donation->donor_name ?: null),
+                'is_anonymous' => (bool) $donation->is_anonymous,
                 'amount_minor' => $donation->is_anonymous ? null : $donation->amount_minor,
                 'currency' => $donation->currency,
                 'paid_at' => optional($donation->paid_at)->toISOString(),
@@ -36,9 +43,88 @@ class CommunityController extends Controller
 
     public function donate(Request $request, DonationCheckout $checkout)
     {
+        if ($user = $request->user('sanctum')) {
+            $request->setUserResolver(fn () => $user);
+        }
+
         $result = $checkout->start($request);
 
         return response()->json($result['body'], $result['status']);
+    }
+
+    /**
+     * Élèves dont le nom peut être publié pour un parrainage.
+     */
+    public function sponsorableStudents()
+    {
+        return response()->json([
+            'data' => $this->eligibleStudents()->map(fn (User $user) => [
+                'id' => $user->id,
+                'name' => $user->fullName(),
+            ])->values(),
+        ]);
+    }
+
+    /**
+     * Engagement de parrainage. Le secrétariat confirme avant qu'il soit actif.
+     */
+    public function sponsor(Request $request)
+    {
+        $data = $request->validate([
+            'student_id' => ['nullable', 'string', 'size:26'],
+            'amount_minor' => ['required', 'integer', 'min:100', 'max:100000000'],
+            'frequency' => ['required', 'in:once,monthly,yearly'],
+        ]);
+
+        $studentId = $data['student_id'] ?? null;
+        if ($studentId && ! $this->eligibleStudents()->contains(fn (User $user) => $user->id === $studentId)) {
+            return response()->json([
+                'message' => 'Cet élève ne peut pas être désigné publiquement.',
+            ], 422);
+        }
+
+        $sponsorship = Sponsorship::query()->create([
+            'sponsor_id' => $request->user()->id,
+            'student_id' => $studentId,
+            'amount_minor' => $data['amount_minor'],
+            'currency' => 'XOF',
+            'frequency' => $data['frequency'],
+            'status' => 'pending',
+        ]);
+
+        return response()->json([
+            'id' => $sponsorship->id,
+            'status' => $sponsorship->status,
+            'message' => 'Demande de parrainage enregistrée. Le secrétariat la confirmera.',
+        ], 201);
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    private function eligibleStudents(): Collection
+    {
+        $ids = DB::table('enrollments')
+            ->whereIn('status', ['approved', 'active', 'completed'])
+            ->whereNull('deleted_at')
+            ->distinct()
+            ->pluck('user_id');
+
+        return User::query()
+            ->with(['minorConsent', 'guardians'])
+            ->whereIn('id', $ids)
+            ->whereNull('anonymized_at')
+            ->orderBy('first_name')
+            ->get()
+            ->filter(function (User $user): bool {
+                if ($user->fullName() === '') {
+                    return false;
+                }
+
+                return $user->guardians->isEmpty()
+                    || (bool) $user->minorConsent?->public_name_consent;
+            })
+            ->values();
     }
 
     public function testimonials()
@@ -95,7 +181,8 @@ class CommunityController extends Controller
                 return [
                     'id' => $item->id,
                     'kind' => $item->kind,
-                    'caption' => $item->caption_i18n[$locale] ?? $item->caption_i18n['fr'] ?? '',
+                    'caption' => EditorialText::present($item->caption_i18n, $locale)['text'],
+                    'caption_fell_back' => EditorialText::present($item->caption_i18n, $locale)['fell_back'],
                     'event_name' => $item->event_name,
                     'media_url' => $item->publicMediaUrl(),
                     'thumbnail_url' => $item->publicThumbnailUrl() ?: $item->publicMediaUrl(),
@@ -112,22 +199,28 @@ class CommunityController extends Controller
         $perPage = max(1, min(48, (int) $request->integer('per_page', 12)));
 
         $items = Question::query()
-            ->with('asker:id,first_name,last_name')
+            ->with(['asker:id,first_name,last_name', 'teacher:id,first_name,last_name'])
             ->where('status', 'published')
             ->where('is_public', true)
             ->latest('created_at')
             ->latest('id')
             ->paginate($perPage)
             ->through(function (Question $question) use ($locale) {
+                $teacher = $question->teacherName();
+                $answered = $question->publicAnswer($locale) !== null;
+                $title = EditorialText::present($question->question_i18n, $locale);
+
                 return [
                     'id' => $question->id,
-                    'title' => $question->question_i18n[$locale] ?? $question->question_i18n['fr'] ?? '',
+                    'title' => $title['text'],
+                    'title_fell_back' => $title['fell_back'],
                     'author' => trim(($question->asker?->first_name ?? '').' '.($question->asker?->last_name ?? '')) ?: 'Membre',
-                    'replies' => $question->answer_i18n ? 1 : 0,
-                    'answered' => (bool) $question->answer_i18n,
+                    'teacher' => $answered ? $teacher : null,
+                    'replies' => $answered ? 1 : 0,
+                    'answered' => $answered,
                     'topics' => $question->topics ?? [],
                     'created_at' => optional($question->created_at)->toISOString(),
-                    'answered_at' => optional($question->answered_at)->toISOString(),
+                    'answered_at' => $answered ? optional($question->answered_at)->toISOString() : null,
                 ];
             });
 
@@ -143,23 +236,33 @@ class CommunityController extends Controller
             ->where('is_public', true)
             ->findOrFail($id);
 
+        $answer = $question->publicAnswer($locale);
+        $title = EditorialText::present($question->question_i18n, $locale);
+        $answerLine = EditorialText::present($question->answer_i18n, $locale);
+
         return response()->json([
             'data' => [
                 'id' => $question->id,
-                'title' => $question->question_i18n[$locale] ?? $question->question_i18n['fr'] ?? '',
-                'answer' => $question->answer_i18n[$locale] ?? $question->answer_i18n['fr'] ?? null,
+                'title' => $title['text'],
+                'title_fell_back' => $title['fell_back'],
+                'answer' => $answer,
+                'answer_fell_back' => $answer !== null && $answerLine['fell_back'],
                 'author' => trim(($question->asker?->first_name ?? '').' '.($question->asker?->last_name ?? '')) ?: 'Membre',
-                'teacher' => trim(($question->teacher?->first_name ?? '').' '.($question->teacher?->last_name ?? '')) ?: null,
-                'replies' => $question->answer_i18n ? 1 : 0,
-                'answered' => (bool) $question->answer_i18n,
+                'teacher' => $answer !== null ? $question->teacherName() : null,
+                'replies' => $answer !== null ? 1 : 0,
+                'answered' => $answer !== null,
                 'topics' => $question->topics ?? [],
-                'answered_at' => optional($question->answered_at)->toISOString(),
+                'answered_at' => $answer !== null ? optional($question->answered_at)->toISOString() : null,
             ],
         ]);
     }
 
     public function ask(Request $request)
     {
+        if ($closed = ContributionDesk::closedResponse('questions')) {
+            return $closed;
+        }
+
         $data = $request->validate([
             'question_i18n.fr' => 'required|string|max:2000',
             'question_i18n.en' => 'nullable|string|max:2000',

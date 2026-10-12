@@ -31,4 +31,20 @@ final class PhoneNumber
 
         return null;
     }
+
+    /** Formes susceptibles d'être déjà enregistrées : E.164 et numéro local sénégalais. */
+    public static function storedForms(?string $raw): array
+    {
+        $e164 = self::e164($raw);
+        if ($e164 === null) {
+            return [];
+        }
+
+        $forms = [$e164];
+        if (str_starts_with($e164, '+221') && strlen($e164) === 13) {
+            $forms[] = substr($e164, 4);
+        }
+
+        return $forms;
+    }
 }

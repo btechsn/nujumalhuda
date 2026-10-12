@@ -33,4 +33,26 @@ class Question extends Model
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
+
+    /**
+     * Cahier des charges §8.4 : une réponse publique porte le nom d'un
+     * enseignant. Sans nom, elle n'est pas publiable.
+     */
+    public function teacherName(): ?string
+    {
+        $name = trim((string) $this->teacher?->fullName());
+
+        return $name !== '' ? $name : null;
+    }
+
+    public function publicAnswer(string $locale): ?string
+    {
+        if ($this->teacherName() === null) {
+            return null;
+        }
+
+        $text = trim((string) ($this->answer_i18n[$locale] ?? $this->answer_i18n['fr'] ?? ''));
+
+        return $text !== '' ? $text : null;
+    }
 }

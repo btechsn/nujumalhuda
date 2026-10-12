@@ -4,7 +4,9 @@ namespace Modules\Community\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use Modules\Core\Models\User;
 
 class GalleryItem extends Model
 {
@@ -12,6 +14,7 @@ class GalleryItem extends Model
 
     protected $fillable = [
         'kind',
+        'student_id',
         'caption_i18n',
         'event_name',
         'media_url',
@@ -27,6 +30,11 @@ class GalleryItem extends Model
         'taken_on' => 'date',
         'is_public' => 'boolean',
     ];
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
 
     public function publicMediaUrl(): ?string
     {

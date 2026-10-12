@@ -54,9 +54,16 @@ class ContributionRecorder
             $result = app(PaymentGatewayManager::class)->for($paymentMethod)->initiate(PaymentData::fromPayment($payment));
             if (!($result['ok'] ?? false)) {
                 $payment->markAsFailed($result['error'] ?? 'gateway');
-                $contribution->setAttribute('gateway_error', $result['error'] ?? 'gateway_unavailable');
+                // `fresh()` recharge un tout nouveau modèle depuis la base :
+                // l'attribut dynamique posé sur `$contribution` ci-dessus
+                // serait perdu si on ne le reportait pas sur l'instance
+                // fraîche (même logique que la branche `checkout_url`
+                // ci-dessous, pour ne pas faire disparaître le motif
+                // d'échec côté appelant).
+                $fresh = $contribution->fresh('payment');
+                $fresh->setAttribute('gateway_error', $result['error'] ?? 'gateway_unavailable');
 
-                return $contribution->fresh('payment');
+                return $fresh;
             }
 
             $payment->update([

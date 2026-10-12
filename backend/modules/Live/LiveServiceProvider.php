@@ -4,7 +4,14 @@ namespace Modules\Live;
 
 use Filament\Panel;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Events\MinorAnonymized;
+use Modules\Core\Events\OperationsStatusCollecting;
+use Modules\Core\Events\PersonalDataPurgeRunning;
+use Modules\Live\Listeners\PurgeExpiredLiveChats;
+use Modules\Live\Listeners\ReportLiveOperations;
+use Modules\Live\Listeners\ScrubAnonymizedRecitations;
 use Modules\Core\Contracts\RecitationScheduler;
 use Modules\Live\Services\LiveRecitationScheduler;
 
@@ -40,6 +47,10 @@ class LiveServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'live');
 
         $this->registerObservers();
+
+        Event::listen(PersonalDataPurgeRunning::class, PurgeExpiredLiveChats::class);
+        Event::listen(MinorAnonymized::class, ScrubAnonymizedRecitations::class);
+        Event::listen(OperationsStatusCollecting::class, ReportLiveOperations::class);
 
         $this->commands([
             Console\Commands\CheckStreamHealthCommand::class,

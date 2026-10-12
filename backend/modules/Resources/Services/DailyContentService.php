@@ -2,6 +2,7 @@
 
 namespace Modules\Resources\Services;
 
+use Modules\Core\Support\EditorialText;
 use Modules\Resources\Models\DailyContent;
 
 class DailyContentService
@@ -41,14 +42,18 @@ class DailyContentService
     protected function payload(DailyContent $content, bool $fallback): array
     {
         $locale = app()->getLocale();
+        $translation = EditorialText::present($content->translation_i18n, $locale);
+        $commentary = EditorialText::present($content->commentary_i18n, $locale);
 
         return [
             'id' => $content->id,
             'type' => $content->type,
             'display_date' => $content->display_date->toDateString(),
             'arabic_text' => $content->arabic_text,
-            'translation' => $content->translation_i18n[$locale] ?? $content->translation_i18n['fr'] ?? '',
-            'commentary' => $content->commentary_i18n[$locale] ?? $content->commentary_i18n['fr'] ?? null,
+            'translation' => $translation['text'],
+            'translation_fell_back' => $translation['fell_back'],
+            'commentary' => $commentary['text'] !== '' ? $commentary['text'] : null,
+            'commentary_fell_back' => $commentary['fell_back'],
             'source' => $content->source,
             'reference' => $content->reference,
             'is_fallback' => $fallback,

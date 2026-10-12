@@ -10,6 +10,7 @@ use Modules\Live\Models\LiveChatMessage;
 use Modules\Live\Models\LiveSession;
 use Modules\Live\Models\LiveStream;
 use Modules\Live\Services\LiveChatService;
+use Modules\Core\Support\ContributionDesk;
 
 class LiveChatController extends Controller
 {
@@ -41,6 +42,10 @@ class LiveChatController extends Controller
      */
     public function store(ChatMessageStoreRequest $request, string $streamId)
     {
+        if ($closed = ContributionDesk::closedResponse('live_chat')) {
+            return $closed;
+        }
+
         $stream = LiveStream::findOrFail($streamId);
 
         if (!$stream->enable_chat) {
@@ -158,6 +163,10 @@ class LiveChatController extends Controller
      */
     public function reaction(Request $request, string $streamId)
     {
+        if ($closed = ContributionDesk::closedResponse('live_chat')) {
+            return $closed;
+        }
+
         $request->validate([
             'reaction' => 'required|string|in:like,love,clap,pray,mashallah',
             'session_token' => 'required|string',

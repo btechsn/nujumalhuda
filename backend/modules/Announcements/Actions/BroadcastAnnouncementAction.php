@@ -15,6 +15,10 @@ class BroadcastAnnouncementAction
             return;
         }
 
-        broadcast(new AnnouncementBroadcast($announcement));
+        try {
+            broadcast(new AnnouncementBroadcast($announcement));
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 }

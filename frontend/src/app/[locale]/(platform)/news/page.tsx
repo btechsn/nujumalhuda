@@ -7,14 +7,12 @@ import { useLocale, useTranslations } from "next-intl";
 import { EightPointStar } from "@/components/brand/ornaments";
 import { ArticleCard } from "@/components/news/article-card";
 import { useArticleCategories, useArticles } from "@/hooks/useArticles";
+import { readEditorial } from "@/lib/editorial";
 import type { I18nField } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 function i18nText(field: I18nField | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 export default function NewsPage() {

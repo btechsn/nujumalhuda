@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { EightPointStar } from "@/components/brand/ornaments";
 import { PageHeading } from "@/components/layout/page-heading";
 import { useIjazas } from "@/hooks/useIjazas";
+import { readEditorial } from "@/lib/editorial";
 import type { I18nField, IjazaSummary } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -19,11 +20,7 @@ const API_BASES = [
 ].filter((base): base is string => Boolean(base));
 
 function i18nText(field: I18nField | string | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 function formatDate(value: string | undefined, locale: string): string {

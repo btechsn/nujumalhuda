@@ -13,23 +13,40 @@ use Modules\Core\Support\PhoneNumber;
 
 class OrangeSmsChannel implements NotificationChannelContract
 {
+    public ?string $lastFailure = null;
+
     public function send(User $user, NotificationData $notification): bool
     {
         return $this->sendToPhone($user->phone, $notification->message);
     }
 
+    public function isConfigured(): bool
+    {
+        return $this->configured() && (string) config('services.orange_sms.sender_address') !== '';
+    }
+
     public function sendToPhone(?string $phone, string $message): bool
     {
+        $this->lastFailure = null;
         $destination = PhoneNumber::e164($phone);
         $sender = (string) config('services.orange_sms.sender_address');
-        if (!$destination || $sender === '' || !$this->configured()) {
-            Log::info('SMS Orange non envoyé : configuration ou numéro incomplet.');
+        if (!$destination) {
+            $this->lastFailure = 'missing_phone';
+            Log::info('SMS Orange non envoyé : numéro incomplet.');
+
+            return false;
+        }
+        if ($sender === '' || !$this->configured()) {
+            $this->lastFailure = 'not_configured';
+            Log::info('SMS Orange non envoyé : identifiants absents.');
 
             return false;
         }
 
         $token = $this->token();
         if ($token === null) {
+            $this->lastFailure = 'token_refused';
+
             return false;
         }
 
@@ -49,6 +66,7 @@ class OrangeSmsChannel implements NotificationChannelContract
             ]);
 
         if (!$response->successful()) {
+            $this->lastFailure = 'gateway_refused';
             Log::warning('SMS Orange refusé', ['status' => $response->status()]);
 
             return false;

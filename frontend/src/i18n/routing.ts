@@ -87,11 +87,18 @@ export const routing = defineRouting({
       en: "/enroll",
       ar: "/التسجيل",
     },
-    "/soutien": {
-      fr: "/soutien",
-      en: "/support",
-      ar: "/الدعم",
-    },
+    "/soutien": "/soutien",
+    "/recherche": "/recherche",
+    // Chemins stables sur les trois langues : plus simples à relier depuis
+    // l'en-tête (qui compose `href` sans passer par ce dictionnaire), et le
+    // lien de réinitialisation envoyé par SMS/e-mail (PasswordResetService)
+    // pointe en dur vers `/reinitialiser`, sans préfixe de langue.
+    "/compte/connexion": "/compte/connexion",
+    "/compte/inscription": "/compte/inscription",
+    "/compte/mot-de-passe-oublie": "/compte/mot-de-passe-oublie",
+    "/reinitialiser": "/reinitialiser",
+    "/compte/tableau-de-bord": "/compte/tableau-de-bord",
+    "/compte/console": "/compte/console",
   },
 });
 

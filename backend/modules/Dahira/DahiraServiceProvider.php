@@ -7,6 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Events\PaymentRecorded;
+use Modules\Core\Events\PersonalDataPurgeRunning;
+use Modules\Dahira\Listeners\PurgeExpiredJoinRequests;
 use Modules\Dahira\Listeners\RecordContributionTreasury;
 
 class DahiraServiceProvider extends ServiceProvider
@@ -32,6 +34,7 @@ class DahiraServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
 
         Event::listen(PaymentRecorded::class, RecordContributionTreasury::class);
+        Event::listen(PersonalDataPurgeRunning::class, PurgeExpiredJoinRequests::class);
 
         $this->commands([
             Console\Commands\GenerateSchedulesCommand::class,

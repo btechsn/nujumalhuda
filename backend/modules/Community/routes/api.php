@@ -8,7 +8,8 @@ use Modules\Community\Http\Controllers\DiscussionController;
 Route::prefix('api/v1/community')->middleware('api')->group(function () {
     Route::get('board', [CommunityFeedController::class, 'board']);
     Route::get('donors', [CommunityController::class, 'donors']);
-    Route::post('donations', [CommunityController::class, 'donate']);
+    Route::post('donations', [CommunityController::class, 'donate'])->middleware('throttle:20,1');
+    Route::get('sponsorships/students', [CommunityController::class, 'sponsorableStudents']);
     Route::get('testimonials', [CommunityController::class, 'testimonials']);
     Route::get('partners', [CommunityController::class, 'partners']);
     Route::get('gallery', [CommunityController::class, 'gallery']);
@@ -21,6 +22,7 @@ Route::prefix('api/v1/community')->middleware('api')->group(function () {
     Route::post('contact', [CommunityController::class, 'contact']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::post('sponsorships', [CommunityController::class, 'sponsor'])->middleware('throttle:10,1');
         Route::post('questions', [CommunityController::class, 'ask']);
         Route::get('discussions', [DiscussionController::class, 'index']);
         Route::post('discussions', [DiscussionController::class, 'store']);

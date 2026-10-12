@@ -9,12 +9,15 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 use Modules\Core\Enums\PaymentMethod;
 use Modules\Core\Enums\PaymentStatus;
 use Modules\Core\Models\Payment;
 use Modules\Education\Events\EnrollmentApproved;
 use Modules\Education\Events\EnrollmentRejected;
 use Modules\Education\Models\Enrollment;
+use Modules\Education\Models\EnrollmentDocument;
 
 class EnrollmentResource extends Resource
 {
@@ -55,6 +58,36 @@ class EnrollmentResource extends Resource
                             ->email()
                             ->maxLength(255),
                     ])->columns(2),
+
+                Forms\Components\Section::make('Demande')
+                    ->schema([
+                        Forms\Components\Textarea::make('motivation')
+                            ->label('Motivation')
+                            ->rows(4)
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('previous_education')
+                            ->label('Parcours antérieur')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        Forms\Components\Placeholder::make('has_quran_knowledge')
+                            ->label('Connaissance du Coran')
+                            ->content(fn (?Enrollment $record): string => ($record?->application_data['has_quran_knowledge'] ?? false) ? 'Oui' : 'Non'),
+                        Forms\Components\Placeholder::make('quran_level')
+                            ->label('Niveau de Coran')
+                            ->content(fn (?Enrollment $record): string => self::studyLevel($record?->application_data['quran_level'] ?? null)),
+                        Forms\Components\Placeholder::make('arabic_level')
+                            ->label('Niveau d\'arabe')
+                            ->content(fn (?Enrollment $record): string => self::studyLevel($record?->application_data['arabic_level'] ?? null)),
+                    ])->columns(3),
+
+                Forms\Components\Section::make('Pièces jointes')
+                    ->description('Le badge sous chaque fichier indique s’il est en attente, vérifié ou refusé.')
+                    ->schema([
+                        Forms\Components\Placeholder::make('uploaded_documents')
+                            ->label('')
+                            ->content(fn (?Enrollment $record): HtmlString => self::documentsOverview($record))
+                            ->columnSpanFull(),
+                    ]),
 
                 Forms\Components\Section::make('Promotion')
                     ->schema([
@@ -303,6 +336,81 @@ class EnrollmentResource extends Resource
             $payment = Payment::query()->create($attributes);
             $enrollment->update(['payment_id' => $payment->id]);
         }
+    }
+
+    public static function documentsOverview(?Enrollment $record): HtmlString
+    {
+        if (!$record) {
+            return new HtmlString('');
+        }
+
+        $record->loadMissing('uploadedDocuments');
+        $order = ['id_card' => 0, 'birth_certificate' => 1, 'photo' => 2];
+        $documents = $record->uploadedDocuments->sortBy(
+            fn (EnrollmentDocument $document): int => $order[$document->document_type] ?? 9,
+        );
+
+        if ($documents->isEmpty()) {
+            return new HtmlString('<p style="margin:0;color:#6b7280">Aucune pièce jointe pour cette demande.</p>');
+        }
+
+        $items = $documents->map(function (EnrollmentDocument $document): string {
+            $name = e($document->original_name ?: $document->file_name);
+            $label = e($document->getTypeLabel());
+            $size = e($document->getFormattedSize());
+            [$status, $background, $color] = match ($document->verification_status) {
+                'verified' => ['Vérifiée', '#dcfce7', '#166534'],
+                'rejected' => ['Refusée', '#fee2e2', '#991b1b'],
+                default => ['En attente de vérification', '#fef3c7', '#92400e'],
+            };
+            $status = e($status);
+            if ($document->verified_at) {
+                $status .= ' le '.e($document->verified_at->timezone(config('app.timezone'))->format('d/m/Y H:i'));
+            }
+            $missing = !Storage::disk('private')->exists((string) $document->file_path);
+            if ($missing) {
+                return '<div style="padding:12px 0;border-bottom:1px solid #e5e7eb">'
+                    .'<div style="font-weight:600">'.$label.'</div>'
+                    .'<div style="color:#6b7280">'.$name.' · fichier introuvable</div>'
+                    .'</div>';
+            }
+
+            $url = e(route('education.admin.documents.download', $document, false));
+            $id = e($document->id);
+            $notes = filled($document->verification_notes)
+                ? '<div style="margin-top:4px;color:#6b7280">Motif : '.e($document->verification_notes).'</div>'
+                : '';
+            $preview = str_starts_with((string) $document->mime_type, 'image/')
+                ? '<img src="'.$url.'" alt="'.$label.'" style="display:block;max-height:120px;margin-top:8px;border-radius:8px">'
+                : '';
+
+            return '<div style="padding:12px 0;border-bottom:1px solid #e5e7eb">'
+                .'<div style="font-weight:600">'.$label.'</div>'
+                .'<div style="margin-top:2px">'.$name.' · '.$size.'</div>'
+                .'<span style="display:inline-block;margin-top:8px;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;background:'.$background.';color:'.$color.'">'.$status.'</span>'
+                .$notes
+                .'<div style="margin-top:8px">'
+                .'<a href="'.$url.'" target="_blank" rel="noopener" style="font-weight:600;color:#14532d">Ouvrir le fichier</a>'
+                .'<button type="button" wire:click="verifyDocument(\''.$id.'\')" wire:confirm="Marquer cette pièce comme vérifiée ?" style="margin-left:16px;font-weight:600;color:#166534">Marquer comme vérifiée</button>'
+                .'<button type="button" x-on:click="const reason = window.prompt(\'Motif du refus\'); if (reason) { $wire.rejectDocument(\''.$id.'\', reason) }" style="margin-left:16px;font-weight:600;color:#991b1b">Refuser</button>'
+                .'</div>'
+                .$preview
+                .'</div>';
+        })->implode('');
+
+        return new HtmlString($items);
+    }
+
+    private static function studyLevel(mixed $value): string
+    {
+        return match ((string) $value) {
+            'none' => 'Aucun',
+            'beginner' => 'Débutant',
+            'intermediate' => 'Intermédiaire',
+            'advanced' => 'Avancé',
+            '' => '—',
+            default => (string) $value,
+        };
     }
 
     public static function getPages(): array

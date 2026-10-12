@@ -4,6 +4,7 @@ namespace Modules\Live\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Modules\Core\Support\OperationsDesk;
 use Modules\Live\Models\LiveChannel;
 use Modules\Live\Models\LiveStream;
 
@@ -40,7 +41,7 @@ class MediaMtxService
         }
 
         if ($action === 'publish') {
-            return $this->validatePublishPath($path);
+            return OperationsDesk::isReady() && $this->validatePublishPath($path);
         }
 
         return false;
@@ -55,6 +56,10 @@ class MediaMtxService
     {
         $parts = array_values(array_filter(explode('/', trim($path, '/'))));
         if ($parts === []) {
+            return false;
+        }
+
+        if (! OperationsDesk::isReady()) {
             return false;
         }
 

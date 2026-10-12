@@ -8,8 +8,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
 import { AiSupportFab } from "@/components/layout/ai-support-fab";
+import { TranslationFallbackNote } from "@/components/layout/translation-fallback-note";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { PLATFORM_NAV } from "@/config/platform-nav";
+import { useAuth } from "@/hooks/useAuth";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { localized, mapsSearchUrl, phoneHref, type FooterLink } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
@@ -74,13 +76,13 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
         <div className="border-b border-line bg-surface">
           <div className="nh-container flex h-16 items-center justify-between gap-4">
-            <Link href={hrefOf("")} className="flex min-w-0 items-center gap-3">
+            <Link href={hrefOf("")} className="flex shrink-0 items-center gap-3">
               <span className="relative size-11 shrink-0 overflow-hidden rounded-full border border-gold-300 bg-white">
-                <Image src={logoSrc} alt="" fill sizes="44px" className="object-cover object-[center_28%]" />
+                <Image src={logoSrc} alt="" fill sizes="44px" data-essential="" className="object-cover object-[center_28%]" />
               </span>
-              <span className="hidden min-w-0 flex-col leading-none sm:flex">
-                <span className="font-sans text-sm font-extrabold tracking-tight">Nujum Al-Huda</span>
-                <span className={`mt-1 text-[0.65rem] font-semibold text-primary ${locale === "ar" ? "font-arabic" : "font-sans"}`}>
+              <span className="hidden flex-col leading-none sm:flex">
+                <span className="whitespace-nowrap font-sans text-xs font-extrabold tracking-tight">Nujum Al-Huda</span>
+                <span className={`mt-1 whitespace-nowrap text-[0.6rem] font-semibold text-primary ${locale === "ar" ? "font-arabic" : "font-sans"}`}>
                   {t("quranic")}
                 </span>
               </span>
@@ -101,7 +103,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
                       href={hrefOf(group.href)}
                       aria-expanded={shown}
                       className={cn(
-                        "inline-flex items-center gap-1 px-3 py-2 text-small font-semibold uppercase tracking-wide",
+                        "inline-flex items-center gap-1 px-3 py-2 font-semibold uppercase tracking-wide",
                         current ? "text-gold-700" : "text-content hover:text-gold-700",
                       )}
                     >
@@ -129,6 +131,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
             </nav>
 
             <div className="flex items-center gap-2">
+              <AccountMenu hrefOf={hrefOf} />
               <Link
                 href={hrefOf("/academique/inscription")}
                 className="inline-flex rounded-full bg-gold-300 px-4 py-2.5 text-small font-semibold tracking-wide text-neutral-900 uppercase transition hover:bg-gold-200"
@@ -156,6 +159,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
                   </a>
                   <LocaleSwitcher />
                 </div>
+                <AccountMenu hrefOf={hrefOf} mobile onNavigate={() => setOpen(false)} />
                 {PLATFORM_NAV.map((group) => (
                   <div key={group.id}>
                     <p className="text-small font-semibold uppercase tracking-wide text-gold-700">
@@ -184,25 +188,19 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
       <div aria-hidden="true" className="h-16 shrink-0 sm:h-[6.25rem]" />
 
       <div id="nh-main" className="flex-1">
+        <TranslationFallbackNote />
         {children}
       </div>
 
       <AiSupportFab />
 
-      {settings.analyticsId ? (
-        <>
-          <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.analyticsId}`} strategy="afterInteractive" />
-          <Script id="nh-analytics" strategy="afterInteractive">
-            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.analyticsId}');`}
-          </Script>
-        </>
-      ) : null}
+      <SiteAnalytics domain={settings.plausibleDomain} pathname={pathname} />
 
       <footer className="bg-brand-950 text-white">
         <div className="nh-container grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <span className="relative block size-16 overflow-hidden rounded-full border border-gold-300 bg-white">
-              <Image src={logoSrc} alt={localized(settings.footerTitle, locale)} fill sizes="64px" className="object-cover object-[center_28%]" />
+              <Image src={logoSrc} alt={localized(settings.footerTitle, locale)} fill sizes="64px" data-essential="" className="object-cover object-[center_28%]" />
             </span>
             <p className="mt-4 font-sans text-lg font-extrabold">{localized(settings.footerTitle, locale)}</p>
             <p className="mt-3 max-w-xs text-small leading-relaxed text-white/75">{localized(settings.footerBlurb, locale)}</p>
@@ -256,6 +254,150 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+/**
+ * Cahier des charges §8.3 point 3 : aucune donnée de mineur dans les
+ * analytics. Le script ne se charge pas tant que l'identité n'est pas
+ * connue, jamais pour un élève mineur, et jamais sur les pages de compte
+ * (profil, enfants, jeton de réinitialisation). La vue envoyée ne contient
+ * ni requête d'URL, ni titre de page, ni identifiant utilisateur.
+ */
+function SiteAnalytics({ domain, pathname }: { domain: string; pathname: string }) {
+  const { user, loading } = useAuth();
+
+  if (!domain || loading || user?.is_minor || /\/(compte|reinitialiser)(\/|$)/.test(pathname)) {
+    return null;
+  }
+
+  return (
+    <Script
+      src="https://plausible.io/js/script.js"
+      strategy="afterInteractive"
+      data-domain={domain}
+    />
+  );
+}
+
+function AccountMenu({
+  hrefOf,
+  mobile = false,
+  onNavigate,
+}: {
+  hrefOf: (path: string) => string;
+  mobile?: boolean;
+  onNavigate?: () => void;
+}) {
+  const t = useTranslations("auth");
+  const { user, loading, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  if (loading) return mobile ? null : <span className="size-9" aria-hidden="true" />;
+
+  if (mobile) {
+    return (
+      <div className="flex flex-col gap-2 border-b border-line pb-4">
+        {user ? (
+          <>
+            <Link
+              href={hrefOf("/compte/tableau-de-bord")}
+              onClick={onNavigate}
+              className="block rounded-full bg-brand-800 px-4 py-2.5 text-center text-small font-semibold text-white"
+            >
+              {t("welcome", { name: user.first_name })} — {t("goToDashboard")}
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                onNavigate?.();
+              }}
+              className="block rounded-full border border-line px-4 py-2.5 text-center text-small font-semibold text-content"
+            >
+              {t("logout")}
+            </button>
+          </>
+        ) : (
+          <div className="flex gap-2">
+            <Link
+              href={hrefOf("/compte/connexion")}
+              onClick={onNavigate}
+              className="flex-1 rounded-full border border-line px-4 py-2.5 text-center text-small font-semibold text-content"
+            >
+              {t("login")}
+            </Link>
+            <Link
+              href={hrefOf("/compte/inscription")}
+              onClick={onNavigate}
+              className="flex-1 rounded-full bg-brand-800 px-4 py-2.5 text-center text-small font-semibold text-white"
+            >
+              {t("createAccount")}
+            </Link>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Link
+        href={hrefOf("/compte/connexion")}
+        className="hidden items-center gap-1.5 rounded-full border border-line px-3.5 py-2.5 text-small font-semibold text-content transition hover:border-gold-300 hover:text-gold-700 lg:inline-flex"
+      >
+        <UserIcon />
+        {t("login")}
+      </Link>
+    );
+  }
+
+  return (
+    <div
+      className="relative hidden lg:block"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 rounded-full border border-line px-3.5 py-2.5 text-small font-semibold text-content transition hover:border-gold-300 hover:text-gold-700"
+      >
+        <UserIcon />
+        {user.first_name}
+        <Chevron />
+      </button>
+      {open ? (
+        <ul className="nh-drop absolute end-0 top-full z-50 flex w-52 flex-col gap-2 pt-2">
+          <li>
+            <Link
+              href={hrefOf("/compte/tableau-de-bord")}
+              className="block rounded-full bg-gold-300 px-4 py-2.5 text-center text-small font-semibold text-neutral-900 transition hover:-translate-y-0.5 hover:bg-gold-200"
+            >
+              {t("goToDashboard")}
+            </Link>
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => logout()}
+              className="block w-full rounded-full border border-line bg-surface px-4 py-2.5 text-center text-small font-semibold text-content transition hover:border-gold-300"
+            >
+              {t("logout")}
+            </button>
+          </li>
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true" className="size-3.5">
+      <circle cx="8" cy="5.2" r="2.6" />
+      <path d="M2.6 13.4c0-2.7 2.4-4.4 5.4-4.4s5.4 1.7 5.4 4.4" strokeLinecap="round" />
+    </svg>
   );
 }
 

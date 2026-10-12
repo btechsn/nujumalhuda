@@ -3,8 +3,11 @@
 namespace Modules\Academics;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Academics\Listeners\ScrubAnonymizedStudentRecords;
 use Modules\Academics\Models\StudentProgress;
+use Modules\Core\Events\MinorAnonymized;
 use Modules\Academics\Observers\StudentProgressObserver;
 use Modules\Education\Models\Enrollment;
 
@@ -32,6 +35,8 @@ class AcademicsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'academics');
 
         StudentProgress::observe(StudentProgressObserver::class);
+
+        Event::listen(MinorAnonymized::class, ScrubAnonymizedStudentRecords::class);
 
         Enrollment::created(function (Enrollment $enrollment): void {
             StudentProgress::ensureForStudent($enrollment->user_id);

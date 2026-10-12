@@ -9,7 +9,6 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Announcements\Http\Resources\AnnouncementResource;
 use Modules\Announcements\Models\Announcement;
 
 class AnnouncementBroadcast implements ShouldBroadcast
@@ -44,7 +43,7 @@ class AnnouncementBroadcast implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'announcement' => AnnouncementResource::make($this->announcement)->resolve(),
+            'id' => $this->announcement->id,
         ];
     }
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { serverApiFetch } from "@/lib/server-api";
 
 const DOORS = [
   { href: "centre", key: "centre", tone: "solid" },
@@ -16,8 +17,61 @@ const DOORS = [
  * Photo libre d'une leçon de Coran, sous un voile vert uniforme.
  * Quatre boutons séparés : Centre, Académique, Actualités et Live.
  */
+type KhutbaRow = {
+  id: string;
+  title?: Record<string, string> | null;
+  date?: string | null;
+  speaker?: { name?: string | null } | null;
+};
+
+function dakarToday(now = new Date()): { friday: boolean; date: string } {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Africa/Dakar",
+      weekday: "short",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+      .formatToParts(now)
+      .map((part) => [part.type, part.value]),
+  );
+
+  return {
+    friday: parts.weekday === "Fri",
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+  };
+}
+
+function isFridayDate(iso: string): boolean {
+  const [year, month, day] = iso.split("-").map(Number);
+  if (!year || !month || !day) return false;
+  return new Date(Date.UTC(year, month - 1, day, 12)).getUTCDay() === 5;
+}
+
+function localizedTitle(map: Record<string, string> | null | undefined, locale: string): string {
+  if (!map) return "";
+  const requested = locale === "en" || locale === "ar" ? locale : "fr";
+  const own = (map[requested] ?? "").trim();
+  if (own) return map[requested] ?? "";
+  return map.fr ?? "";
+}
+
+async function fridayKhutba(locale: string, today: string): Promise<{ item: KhutbaRow | null; exact: boolean }> {
+  const body = await serverApiFetch<{ data?: KhutbaRow[] }>("/mosque/khutbas", { locale, revalidate: 300 });
+  const rows = Array.isArray(body?.data) ? body.data : [];
+  const exact = rows.find((row) => row.date === today) ?? null;
+  if (exact) return { item: exact, exact: true };
+  const latestFriday = rows.find((row) => row.date && row.date <= today && isFridayDate(row.date)) ?? null;
+  return { item: latestFriday, exact: false };
+}
+
 export async function SplashScreen({ locale }: { locale: string }) {
   const t = await getTranslations("splash");
+  const today = dakarToday();
+  const friday = today.friday ? await fridayKhutba(locale, today.date) : null;
+  const fridayTitle = friday?.item ? localizedTitle(friday.item.title, locale) : "";
+  const fridayLabel = friday?.exact ? t("fridayTitle") : t("fridayLatest");
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-brand-950 text-white">
@@ -48,6 +102,7 @@ export async function SplashScreen({ locale }: { locale: string }) {
                 width={1280}
                 height={725}
                 priority
+                data-essential=""
                 className="absolute h-auto max-w-none"
                 style={{ width: "261.82%", left: "-76.62%", top: "-4.82%" }}
               />
@@ -103,6 +158,25 @@ export async function SplashScreen({ locale }: { locale: string }) {
             </Link>
           ))}
         </nav>
+
+        {today.friday ? (
+          <div className="nh-fade mt-8 w-full max-w-md rounded-2xl border border-gold-300/70 bg-brand-950/40 px-5 py-4 text-start">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gold-300">{fridayLabel}</p>
+            {friday?.item && fridayTitle ? (
+              <Link href={`/${locale}/centre/khutbas/${friday.item.id}`} className="mt-2 block">
+                <span className="text-base font-semibold text-white">{fridayTitle}</span>
+                {friday.item.speaker?.name ? (
+                  <span className="mt-1 block text-sm text-white/80">{friday.item.speaker.name}</span>
+                ) : null}
+                <span className="mt-2 inline-flex text-sm font-semibold text-gold-300">{t("fridayOpen")}</span>
+              </Link>
+            ) : (
+              <Link href={`/${locale}/centre/khutbas`} className="mt-2 block text-sm text-white/90">
+                {t("fridayEmpty")}
+              </Link>
+            )}
+          </div>
+        ) : null}
       </div>
     </main>
   );

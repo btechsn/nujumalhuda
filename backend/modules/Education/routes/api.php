@@ -29,6 +29,10 @@ Route::prefix('api/v1/education')->middleware('api')->group(function () {
     Route::get('teachers/{id}', [TeacherController::class, 'show']);
 
     Route::post('enrollments/public', [EnrollmentController::class, 'storePublic']);
+    Route::get('enrollments/track', [EnrollmentDocumentController::class, 'track'])
+        ->middleware('throttle:30,1');
+    Route::post('enrollments/track/documents', [EnrollmentDocumentController::class, 'uploadWithCode'])
+        ->middleware('throttle:20,1');
     
     // Routes authentifiées
     Route::middleware('auth:sanctum')->group(function () {

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { BannerSlider } from "@/components/layout/banner-slider";
+import { LiveAnnouncementBar } from "@/components/layout/live-announcement-bar";
 import { CentreShortcuts } from "@/components/layout/centre-shortcuts";
-import { CommuniqueBar } from "@/components/layout/communique-bar";
 import { MissionsSection } from "@/components/layout/missions-section";
 import { PartnersMarquee } from "@/components/layout/partners-marquee";
 import { TestimonialsCarousel } from "@/components/layout/testimonials-carousel";
@@ -97,20 +97,6 @@ async function loadFeaturedSlides(
   }));
 }
 
-type Communique = { id: string; text: string; href?: string };
-
-async function loadCommuniques(locale: string): Promise<Communique[]> {
-  const body = await serverApiFetch<{
-    data?: Array<{ id: string; message?: string; action_url?: string | null }>;
-  }>("/announcements", { locale });
-  if (!body?.data?.length) return [];
-  return body.data.map((item) => ({
-    id: item.id,
-    text: item.message ?? "",
-    href: `/${locale}/centre/annonces?annonce=${encodeURIComponent(item.id)}`,
-  }));
-}
-
 async function loadIndicators(): Promise<Record<IndicatorKey, number> | null> {
   const body = await serverApiFetch<{ data?: Record<IndicatorKey, number> }>(
     "/education/indicators",
@@ -142,21 +128,19 @@ export default async function CentrePage({
 
   // Traductions d’abord (local, rapide), puis API en parallèle
   // pour ne pas saturer `php artisan serve` en même temps que le compilateur.
-  const [t, menu, pages, splash, common, news, notices] = await Promise.all([
+  const [t, menu, pages, splash, common, news] = await Promise.all([
     getTranslations("doors"),
     getTranslations("menu"),
     getTranslations("pages"),
     getTranslations("splash"),
     getTranslations("common"),
     getTranslations("news"),
-    getTranslations("announcements"),
   ]);
 
-  const [indicators, testimonials, partners, communiques, featuredSlidesRaw, centreImage] = await Promise.all([
+  const [indicators, testimonials, partners, featuredSlidesRaw, centreImage] = await Promise.all([
     loadIndicators(),
     loadTestimonials(locale),
     loadPartners(locale),
-    loadCommuniques(locale),
     loadFeaturedSlides(locale, { eyebrow: news("featured") }),
     loadCentreImage(),
   ]);
@@ -204,11 +188,7 @@ export default async function CentrePage({
   return (
     <article>
       <div className="relative">
-        <CommuniqueBar
-          items={communiques}
-          label={notices("communique")}
-          listHref={`/${locale}/centre/annonces`}
-        />
+        <LiveAnnouncementBar />
         <BannerSlider slides={featuredSlides.length > 0 ? featuredSlides : fallbackSlides} />
 
         <CentreShortcuts locale={locale} indicators={indicators} />

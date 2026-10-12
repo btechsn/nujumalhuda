@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { FeaturePage } from "@/components/layout/feature-page";
+import { DailyBoard } from "@/components/resources/daily-board";
 
 export async function generateMetadata({
   params,
@@ -9,10 +9,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "pages" });
-  return { title: t("daily.title") };
+  const t = await getTranslations({ locale, namespace: "pages.daily" });
+  return { title: t("title") };
 }
 
 export default function DailyPage() {
-  return <FeaturePage pageKey="daily" />;
+  return <DailyBoard />;
 }

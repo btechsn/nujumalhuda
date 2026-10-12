@@ -6,15 +6,22 @@ namespace Modules\Announcements\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Core\Support\EditorialText;
 
 class AnnouncementResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $locale = app()->getLocale();
+        $title = EditorialText::present($this->resource->getTranslations('title'), $locale);
+        $message = EditorialText::present($this->resource->getTranslations('message'), $locale);
+
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'message' => $this->message,
+            'title' => $title['text'],
+            'title_fell_back' => $title['fell_back'],
+            'message' => $message['text'],
+            'message_fell_back' => $message['fell_back'],
             'category' => [
                 'value' => $this->category->value,
                 'label' => $this->category->label(),

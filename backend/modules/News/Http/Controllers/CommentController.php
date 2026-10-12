@@ -5,7 +5,6 @@ namespace Modules\News\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Modules\News\Events\CommentPosted;
 use Modules\News\Http\Requests\CommentStoreRequest;
@@ -14,12 +13,17 @@ use Modules\News\Models\Article;
 use Modules\News\Models\ArticleComment;
 use Modules\News\Services\CommentSpamService;
 use Modules\Core\Services\ModerationService;
+use Modules\Core\Support\ContributionDesk;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
     public function store(CommentStoreRequest $request, CommentSpamService $spam, ModerationService $moderation): JsonResponse
     {
+        if ($closed = ContributionDesk::closedResponse('comments')) {
+            return $closed;
+        }
+
         $article = Article::findOrFail($request->article_id);
 
         if (!$article->allow_comments) {
@@ -28,7 +32,11 @@ class CommentController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $user = Auth::user();
+        $user = $request->user('sanctum');
+        if ($user === null) {
+            return response()->json(['message' => 'Connectez-vous pour commenter.'], Response::HTTP_UNAUTHORIZED);
+        }
+
         $analysis = $spam->analyze(
             $user,
             $request->string('content')->toString(),
@@ -38,8 +46,8 @@ class CommentController extends Controller
 
         $comment = ArticleComment::create([
             'article_id' => $article->id,
-            'user_id' => $user?->id,
-            'author_name' => filled($request->input('author_name')) ? trim((string) $request->input('author_name')) : null,
+            'user_id' => $user->id,
+            'author_name' => null,
             'parent_id' => $request->parent_id,
             'content' => $request->content,
             'status' => $analysis['status'],
@@ -96,7 +104,7 @@ class CommentController extends Controller
     public function index(string $articleId): JsonResponse
     {
         $comments = ArticleComment::query()
-            ->with(['user', 'replies.user'])
+            ->with(['user', 'replies' => fn ($query) => $query->approved()->with('user')->orderBy('created_at')])
             ->where('article_id', $articleId)
             ->approved()
             ->topLevel()

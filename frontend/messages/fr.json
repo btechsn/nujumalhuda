@@ -1,4 +1,43 @@
 {
+  "editorial": {
+    "fallback": "Cette page est affichée en français : la traduction n’est pas encore disponible."
+  },
+  "comfort": {
+    "open": "Confort",
+    "title": "Confort de lecture",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "text": "Texte",
+    "textNormal": "100 %",
+    "textLarge": "125 %",
+    "arabic": "Graphie arabe",
+    "naskh": "Simplifiée",
+    "uthmani": "Uthmani",
+    "bandwidth": "Connexion",
+    "full": "Complète",
+    "low": "Allégée",
+    "push": "Notifications",
+    "signIn": "Connectez-vous pour choisir les notifications.",
+    "pushPending": "Le serveur n’envoie pas encore de notifications. Votre choix est enregistré.",
+    "announcements": "Annonces",
+    "prayers": "Prières",
+    "live": "Direct",
+    "close": "Fermer"
+  },
+  "search": {
+    "title": "Recherche",
+    "placeholder": "Verset, khutba, programme…",
+    "submit": "Chercher",
+    "empty": "Aucun résultat public pour cette recherche.",
+    "hint": "Deux caractères au minimum.",
+    "kinds": {
+      "article": "Actualité",
+      "khutba": "Khutba",
+      "program": "Programme"
+    }
+  },
   "common": {
     "appName": "Nujum Al-Huda Institute",
     "loading": "Chargement...",
@@ -17,7 +56,8 @@
     "previous": "Précédent",
     "home": "Accueil",
     "logout": "Déconnexion",
-    "changeLanguage": "Changer de langue"
+    "changeLanguage": "Changer de langue",
+    "shareWhatsApp": "Partager sur WhatsApp"
   },
   "nav": {
     "home": "Accueil",
@@ -28,7 +68,9 @@
     "news": "Actualités",
     "contact": "Contact",
     "login": "Connexion",
-    "register": "S'inscrire"
+    "register": "S'inscrire",
+    "support": "Soutenir",
+    "enroll": "S'inscrire"
   },
   "auth": {
     "login": "Connexion",
@@ -44,11 +86,108 @@
     "rememberMe": "Se souvenir de moi",
     "loginSuccess": "Connexion réussie",
     "logoutSuccess": "Déconnexion réussie",
-    "registerSuccess": "Inscription réussie"
+    "registerSuccess": "Inscription réussie",
+    "emailPh": "vous@exemple.com",
+    "phonePh": "77 123 45 67",
+    "passwordPh": "••••••••",
+    "firstNamePh": "Votre prénom",
+    "lastNamePh": "Votre nom",
+    "identifierHint": "Renseignez un email ou un numéro de téléphone (au moins l'un des deux).",
+    "submitLogin": "Se connecter",
+    "submitRegister": "Créer mon compte",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un compte ?",
+    "createAccount": "Créer un compte",
+    "backToLogin": "Retour à la connexion",
+    "loginError": "Les identifiants sont incorrects.",
+    "registerError": "L'inscription n'a pas abouti.",
+    "genericError": "Une erreur est survenue.",
+    "sendResetLink": "Envoyer les instructions",
+    "resetSent": "Si un compte correspond, un message de réinitialisation a été envoyé par SMS ou par e-mail.",
+    "resetLocal": "L'envoi d'e-mail n'est pas configuré sur cette machine. Choisissez un nouveau mot de passe avec le lien ci-dessous.",
+    "resetOpenLink": "Choisir un nouveau mot de passe",
+    "resetIdentifier": "Email ou téléphone utilisé à l'inscription",
+    "resetToken": "Code reçu",
+    "resetTokenPh": "Code SMS ou code du lien reçu",
+    "resetTokenHint": "Le SMS contient un code à 6 chiffres. L'e-mail contient un lien : le code figure à la fin de ce lien.",
+    "newPassword": "Nouveau mot de passe",
+    "resetSubmit": "Réinitialiser le mot de passe",
+    "resetSuccess": "Mot de passe mis à jour. Vous pouvez vous connecter.",
+    "resetError": "Le code est invalide ou expiré.",
+    "myAccount": "Mon compte",
+    "goToDashboard": "Tableau de bord",
+    "goToAdmin": "Administration",
+    "memberSince": "Membre depuis {date}",
+    "welcome": "Bonjour {name}",
+    "sectionProfile": "Mon profil",
+    "saveProfile": "Enregistrer",
+    "savingProfile": "Enregistrement…",
+    "profileSaved": "Profil mis à jour.",
+    "profileError": "Le profil n'a pas pu être enregistré.",
+    "emailReadOnly": "L'adresse e-mail ne se modifie pas depuis cette page.",
+    "localeLabel": "Langue",
+    "localeFr": "Français",
+    "localeEn": "Anglais",
+    "localeAr": "Arabe",
+    "sectionChildren": "Suivi de mes enfants",
+    "sectionProgress": "Ma progression",
+    "sectionDahira": "Mon dahira",
+    "sectionStaff": "Espace administration",
+    "teacherConsole": "Console enseignant",
+    "sectionStaffLede": "Vous avez un rôle dans l'équipe. La gestion complète se fait dans l'administration.",
+    "noChildren": "Aucun enfant rattaché à votre compte pour le moment.",
+    "noProgress": "Aucun suivi de progression pour le moment.",
+    "dossierTitle": "Dossiers d’inscription",
+    "dossierStudent": "Élève",
+    "dossierStatus": {
+      "pending": "Dossier en attente",
+      "approved": "Dossier accepté",
+      "rejected": "Dossier refusé",
+      "active": "Inscription en cours",
+      "completed": "Parcours terminé",
+      "withdrawn": "Dossier retiré"
+    },
+    "noDahira": "Vous n'êtes membre d'aucun dahira pour le moment.",
+    "dahiraTreasurerBadge": "Trésorier",
+    "dahiraBalance": "Solde de la caisse",
+    "dahiraUpcomingMeetings": "Prochaines réunions",
+    "dahiraNoMeetings": "Aucune réunion programmée pour le moment.",
+    "dahiraContributions": "Mes cotisations",
+    "dahiraNoContributions": "Aucune échéance de cotisation pour le moment.",
+    "dahiraStatusDue": "À régler",
+    "dahiraStatusOverdue": "En retard",
+    "dahiraStatusProcessing": "Paiement en cours",
+    "dahiraStatusPaid": "Réglée",
+    "dahiraPay": "Payer",
+    "dahiraChooseMethod": "Choisir un moyen de paiement",
+    "dahiraMethodWave": "Wave",
+    "dahiraMethodOrangeMoney": "Orange Money",
+    "dahiraMethodBankTransfer": "Virement bancaire",
+    "dahiraMethodCash": "Déjà remis en espèces",
+    "dahiraPaying": "Paiement en cours…",
+    "dahiraPaymentError": "Le paiement n'a pas pu être initié ({error}). Réessayez ou choisissez un autre moyen.",
+    "dahiraPeriod": "Période du {date}",
+    "dahiraDueOn": "Échéance le {date}",
+    "dahiraAmount": "{amount} FCFA",
+    "dahiraTreasuryEntries": "Dernières opérations de caisse",
+    "dahiraTreasuryEmpty": "Aucune opération enregistrée pour le moment.",
+    "statusCompleted": "Terminé",
+    "statusInProgress": "En cours",
+    "statusNotStarted": "À venir",
+    "certificateCode": "Certificat {code}",
+    "roles": {
+      "admin": "Administrateur général",
+      "director": "Direction",
+      "secretary": "Administration communication",
+      "teacher": "Enseignant",
+      "academic_admin": "Administration académique"
+    }
   },
   "announcements": {
     "title": "Annonces",
     "communique": "Communiqué",
+    "pause": "Mettre le bandeau en pause",
+    "resume": "Reprendre le défilement",
     "noAnnouncements": "Aucune annonce pour le moment",
     "markAsRead": "Marquer comme lu",
     "category": {
@@ -82,6 +221,10 @@
     "verse": "وَقُل رَّبِّ زِدْنِي عِلْمًا",
     "verseRef": "Taha, 114",
     "lead": "La lumière du savoir, à Dakar",
+    "fridayTitle": "Khutba du vendredi",
+    "fridayLatest": "Dernière khutba du vendredi",
+    "fridayEmpty": "La khutba de ce vendredi sera publiée par le centre.",
+    "fridayOpen": "Lire la khutba",
     "enter": "Entrer",
     "centre": {
       "kicker": "Mosquée et vie du lieu",
@@ -203,7 +346,13 @@
       "commentBodyPh": "Écrivez votre message…",
       "commentSubmit": "Publier",
       "commentPending": "Merci. Votre commentaire sera visible après validation.",
-      "commentError": "Le commentaire n'a pas pu être envoyé. Réessayez."
+      "commentError": "Le commentaire n'a pas pu être envoyé. Réessayez.",
+      "commentClosed": "Les commentaires sont fermés tant que le centre n’a pas nommé un modérateur.",
+      "commentCharter": "Charte",
+      "commentSignIn": "Connectez-vous pour commenter.",
+      "commentReply": "Répondre",
+      "commentReplying": "Réponse au commentaire.",
+      "commentCancel": "Annuler"
     }
   },
   "live": {
@@ -476,6 +625,7 @@
     "next": "Suivant",
     "replies": "{count} réponses",
     "answered": "Répondu",
+    "answeredBy": "Répondu par {name}",
     "members": "{count} membres",
     "joinGroup": "Rejoindre",
     "emptyDiscussions": "Aucune discussion publique pour le moment.",
@@ -500,7 +650,7 @@
     "detail": {
       "back": "Retour à la communauté",
       "notFound": "Cette discussion est introuvable.",
-      "answer": "Réponse du centre",
+      "answer": "Réponse de {name}",
       "pending": "La réponse n'est pas encore publiée."
     },
     "topics": {
@@ -579,6 +729,73 @@
     "another": "Nouveau message",
     "error": "L'envoi n'a pas abouti. Indiquez un email ou un téléphone, puis réessayez."
   },
+  "teacherConsole": {
+    "title": "Console enseignant",
+    "lede": "Ouvrez une séance d'écoute puis notez la récitation. Cette page n'ouvre pas de diffusion en direct.",
+    "closed": "Cette console est réservée aux enseignants.",
+    "back": "Retour au tableau de bord",
+    "student": "Élève",
+    "studentPh": "Choisir un élève",
+    "titleField": "Passage récité",
+    "titlePh": "Ex. Sourate Al-Mulk",
+    "start": "Commencer la séance",
+    "started": "Séance ouverte. Elle reste restreinte aux enseignants et aux tuteurs.",
+    "evaluate": "Noter la récitation",
+    "memorization": "Mémorisation",
+    "tajwid": "Tajwid",
+    "fluency": "Fluidité",
+    "comment": "Commentaire",
+    "commentPh": "Ce qui a été entendu, ce qu'il faut reprendre",
+    "milestone": "Palier",
+    "milestoneNone": "Aucun palier",
+    "save": "Enregistrer la note",
+    "saved": "Note enregistrée.",
+    "error": "L'action n'a pas abouti.",
+    "loading": "Envoi…",
+    "noStudents": "Aucun élève inscrit à évaluer pour le moment.",
+    "scoreHint": "1 à revoir, 5 excellent"
+  },
+  "support": {
+    "donateTitle": "Faire un don",
+    "donateLede": "Espèces et virement sont confirmés par le secrétariat. Wave et Orange Money demandent un compte connecté.",
+    "amount": "Montant (FCFA)",
+    "anonymous": "Rester anonyme sur le mur des donateurs",
+    "donorName": "Nom affiché",
+    "donorNamePh": "Votre nom",
+    "method": "Moyen",
+    "methods": {
+      "cash": "Espèces au centre",
+      "bank_transfer": "Virement",
+      "wave": "Wave",
+      "orange_money": "Orange Money"
+    },
+    "note": "Message (optionnel)",
+    "donateSubmit": "Enregistrer le don",
+    "donateSuccess": "Don enregistré. S'il passe par un opérateur, ouvrez le paiement. Sinon le secrétariat confirme l'encaissement.",
+    "donateError": "Le don n'a pas pu être enregistré.",
+    "checkout": "Ouvrir le paiement",
+    "sponsorTitle": "Parrainer un élève",
+    "sponsorLede": "Seuls les élèves dont le nom peut être publié apparaissent. Le secrétariat confirme le parrainage.",
+    "student": "Élève",
+    "studentAny": "Le secrétariat choisira l'élève",
+    "pledge": "Engagement (FCFA)",
+    "frequency": "Rythme",
+    "frequencies": {
+      "once": "Une fois",
+      "monthly": "Chaque mois",
+      "yearly": "Chaque année"
+    },
+    "sponsorSubmit": "Proposer le parrainage",
+    "sponsorSuccess": "Demande enregistrée. Le secrétariat vous confirmera le parrainage.",
+    "sponsorError": "La demande n'a pas abouti.",
+    "sponsorLogin": "Connectez-vous pour parrainer un élève.",
+    "login": "Connexion",
+    "wallTitle": "Mur des donateurs",
+    "wallLede": "Les dons confirmés. Un don anonyme n'affiche ni nom ni montant.",
+    "wallEmpty": "Aucun don confirmé pour le moment.",
+    "anonymousDonor": "Donateur anonyme",
+    "loading": "Envoi…"
+  },
   "enroll": {
     "infoTitle": "Le dossier",
     "infoLede": "Choisissez une promotion ouverte, puis déposez votre demande. Le secrétariat valide ensuite votre place.",
@@ -628,8 +845,47 @@
     },
     "submit": "Envoyer la demande",
     "loading": "Envoi…",
-    "success": "Demande envoyée. Le secrétariat vous contactera après examen du dossier.",
+    "success": "Demande envoyée. Conservez le code de suivi : la famille s’en sert pour voir l’état du dossier.",
     "another": "Nouvelle demande",
+    "documentsTitle": "Pièces justificatives",
+    "documentsHint": "PDF, JPG ou PNG, 10 Mo maximum. Ces pièces restent privées.",
+    "chooseFile": "Choisir un fichier",
+    "noFile": "Aucun fichier choisi",
+    "idCard": "Pièce d’identité",
+    "birthCertificate": "Acte de naissance",
+    "photo": "Photo",
+    "uploadWarning": "La demande est enregistrée, mais une pièce n’a pas pu être jointe. Vous pourrez la renvoyer avec le code de suivi.",
+    "trackingHint": "Code de suivi à conserver :",
+    "trackingTitle": "Suivre un dossier",
+    "trackingLede": "Saisissez le code remis à l’envoi pour voir l’état de la demande et les pièces reçues.",
+    "trackingPh": "Code de suivi",
+    "trackingSubmit": "Consulter",
+    "trackingMissing": "Aucun dossier ne correspond à ce code.",
+    "trackingStudent": "Élève",
+    "trackingStatus": "État",
+    "trackingNoDocuments": "Aucune pièce jointe pour le moment.",
+    "statuses": {
+      "pending": "En attente",
+      "approved": "Accepté",
+      "rejected": "Refusé",
+      "active": "En cours",
+      "completed": "Terminé",
+      "withdrawn": "Retiré"
+    },
+    "docTypes": {
+      "id_card": "Pièce d’identité",
+      "birth_certificate": "Acte de naissance",
+      "photo": "Photo",
+      "diploma": "Diplôme",
+      "cv": "CV",
+      "recommendation": "Recommandation",
+      "other": "Autre"
+    },
+    "docStatus": {
+      "pending": "À vérifier",
+      "verified": "Vérifiée",
+      "rejected": "Refusée"
+    },
     "errors": {
       "promotion": "Choisissez une promotion ouverte.",
       "send": "L’inscription n’a pas abouti. Vérifiez les champs et réessayez."
@@ -943,7 +1199,9 @@
       "muud": "Muud Ramadan",
       "community": "Communauté",
       "dahira": "Dahiras",
-      "contact": "Contact"
+      "contact": "Contact",
+      "search": "Recherche",
+      "support": "Soutenir"
     },
     "indicators": {
       "teachers": "Enseignants",
@@ -1087,6 +1345,31 @@
         "Le secrétariat valide la demande."
       ]
     },
+    "login": {
+      "eyebrow": "Espace membre",
+      "title": "Connexion",
+      "lede": "Accédez à votre tableau de bord : suivi des enfants, progression, et espace administration."
+    },
+    "register": {
+      "eyebrow": "Espace membre",
+      "title": "Créer un compte",
+      "lede": "Un compte permet de suivre la progression de vos enfants et de retrouver vos démarches."
+    },
+    "forgotPassword": {
+      "eyebrow": "Espace membre",
+      "title": "Mot de passe oublié",
+      "lede": "Indiquez l'email ou le téléphone de votre compte : nous vous envoyons les instructions."
+    },
+    "resetPassword": {
+      "eyebrow": "Espace membre",
+      "title": "Réinitialiser le mot de passe",
+      "lede": "Saisissez le code reçu et choisissez un nouveau mot de passe."
+    },
+    "dashboard": {
+      "eyebrow": "Espace membre",
+      "title": "Mon espace",
+      "lede": "Votre compte, votre suivi, et les accès qui correspondent à votre rôle."
+    },
     "promotions": {
       "eyebrow": "Élèves",
       "title": "Promotions",
@@ -1175,7 +1458,12 @@
         "Un contenu par jour.",
         "Verset, hadith ou rappel du centre.",
         "Il change avec la journée."
-      ]
+      ],
+      "verse": "Verset du jour",
+      "hadith": "Hadith du jour",
+      "empty": "Aucun verset ni hadith n'est publié pour le moment.",
+      "publishedOn": "Publié le {date}",
+      "source": "Source"
     },
     "zakat": {
       "eyebrow": "Calcul",
@@ -1242,6 +1530,11 @@
         "Le secrétariat accepte ou refuse la demande.",
         "Réunions et cotisations se gèrent ensuite dans chaque dahira."
       ]
+    },
+    "support": {
+      "eyebrow": "Soutien",
+      "title": "Soutenir le centre",
+      "lede": "Un don, un parrainage d'élève, et le mur de celles et ceux qui ont déjà donné."
     },
     "contact": {
       "eyebrow": "Dakar",

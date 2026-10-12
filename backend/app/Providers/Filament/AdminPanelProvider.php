@@ -53,6 +53,8 @@ final class AdminPanelProvider extends PanelProvider
                 \App\Filament\Pages\Settings\LinksSettingsPage::class,
                 \App\Filament\Pages\SendNewsletter::class,
                 \App\Filament\Pages\Settings\AnalyticsSettingsPage::class,
+                \App\Filament\Pages\Settings\ModerationSettingsPage::class,
+                \App\Filament\Pages\Settings\OperationsSettingsPage::class,
                 \App\Filament\Pages\Settings\MailSettingsPage::class,
                 \App\Filament\Pages\Settings\SmsSettingsPage::class,
                 \App\Filament\Pages\Settings\WaveSettingsPage::class,
@@ -183,6 +185,7 @@ final class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Communauté')->icon('heroicon-o-chat-bubble-left-right'),
                 NavigationGroup::make('Dahira')->icon('heroicon-o-user-group'),
                 NavigationGroup::make('Ressources')->icon('heroicon-o-book-open'),
+                NavigationGroup::make('Conformité & RGPD')->icon('heroicon-o-shield-check'),
                 NavigationGroup::make('Pages')->icon('heroicon-o-document-text')->collapsible(),
                 NavigationGroup::make('Paramètres')->icon('heroicon-o-cog-6-tooth')->collapsible(),
             ])

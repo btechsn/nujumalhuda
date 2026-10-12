@@ -8,6 +8,7 @@ import { EightPointStar } from "@/components/brand/ornaments";
 import { PageHeading } from "@/components/layout/page-heading";
 import { useLiveStreams, useSocialAccounts, type SocialAccount } from "@/hooks/useMediaLibrary";
 import type { LiveStream } from "@/types/api";
+import { markEditorialFallback } from "@/lib/editorial";
 import { cn } from "@/lib/utils";
 
 const TYPES = ["lecture", "khutba", "recitation", "event", "general"] as const;
@@ -76,6 +77,12 @@ export function LiveBoard() {
   useEffect(() => {
     setPage(1);
   }, [type, search]);
+
+  useEffect(() => {
+    if ([...liveData, ...data].some((item) => item.title_fell_back || item.description_fell_back)) {
+      markEditorialFallback();
+    }
+  }, [liveData, data]);
 
   const liveNow = useMemo(
     () => liveData.filter((item) => Boolean(item.embed_url)),

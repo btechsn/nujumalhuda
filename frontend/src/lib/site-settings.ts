@@ -17,7 +17,7 @@ export type SiteSettings = {
   latitude: number;
   longitude: number;
   footerNote: string;
-  analyticsId: string;
+  plausibleDomain: string;
   logoUrl: string;
   footerTitle: LocalizedText;
   footerBlurb: LocalizedText;
@@ -59,7 +59,7 @@ export const SITE_SETTINGS_FALLBACK: SiteSettings = {
   latitude: 14.7437965,
   longitude: -17.4674915,
   footerNote: "",
-  analyticsId: "",
+  plausibleDomain: "",
   logoUrl: "",
   footerTitle: {
     fr: "Nujum Al-Huda Institute Center",
@@ -125,7 +125,11 @@ export function normalizeSiteSettings(body: unknown): SiteSettings {
     latitude: Number.isFinite(latitude) ? latitude : SITE_SETTINGS_FALLBACK.latitude,
     longitude: Number.isFinite(longitude) ? longitude : SITE_SETTINGS_FALLBACK.longitude,
     footerNote: typeof data.footer_note === "string" ? data.footer_note : "",
-    analyticsId: typeof data.analytics_id === "string" && /^[A-Za-z0-9-]+$/.test(data.analytics_id) ? data.analytics_id : "",
+    plausibleDomain:
+      typeof data.plausible_domain === "string" &&
+      /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i.test(data.plausible_domain)
+        ? data.plausible_domain
+        : "",
     logoUrl: typeof data.logo_url === "string" ? data.logo_url : "",
     footerTitle: readLocalized(data.footer_title, SITE_SETTINGS_FALLBACK.footerTitle),
     footerBlurb: readLocalized(data.footer_blurb, SITE_SETTINGS_FALLBACK.footerBlurb),

@@ -24,7 +24,11 @@ class SponsorshipResource extends Resource
     {
         return $form->schema([
             Forms\Components\Select::make('sponsor_id')->relationship('sponsor', 'email')->searchable()->required(),
-            Forms\Components\Select::make('student_id')->relationship('student', 'email')->searchable()->required(),
+            Forms\Components\Select::make('student_id')
+                ->relationship('student', 'email')
+                ->searchable()
+                ->label('Élève')
+                ->helperText('Laisser vide si le secrétariat doit encore désigner l’élève.'),
             Forms\Components\TextInput::make('amount_minor')->numeric()->required()->label('Montant (XOF)'),
             Forms\Components\Select::make('frequency')->options([
                 'once' => 'Une fois',
@@ -32,10 +36,11 @@ class SponsorshipResource extends Resource
                 'yearly' => 'Annuel',
             ])->required(),
             Forms\Components\Select::make('status')->options([
+                'pending' => 'En attente',
                 'active' => 'Actif',
                 'paused' => 'En pause',
                 'ended' => 'Terminé',
-            ])->required(),
+            ])->required()->default('pending'),
         ]);
     }
 

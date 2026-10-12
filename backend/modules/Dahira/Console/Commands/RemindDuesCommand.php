@@ -9,12 +9,12 @@ class RemindDuesCommand extends Command
 {
     protected $signature = 'dahira:remind-dues';
 
-    protected $description = 'Prépare les relances de cotisation. Le SMS est enregistré, pas envoyé.';
+    protected $description = 'Relance les cotisations. Le SMS part seulement si Orange est configuré.';
 
     public function handle(DahiraNotifier $notifier): int
     {
         $count = $notifier->remindDues();
-        $this->info("{$count} relance(s) préparée(s). Les SMS ne partent pas tant que la passerelle Orange n'est pas branchée.");
+        $this->info("{$count} relance(s) traitée(s). Sans identifiants Orange, le SMS reste en attente et apparaît dans Exploitation.");
 
         return self::SUCCESS;
     }

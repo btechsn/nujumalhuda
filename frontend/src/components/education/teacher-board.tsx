@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { EightPointStar } from "@/components/brand/ornaments";
 import { PageHeading } from "@/components/layout/page-heading";
+import { markEditorialFallback, readEditorial } from "@/lib/editorial";
 import type { I18nField, Teacher, TeacherIjaza } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -35,10 +36,7 @@ function matchesName(name: string, query: string, locale: string) {
 }
 
 function i18nText(field: I18nField | undefined | null, locale: string): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 function i18nList(
@@ -46,7 +44,13 @@ function i18nList(
   locale: string,
 ): string[] {
   if (!field) return [];
-  const raw = (field as Record<string, unknown>)[locale] ?? (field as Record<string, unknown>).fr;
+  const record = field as Record<string, unknown>;
+  const own = record[locale];
+  const french = record.fr;
+  const ownFilled = Array.isArray(own) ? own.some(Boolean) : typeof own === "string" && own.trim() !== "";
+  const frenchFilled = Array.isArray(french) ? french.some(Boolean) : typeof french === "string" && french.trim() !== "";
+  const raw = ownFilled ? own : french;
+  if ((locale === "en" || locale === "ar") && !ownFilled && frenchFilled) markEditorialFallback();
   if (Array.isArray(raw)) return raw.filter(Boolean) as string[];
   if (typeof raw === "string" && raw) return [raw];
   return [];

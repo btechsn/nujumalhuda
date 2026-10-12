@@ -4,6 +4,7 @@ namespace Modules\Live\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Core\Support\EditorialText;
 
 class LiveStreamResource extends JsonResource
 {
@@ -17,8 +18,10 @@ class LiveStreamResource extends JsonResource
                 'name' => $this->channel->getLocalizedName(),
                 'type' => $this->channel->type,
             ],
-            'title' => $this->getLocalizedTitle(),
+            'title' => EditorialText::present(is_array($this->title) ? $this->title : null, app()->getLocale())['text'],
+            'title_fell_back' => EditorialText::present(is_array($this->title) ? $this->title : null, app()->getLocale())['fell_back'],
             'description' => $this->getLocalizedDescription(),
+            'description_fell_back' => EditorialText::present(is_array($this->description) ? $this->description : null, app()->getLocale())['fell_back'],
             'type' => $this->type,
             'status' => $this->status,
             'scheduled_at' => $this->scheduled_at?->toISOString(),

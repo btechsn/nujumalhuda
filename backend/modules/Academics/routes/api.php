@@ -5,6 +5,7 @@ use Modules\Academics\Http\Controllers\CertificateController;
 use Modules\Academics\Http\Controllers\IjazaController;
 use Modules\Academics\Http\Controllers\ProgressController;
 use Modules\Academics\Http\Controllers\QuizController;
+use Modules\Academics\Http\Controllers\TeacherConsoleController;
 
 Route::prefix('api/v1/academics')->middleware('api')->group(function () {
     Route::get('milestones', [ProgressController::class, 'milestones']);
@@ -17,6 +18,8 @@ Route::prefix('api/v1/academics')->middleware('api')->group(function () {
     Route::get('ijazas/{code}', [IjazaController::class, 'verify']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('teacher/students', [TeacherConsoleController::class, 'students']);
+        Route::post('teacher/evaluations', [TeacherConsoleController::class, 'store']);
         Route::get('portal', [ProgressController::class, 'portal']);
         Route::get('students/{studentId}/progress', [ProgressController::class, 'show']);
         Route::post('quizzes/{slug}/attempts', [QuizController::class, 'attempt']);

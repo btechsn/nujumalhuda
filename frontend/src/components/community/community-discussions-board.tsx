@@ -65,7 +65,7 @@ export function CommunityDiscussionsBoard() {
                 topicLabel={topicLabel}
                 emptyLabel={t("emptyDiscussions")}
                 repliesLabel={(count) => t("replies", { count })}
-                answeredLabel={t("answered")}
+                answeredLabel={(name) => t("answeredBy", { name })}
               />
               {totalPages > 1 ? (
                 <nav

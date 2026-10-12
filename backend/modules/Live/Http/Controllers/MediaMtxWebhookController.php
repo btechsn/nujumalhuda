@@ -4,6 +4,7 @@ namespace Modules\Live\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Core\Support\OperationsDesk;
 use Modules\Live\Services\MediaMtxService;
 
 class MediaMtxWebhookController extends Controller
@@ -27,6 +28,11 @@ class MediaMtxWebhookController extends Controller
 
         $action = (string) $request->input('action', '');
         $path = (string) $request->input('path', '');
+
+        if ($action === 'publish' && ! OperationsDesk::isReady()) {
+            return OperationsDesk::refusal();
+        }
+
         $allowed = $this->mediaMtxService->authorizeRequest($action, $path);
 
         if (!$allowed) {

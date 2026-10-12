@@ -26,7 +26,7 @@ class AnnouncementController extends Controller
     {
         $query = Announcement::with(['audiences'])
             ->active()
-            ->visibleBy($request->user());
+            ->visibleBy($request->user('sanctum'));
 
         $announcements = $query
             ->orderByRaw('COALESCE(starts_at, created_at) DESC')

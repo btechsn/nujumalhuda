@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 
+import { readEditorial } from "@/lib/editorial";
 import type { Article } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -16,10 +17,7 @@ function i18nText(
   field: { fr?: string; en?: string; ar?: string } | undefined | null,
   locale: string,
 ): string {
-  if (!field) return "";
-  if (locale === "en") return field.en || field.fr || "";
-  if (locale === "ar") return field.ar || field.fr || "";
-  return field.fr || "";
+  return readEditorial(field, locale).text;
 }
 
 export function ArticleCard({ article, className }: ArticleCardProps) {

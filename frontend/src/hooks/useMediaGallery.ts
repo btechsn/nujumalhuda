@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { fetchApiJson, unwrapList } from '@/lib/api-fetch';
+import { markEditorialFallback } from '@/lib/editorial';
 
 export interface GalleryMediaItem {
   id: string;
   kind: 'photo' | 'video' | string;
   caption: string;
+  caption_fell_back?: boolean;
   event_name?: string | null;
   media_url: string;
   thumbnail_url?: string | null;
@@ -65,6 +67,7 @@ export function useMediaGallery(
           return;
         }
         const list = unwrapList<GalleryMediaItem>(body);
+        if (list.some((item) => item.caption_fell_back)) markEditorialFallback();
         const nextMeta = readMeta(body, list.length, perPage);
         setData(list);
         setMeta(nextMeta);

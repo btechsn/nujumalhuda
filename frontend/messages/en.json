@@ -1,4 +1,43 @@
 {
+  "editorial": {
+    "fallback": "This page is shown in French: the translation is not available yet."
+  },
+  "comfort": {
+    "open": "Comfort",
+    "title": "Reading comfort",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "text": "Text",
+    "textNormal": "100%",
+    "textLarge": "125%",
+    "arabic": "Arabic script",
+    "naskh": "Simplified",
+    "uthmani": "Uthmani",
+    "bandwidth": "Connection",
+    "full": "Full",
+    "low": "Light",
+    "push": "Notifications",
+    "signIn": "Sign in to choose notifications.",
+    "pushPending": "The server is not sending notifications yet. Your choice is saved.",
+    "announcements": "Announcements",
+    "prayers": "Prayers",
+    "live": "Live",
+    "close": "Close"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Verse, khutba, program…",
+    "submit": "Search",
+    "empty": "No public result for this search.",
+    "hint": "At least two characters.",
+    "kinds": {
+      "article": "News",
+      "khutba": "Khutba",
+      "program": "Program"
+    }
+  },
   "common": {
     "appName": "Nujum Al-Huda Institute",
     "loading": "Loading...",
@@ -17,7 +56,8 @@
     "previous": "Previous",
     "home": "Home",
     "logout": "Logout",
-    "changeLanguage": "Change language"
+    "changeLanguage": "Change language",
+    "shareWhatsApp": "Share on WhatsApp"
   },
   "nav": {
     "home": "Home",
@@ -28,7 +68,9 @@
     "news": "News",
     "contact": "Contact",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "support": "Support",
+    "enroll": "Enrol"
   },
   "auth": {
     "login": "Login",
@@ -44,11 +86,108 @@
     "rememberMe": "Remember me",
     "loginSuccess": "Login successful",
     "logoutSuccess": "Logout successful",
-    "registerSuccess": "Registration successful"
+    "registerSuccess": "Registration successful",
+    "emailPh": "you@example.com",
+    "phonePh": "77 123 45 67",
+    "passwordPh": "••••••••",
+    "firstNamePh": "Your first name",
+    "lastNamePh": "Your last name",
+    "identifierHint": "Provide an email or a phone number (at least one of the two).",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create my account",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "createAccount": "Create an account",
+    "backToLogin": "Back to login",
+    "loginError": "The credentials are incorrect.",
+    "registerError": "Registration failed.",
+    "genericError": "Something went wrong.",
+    "sendResetLink": "Send instructions",
+    "resetSent": "If an account matches, a reset message has been sent by SMS or email.",
+    "resetLocal": "Email delivery is not configured on this machine. Choose a new password with the link below.",
+    "resetOpenLink": "Choose a new password",
+    "resetIdentifier": "Email or phone used at registration",
+    "resetToken": "Code received",
+    "resetTokenPh": "SMS code or code from the link",
+    "resetTokenHint": "The SMS contains a 6-digit code. The email contains a link: the code is at the end of it.",
+    "newPassword": "New password",
+    "resetSubmit": "Reset password",
+    "resetSuccess": "Password updated. You can now sign in.",
+    "resetError": "The code is invalid or expired.",
+    "myAccount": "My account",
+    "goToDashboard": "Dashboard",
+    "goToAdmin": "Administration",
+    "memberSince": "Member since {date}",
+    "welcome": "Hello {name}",
+    "sectionProfile": "My profile",
+    "saveProfile": "Save",
+    "savingProfile": "Saving…",
+    "profileSaved": "Profile updated.",
+    "profileError": "The profile could not be saved.",
+    "emailReadOnly": "The email address cannot be changed from this page.",
+    "localeLabel": "Language",
+    "localeFr": "French",
+    "localeEn": "English",
+    "localeAr": "Arabic",
+    "sectionChildren": "My children's progress",
+    "sectionProgress": "My progress",
+    "sectionDahira": "My dahira",
+    "sectionStaff": "Administration area",
+    "teacherConsole": "Teacher console",
+    "sectionStaffLede": "You have a role in the team. Full management happens in the administration.",
+    "noChildren": "No child linked to your account yet.",
+    "noProgress": "No progress tracking yet.",
+    "dossierTitle": "Enrolment files",
+    "dossierStudent": "Student",
+    "dossierStatus": {
+      "pending": "File waiting",
+      "approved": "File accepted",
+      "rejected": "File refused",
+      "active": "Enrolment in progress",
+      "completed": "Course completed",
+      "withdrawn": "File withdrawn"
+    },
+    "noDahira": "You are not a member of any dahira yet.",
+    "dahiraTreasurerBadge": "Treasurer",
+    "dahiraBalance": "Treasury balance",
+    "dahiraUpcomingMeetings": "Upcoming meetings",
+    "dahiraNoMeetings": "No meeting scheduled yet.",
+    "dahiraContributions": "My contributions",
+    "dahiraNoContributions": "No contribution due yet.",
+    "dahiraStatusDue": "Due",
+    "dahiraStatusOverdue": "Overdue",
+    "dahiraStatusProcessing": "Payment processing",
+    "dahiraStatusPaid": "Paid",
+    "dahiraPay": "Pay",
+    "dahiraChooseMethod": "Choose a payment method",
+    "dahiraMethodWave": "Wave",
+    "dahiraMethodOrangeMoney": "Orange Money",
+    "dahiraMethodBankTransfer": "Bank transfer",
+    "dahiraMethodCash": "Already paid in cash",
+    "dahiraPaying": "Processing payment…",
+    "dahiraPaymentError": "The payment could not be started ({error}). Try again or choose another method.",
+    "dahiraPeriod": "Period starting {date}",
+    "dahiraDueOn": "Due on {date}",
+    "dahiraAmount": "{amount} FCFA",
+    "dahiraTreasuryEntries": "Latest treasury entries",
+    "dahiraTreasuryEmpty": "No entry recorded yet.",
+    "statusCompleted": "Completed",
+    "statusInProgress": "In progress",
+    "statusNotStarted": "Upcoming",
+    "certificateCode": "Certificate {code}",
+    "roles": {
+      "admin": "General administrator",
+      "director": "Management",
+      "secretary": "Communication administration",
+      "teacher": "Teacher",
+      "academic_admin": "Academic administration"
+    }
   },
   "announcements": {
     "title": "Announcements",
     "communique": "Notice",
+    "pause": "Pause the banner",
+    "resume": "Resume scrolling",
     "noAnnouncements": "No announcements at the moment",
     "markAsRead": "Mark as read",
     "category": {
@@ -82,6 +221,10 @@
     "verse": "وَقُل رَّبِّ زِدْنِي عِلْمًا",
     "verseRef": "Taha, 114",
     "lead": "The light of knowledge, in Dakar",
+    "fridayTitle": "Friday khutba",
+    "fridayLatest": "Latest Friday khutba",
+    "fridayEmpty": "This Friday’s khutba will be published by the centre.",
+    "fridayOpen": "Read the khutba",
     "enter": "Enter",
     "centre": {
       "kicker": "Mosque and daily life",
@@ -203,7 +346,13 @@
       "commentBodyPh": "Write your message…",
       "commentSubmit": "Publish",
       "commentPending": "Thank you. Your comment will appear after review.",
-      "commentError": "The comment could not be sent. Please try again."
+      "commentError": "The comment could not be sent. Please try again.",
+      "commentClosed": "Comments are closed until the center names a moderator.",
+      "commentCharter": "Charter",
+      "commentSignIn": "Sign in to comment.",
+      "commentReply": "Reply",
+      "commentReplying": "Reply to the comment.",
+      "commentCancel": "Cancel"
     }
   },
   "live": {
@@ -476,6 +625,7 @@
     "next": "Next",
     "replies": "{count} replies",
     "answered": "Answered",
+    "answeredBy": "Answered by {name}",
     "members": "{count} members",
     "joinGroup": "Join group",
     "emptyDiscussions": "No public discussion yet.",
@@ -500,7 +650,7 @@
     "detail": {
       "back": "Back to the community",
       "notFound": "This discussion could not be found.",
-      "answer": "Center’s answer",
+      "answer": "Answer by {name}",
       "pending": "The answer is not published yet."
     },
     "topics": {
@@ -579,6 +729,73 @@
     "another": "New message",
     "error": "Sending failed. Provide an email or phone, then try again."
   },
+  "teacherConsole": {
+    "title": "Teacher console",
+    "lede": "Open a listening session, then score the recitation. This page does not start a live broadcast.",
+    "closed": "This console is for teachers.",
+    "back": "Back to the dashboard",
+    "student": "Student",
+    "studentPh": "Choose a student",
+    "titleField": "Passage recited",
+    "titlePh": "E.g. Surah Al-Mulk",
+    "start": "Start the session",
+    "started": "Session open. It stays limited to teachers and guardians.",
+    "evaluate": "Score the recitation",
+    "memorization": "Memorization",
+    "tajwid": "Tajweed",
+    "fluency": "Fluency",
+    "comment": "Comment",
+    "commentPh": "What was heard, and what to review",
+    "milestone": "Milestone",
+    "milestoneNone": "No milestone",
+    "save": "Save the score",
+    "saved": "Score saved.",
+    "error": "The action did not go through.",
+    "loading": "Sending…",
+    "noStudents": "No enrolled student to score yet.",
+    "scoreHint": "1 to review, 5 excellent"
+  },
+  "support": {
+    "donateTitle": "Give",
+    "donateLede": "Cash and bank transfer are confirmed by the office. Wave and Orange Money require a signed-in account.",
+    "amount": "Amount (FCFA)",
+    "anonymous": "Stay anonymous on the donor wall",
+    "donorName": "Displayed name",
+    "donorNamePh": "Your name",
+    "method": "Method",
+    "methods": {
+      "cash": "Cash at the centre",
+      "bank_transfer": "Bank transfer",
+      "wave": "Wave",
+      "orange_money": "Orange Money"
+    },
+    "note": "Message (optional)",
+    "donateSubmit": "Record the gift",
+    "donateSuccess": "Gift recorded. If it uses an operator, open the payment. Otherwise the office confirms receipt.",
+    "donateError": "The gift could not be recorded.",
+    "checkout": "Open payment",
+    "sponsorTitle": "Sponsor a student",
+    "sponsorLede": "Only students whose name may be published are listed. The office confirms the sponsorship.",
+    "student": "Student",
+    "studentAny": "The office will choose the student",
+    "pledge": "Pledge (FCFA)",
+    "frequency": "Rhythm",
+    "frequencies": {
+      "once": "Once",
+      "monthly": "Each month",
+      "yearly": "Each year"
+    },
+    "sponsorSubmit": "Offer sponsorship",
+    "sponsorSuccess": "Request recorded. The office will confirm the sponsorship.",
+    "sponsorError": "The request did not go through.",
+    "sponsorLogin": "Sign in to sponsor a student.",
+    "login": "Sign in",
+    "wallTitle": "Donor wall",
+    "wallLede": "Confirmed gifts. An anonymous gift shows neither name nor amount.",
+    "wallEmpty": "No confirmed gift yet.",
+    "anonymousDonor": "Anonymous donor",
+    "loading": "Sending…"
+  },
   "enroll": {
     "infoTitle": "The file",
     "infoLede": "Choose an open promotion, then submit your request. The office then confirms your place.",
@@ -628,8 +845,47 @@
     },
     "submit": "Send request",
     "loading": "Sending…",
-    "success": "Request sent. The office will contact you after reviewing the file.",
+    "success": "Request sent. Keep the tracking code: the family uses it to follow the file.",
     "another": "New request",
+    "documentsTitle": "Supporting documents",
+    "documentsHint": "PDF, JPG or PNG, 10 MB maximum. These files stay private.",
+    "chooseFile": "Choose a file",
+    "noFile": "No file chosen",
+    "idCard": "Identity document",
+    "birthCertificate": "Birth certificate",
+    "photo": "Photo",
+    "uploadWarning": "The request is saved, but one file could not be attached. You can send it again with the tracking code.",
+    "trackingHint": "Tracking code to keep:",
+    "trackingTitle": "Follow a file",
+    "trackingLede": "Enter the code given when the request was sent to see its status and the files received.",
+    "trackingPh": "Tracking code",
+    "trackingSubmit": "Look up",
+    "trackingMissing": "No file matches this code.",
+    "trackingStudent": "Student",
+    "trackingStatus": "Status",
+    "trackingNoDocuments": "No file attached yet.",
+    "statuses": {
+      "pending": "Waiting",
+      "approved": "Accepted",
+      "rejected": "Refused",
+      "active": "In progress",
+      "completed": "Completed",
+      "withdrawn": "Withdrawn"
+    },
+    "docTypes": {
+      "id_card": "Identity document",
+      "birth_certificate": "Birth certificate",
+      "photo": "Photo",
+      "diploma": "Diploma",
+      "cv": "CV",
+      "recommendation": "Recommendation",
+      "other": "Other"
+    },
+    "docStatus": {
+      "pending": "To review",
+      "verified": "Checked",
+      "rejected": "Refused"
+    },
     "errors": {
       "promotion": "Choose an open promotion.",
       "send": "Enrolment failed. Check the fields and try again."
@@ -943,7 +1199,9 @@
       "muud": "Ramadan mudd",
       "community": "Community",
       "dahira": "Dahiras",
-      "contact": "Contact"
+      "contact": "Contact",
+      "search": "Search",
+      "support": "Support"
     },
     "indicators": {
       "teachers": "Teachers",
@@ -1071,6 +1329,31 @@
       "lede": "Submit a request for an open promotion. The office then confirms your place.",
       "points": ["Choose the programme and open promotion.", "Enter the student and emergency contact.", "The office validates the request."]
     },
+    "login": {
+      "eyebrow": "Member area",
+      "title": "Login",
+      "lede": "Access your dashboard: children's progress, your own progress, and the administration area."
+    },
+    "register": {
+      "eyebrow": "Member area",
+      "title": "Create an account",
+      "lede": "An account lets you track your children's progress and find your requests again."
+    },
+    "forgotPassword": {
+      "eyebrow": "Member area",
+      "title": "Forgot password",
+      "lede": "Enter the email or phone of your account: we'll send you the instructions."
+    },
+    "resetPassword": {
+      "eyebrow": "Member area",
+      "title": "Reset password",
+      "lede": "Enter the received code and choose a new password."
+    },
+    "dashboard": {
+      "eyebrow": "Member area",
+      "title": "My space",
+      "lede": "Your account, your progress, and the access that matches your role."
+    },
     "promotions": {
       "eyebrow": "Students",
       "title": "Cohorts",
@@ -1127,7 +1410,12 @@
       "eyebrow": "Reminder",
       "title": "Today",
       "lede": "The verse, hadith or reminder chosen for the day.",
-      "points": ["One item each day.", "A verse, a hadith or a reminder from the centre.", "It changes with the day."]
+      "points": ["One item each day.", "A verse, a hadith or a reminder from the centre.", "It changes with the day."],
+      "verse": "Verse of the day",
+      "hadith": "Hadith of the day",
+      "empty": "No verse or hadith is published yet.",
+      "publishedOn": "Published on {date}",
+      "source": "Source"
     },
     "zakat": {
       "eyebrow": "Calculation",
@@ -1178,6 +1466,11 @@
       "title": "Dahiras",
       "lede": "Discover the centre's dahiras and ask to join the one that fits you.",
       "points": ["Choose a dahira and send a request.", "The secretariat accepts or declines.", "Meetings and dues are managed later inside each dahira."]
+    },
+    "support": {
+      "eyebrow": "Support",
+      "title": "Support the centre",
+      "lede": "A gift, sponsorship of a student, and the wall of people who have already given."
     },
     "contact": {
       "eyebrow": "Dakar",

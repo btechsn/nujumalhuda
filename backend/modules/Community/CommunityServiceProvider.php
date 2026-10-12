@@ -7,8 +7,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\Community\Listeners\MarkDonationPaid;
+use Modules\Community\Listeners\ScrubAnonymizedGallery;
 use Modules\Community\Models\Question;
 use Modules\Community\Models\Testimonial;
+use Modules\Core\Events\MinorAnonymized;
 use Modules\Core\Events\PaymentRecorded;
 use Modules\Core\Services\ModerationService;
 
@@ -35,6 +37,7 @@ class CommunityServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
 
         Event::listen(PaymentRecorded::class, MarkDonationPaid::class);
+        Event::listen(MinorAnonymized::class, ScrubAnonymizedGallery::class);
 
         Question::saved(function (Question $question): void {
             app(ModerationService::class)->sync($question, (string) $question->status);

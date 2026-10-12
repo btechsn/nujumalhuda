@@ -15,6 +15,11 @@ class EditGalleryItem extends EditRecord
         return 'Modifier le média';
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return GalleryItemResource::enforceConsent($data);
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

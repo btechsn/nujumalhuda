@@ -51,6 +51,15 @@ class NotificationDispatcher
             ]);
         }
 
+        if (!$sent && $notification->channel === Channel::SMS) {
+            $notification->update([
+                'data' => array_merge($notification->data ?? [], [
+                    'sent' => false,
+                    'sms_error' => $this->sms->lastFailure ?? 'not_sent',
+                ]),
+            ]);
+        }
+
         return $sent;
     }
 }

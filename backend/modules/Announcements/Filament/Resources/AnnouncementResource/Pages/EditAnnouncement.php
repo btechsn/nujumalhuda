@@ -11,6 +11,8 @@ use Modules\Announcements\Models\Announcement;
 
 class EditAnnouncement extends EditRecord
 {
+    use SyncsAnnouncementAudience;
+
     protected static string $resource = AnnouncementResource::class;
 
     protected function getHeaderActions(): array
@@ -30,7 +32,15 @@ class EditAnnouncement extends EditRecord
         $record = $this->getRecord();
         $data['title'] = $record->getTranslations('title');
         $data['message'] = $record->getTranslations('message');
+        $audience = $record->audiences()->first();
+        $data['audience_type'] = $audience?->type?->value ?? 'public';
+        $data['audience_target'] = $audience?->target_id;
 
         return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $this->syncAudienceAndBroadcast();
     }
 }

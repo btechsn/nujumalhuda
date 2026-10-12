@@ -57,14 +57,14 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $phone = PhoneNumber::e164($request->phone);
+        $phones = PhoneNumber::storedForms($request->phone);
         $user = User::query()
-            ->where(function ($query) use ($request, $phone): void {
+            ->where(function ($query) use ($request, $phones): void {
                 if ($request->filled('email')) {
                     $query->orWhere('email', $request->email);
                 }
-                if ($phone) {
-                    $query->orWhere('phone', $phone);
+                if ($phones !== []) {
+                    $query->orWhereIn('phone', $phones);
                 }
             })
             ->first();
@@ -105,15 +105,75 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * Le membre met à jour son propre profil (prénom, nom, téléphone, langue).
+     * L'e-mail reste inchangé : le changer exigerait une nouvelle vérification.
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        if ($user->anonymized_at !== null) {
+            return ApiResponse::error('Ce compte a été anonymisé.', 403);
+        }
+
+        $data = $request->validate([
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'locale' => ['required', 'string', 'in:fr,en,ar'],
+        ]);
+
+        $rawPhone = trim((string) ($data['phone'] ?? ''));
+        $phone = $rawPhone === '' ? null : PhoneNumber::e164($rawPhone);
+
+        if ($rawPhone !== '' && $phone === null) {
+            throw ValidationException::withMessages([
+                'phone' => 'Le numéro de téléphone n\'est pas valide.',
+            ]);
+        }
+
+        if ($phone === null && blank($user->email)) {
+            throw ValidationException::withMessages([
+                'phone' => 'Un téléphone est requis : ce compte n\'a pas d\'adresse e-mail.',
+            ]);
+        }
+
+        if ($phone !== null && User::query()->where('phone', $phone)->whereKeyNot($user->id)->exists()) {
+            throw ValidationException::withMessages([
+                'phone' => 'Ce numéro de téléphone est déjà utilisé.',
+            ]);
+        }
+
+        $phoneChanged = $phone !== $user->phone;
+
+        $user->forceFill([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone' => $phone,
+            'locale' => $data['locale'],
+            'phone_verified_at' => $phoneChanged ? null : $user->phone_verified_at,
+        ])->save();
+
+        return ApiResponse::success(
+            UserResource::make($user->fresh()),
+            'Profil mis à jour'
+        );
+    }
+
     public function forgotPassword(Request $request, PasswordResetService $resets): JsonResponse
     {
         $data = $request->validate([
             'identifier' => 'required|string|max:180',
         ]);
 
-        $resets->request($data['identifier']);
+        $link = $resets->request($data['identifier']);
 
-        return ApiResponse::success(null, 'Si un compte correspond, un message de réinitialisation a été envoyé.');
+        return ApiResponse::success(
+            $link ? ['reset_url' => $link] : null,
+            'Si un compte correspond, un message de réinitialisation a été envoyé.',
+        );
     }
 
     public function resetPassword(Request $request, PasswordResetService $resets): JsonResponse

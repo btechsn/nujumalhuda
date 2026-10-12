@@ -284,7 +284,9 @@ export interface LiveStream {
   id: string;
   channel?: { id: string; slug: string; name: string; type?: string };
   title: string;
+  title_fell_back?: boolean;
   description?: string | null;
+  description_fell_back?: boolean;
   type: 'general' | 'khutba' | 'recitation' | 'lecture' | 'event' | string;
   status: 'scheduled' | 'live' | 'ended' | 'archived' | string;
   scheduled_at?: string | null;

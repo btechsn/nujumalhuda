@@ -3,7 +3,10 @@
 namespace Modules\Education;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Events\PublicSearchRunning;
+use Modules\Education\Listeners\SearchActivePrograms;
 
 class EducationServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,7 @@ class EducationServiceProvider extends ServiceProvider
         
         // Charger les vues
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'education');
+        Event::listen(PublicSearchRunning::class, SearchActivePrograms::class);
 
         // Publier les configs (si nécessaire dans le futur)
         // $this->publishes([

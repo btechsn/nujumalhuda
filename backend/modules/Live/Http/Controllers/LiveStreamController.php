@@ -9,6 +9,7 @@ use Modules\Live\Http\Requests\StreamStoreRequest;
 use Modules\Live\Services\SyncFinishedYoutubeLives;
 use Modules\Live\Http\Resources\LiveStreamResource;
 use Modules\Live\Models\LiveStream;
+use Modules\Core\Support\OperationsDesk;
 use Modules\Live\Services\MediaMtxService;
 
 class LiveStreamController extends Controller
@@ -248,6 +249,10 @@ class LiveStreamController extends Controller
      */
     public function rotateKey(string $id)
     {
+        if ($closed = OperationsDesk::closedResponse()) {
+            return $closed;
+        }
+
         $stream = LiveStream::findOrFail($id);
 
         if ($stream->isLive()) {

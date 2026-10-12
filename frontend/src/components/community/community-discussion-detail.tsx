@@ -113,12 +113,11 @@ export function CommunityDiscussionDetail({ id }: { id: string }) {
             </div>
           ) : null}
 
-          {data.answer ? (
+          {data.answer && data.teacher ? (
             <div className="mt-8 rounded-2xl bg-brand-50 p-5">
               <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-800">
                 <EightPointStar size={12} className="text-gold-500" />
-                {t("detail.answer")}
-                {data.teacher ? ` — ${data.teacher}` : null}
+                {t("detail.answer", { name: data.teacher })}
               </p>
               <p className="mt-3 text-base leading-relaxed text-content">{data.answer}</p>
             </div>
@@ -136,7 +135,7 @@ export function CommunityDiscussionDetail({ id }: { id: string }) {
             topicLabel={topicLabel}
             emptyLabel={t("emptyDiscussions")}
             repliesLabel={(count) => t("replies", { count })}
-            answeredLabel={t("answered")}
+            answeredLabel={(name) => t("answeredBy", { name })}
           />
         </section>
       </div>

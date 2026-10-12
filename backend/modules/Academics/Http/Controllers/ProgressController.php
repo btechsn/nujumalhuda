@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Modules\Academics\Models\HifzMilestone;
 use Modules\Academics\Models\StudentProgress;
 use Modules\Academics\Services\ProgressAccess;
+use Modules\Core\Models\AuditLog;
 use Modules\Core\Models\Guardianship;
+use Modules\Core\Models\User;
 
 class ProgressController extends Controller
 {
@@ -22,6 +24,12 @@ class ProgressController extends Controller
             ->where('guardian_id', $request->user()->id)
             ->where('can_view_progress', true)
             ->pluck('ward_id');
+
+        if ($wardIds->isNotEmpty()) {
+            AuditLog::log('progress.portal_viewed', $request->user(), context: [
+                'ward_ids' => $wardIds->values()->all(),
+            ]);
+        }
 
         $ids = $wardIds->push($request->user()->id)->unique();
 
@@ -50,6 +58,11 @@ class ProgressController extends Controller
     {
         if (!$access->canView($request->user(), $studentId)) {
             abort(403);
+        }
+
+        $student = User::find($studentId);
+        if ($student?->isMinorCandidate()) {
+            AuditLog::log('progress.viewed', $student, context: ['student_id' => $studentId]);
         }
 
         $milestones = HifzMilestone::with('badge')->orderBy('display_order')->get();

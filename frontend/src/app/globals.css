@@ -131,6 +131,26 @@
   [dir="rtl"] .nh-flip {
     transform: scaleX(-1);
   }
+
+  html[data-text="125"] {
+    font-size: 125%;
+  }
+
+  html[data-arabic="uthmani"] {
+    --font-arabic: var(--nh-font-uthmani), var(--nh-font-quran), serif;
+  }
+
+  html[data-bandwidth="low"] img:not([data-essential]):not(.leaflet-tile):not(.leaflet-marker-icon):not(.leaflet-marker-shadow),
+  html[data-bandwidth="low"] video {
+    display: none !important;
+  }
+
+  html[data-bandwidth="low"] *,
+  html[data-bandwidth="low"] *::before,
+  html[data-bandwidth="low"] *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

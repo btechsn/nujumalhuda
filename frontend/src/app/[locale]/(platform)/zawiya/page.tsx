@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
+import { PlaceMap } from "@/components/layout/place-map";
 import { ZawiyaSlider } from "@/components/layout/zawiya-slider";
 import { KhutbaDeck, type KhutbaCard } from "@/components/mosque/khutba-deck";
 import { serverApiFetch } from "@/lib/server-api";
@@ -260,11 +261,10 @@ export default async function ZawiyaPage({
           <h2 className="font-sans text-3xl font-extrabold text-primary">{pages("location.title")}</h2>
           <p className="mt-3 text-content">{fullAddress(place)}</p>
           <div className="mt-6 overflow-hidden rounded-lg border border-line">
-            <iframe
-              title={pages("location.title")}
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.012}%2C${place.latitude - 0.008}%2C${place.longitude + 0.012}%2C${place.latitude + 0.008}&layer=mapnik&marker=${place.latitude}%2C${place.longitude}`}
-              className="h-[28rem] w-full"
-              loading="lazy"
+            <PlaceMap
+              latitude={place.latitude}
+              longitude={place.longitude}
+              label={fullAddress(place)}
             />
           </div>
           <a

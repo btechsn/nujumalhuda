@@ -10,6 +10,11 @@ class EditIjaza extends EditRecord
 {
     protected static string $resource = IjazaResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return IjazaResource::enforceConsent($data);
+    }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];

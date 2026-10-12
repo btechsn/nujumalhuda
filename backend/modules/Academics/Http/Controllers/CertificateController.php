@@ -9,7 +9,11 @@ class CertificateController extends Controller
 {
     public function index()
     {
+        // Cahier des charges, §8.3, point 1 : le nom de l'élève figure sur
+        // l'attestation ; elle n'apparaît ici que si elle a été rendue
+        // publique (ce qui suppose un consentement « nom public »).
         $certificates = Certificate::query()
+            ->where('is_public', true)
             ->with(['student:id,first_name,last_name', 'milestone:id,slug,title_i18n'])
             ->orderByDesc('issued_at')
             ->get()
