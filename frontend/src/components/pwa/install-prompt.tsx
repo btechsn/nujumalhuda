@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 type InstallEvent = Event & {
@@ -8,10 +8,18 @@ type InstallEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+declare global {
+  interface Window {
+    __nhInstallPrompt?: InstallEvent;
+  }
+}
+
 export function InstallPrompt() {
   const t = useTranslations("comfort");
-  const [event, setEvent] = useState<InstallEvent | null>(null);
   const [visible, setVisible] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
+  const eventRef = useRef<InstallEvent | null>(null);
+  const waitingRef = useRef(false);
 
   useEffect(() => {
     const standalone =
@@ -20,32 +28,83 @@ export function InstallPrompt() {
     if (standalone) return;
 
     setVisible(true);
+
+    const store = (promptEvent: InstallEvent) => {
+      eventRef.current = promptEvent;
+      if (!waitingRef.current) return;
+      waitingRef.current = false;
+      void openSheet(promptEvent);
+    };
+
+    if (window.__nhInstallPrompt) store(window.__nhInstallPrompt);
+
     const onPrompt = (promptEvent: Event) => {
       promptEvent.preventDefault();
-      setEvent(promptEvent as InstallEvent);
+      const installEvent = promptEvent as InstallEvent;
+      window.__nhInstallPrompt = installEvent;
+      store(installEvent);
     };
     window.addEventListener("beforeinstallprompt", onPrompt);
     return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+
+    async function openSheet(promptEvent: InstallEvent) {
+      setHint(null);
+      await promptEvent.prompt();
+      const choice = await promptEvent.userChoice;
+      window.__nhInstallPrompt = undefined;
+      eventRef.current = null;
+      if (choice.outcome === "accepted") setVisible(false);
+    }
   }, []);
 
   if (!visible) return null;
 
   async function install() {
-    if (!event) return;
-    await event.prompt();
-    const choice = await event.userChoice;
-    if (choice.outcome === "accepted") setVisible(false);
+    const current = eventRef.current ?? window.__nhInstallPrompt ?? null;
+    if (current) {
+      eventRef.current = current;
+      setHint(null);
+      await current.prompt();
+      const choice = await current.userChoice;
+      window.__nhInstallPrompt = undefined;
+      eventRef.current = null;
+      if (choice.outcome === "accepted") setVisible(false);
+      return;
+    }
+
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (ios) {
+      setHint(t("installIos"));
+      return;
+    }
+
+    waitingRef.current = true;
+    window.setTimeout(() => {
+      if (!waitingRef.current) return;
+      waitingRef.current = false;
+      setHint(t("installMenu"));
+    }, 1200);
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => void install()}
-      aria-label={t("installAccept")}
-      className="fixed end-5 bottom-5 z-40 inline-flex size-14 items-center justify-center rounded-full bg-gold-400 text-brand-950 shadow-lg sm:end-6 sm:bottom-6"
-    >
-      <DownloadArrowIcon />
-    </button>
+    <>
+      {hint ? (
+        <p
+          role="status"
+          className="fixed inset-x-4 bottom-44 z-50 rounded-full bg-brand-950 px-4 py-2 text-center text-sm text-white shadow-lg sm:inset-x-auto sm:end-6 sm:max-w-sm"
+        >
+          {hint}
+        </p>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => void install()}
+        aria-label={t("installAccept")}
+        className="fixed end-5 bottom-5 z-40 inline-flex size-14 items-center justify-center rounded-full bg-gold-400 text-brand-950 shadow-lg sm:end-6 sm:bottom-6"
+      >
+        <DownloadArrowIcon />
+      </button>
+    </>
   );
 }
 

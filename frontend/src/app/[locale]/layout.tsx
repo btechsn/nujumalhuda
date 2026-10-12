@@ -45,7 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   return {
-    manifest: "/manifest.json",
     alternates: { languages },
   };
 }
@@ -79,6 +78,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="min-h-dvh bg-canvas font-sans text-content antialiased">
         {/* Le serveur de développement et la feuille de style ne donnent pas
             le même identifiant à Poppins. Sans ce raccord, le navigateur
@@ -88,6 +90,12 @@ export default async function LocaleLayout({
             __html: `(function(){try{var names=[];function walk(rules){if(!rules)return;for(var i=0;i<rules.length;i++){var rule=rules[i];if(rule.cssRules){walk(rule.cssRules);continue;}var text=rule.cssText||"";if(text.indexOf("@font-face")!==0)continue;var at=text.indexOf("font-family:");if(at<0)continue;var rest=text.slice(at+12);var end=rest.indexOf(";");var name=(end<0?rest:rest.slice(0,end)).trim();if(name.charAt(0)==="'"||name.charAt(0)==='"')name=name.slice(1,-1);if(names.indexOf(name)===-1)names.push(name);}}for(var s=0;s<document.styleSheets.length;s++){try{walk(document.styleSheets[s].cssRules);}catch(e){}}function value(test){var main="";var fallback="";for(var i=0;i<names.length;i++){var name=names[i];if(!test(name))continue;if(name.indexOf("Fallback")!==-1)fallback=name;else main=name;}if(!main)return "";return "'"+main+"'"+(fallback?", '"+fallback+"'":"");}var root=document.documentElement;var sans=value(function(name){return name.indexOf("__Poppins_")===0;});var arabic=value(function(name){return name.indexOf("__Noto_Naskh_Arabic_")===0;});var uthmani=value(function(name){return name.indexOf("__Amiri_Quran_")===0;});var quran=value(function(name){return name.indexOf("__Amiri_")===0&&name.indexOf("__Amiri_Quran_")!==0;});if(sans)root.style.setProperty("--nh-font-sans",sans);if(arabic)root.style.setProperty("--nh-font-arabic",arabic);if(quran)root.style.setProperty("--nh-font-quran",quran);if(uthmani)root.style.setProperty("--nh-font-uthmani",uthmani);}catch(e){}})();`,
           }}
         />
+        <Script id="nh-app-open" strategy="beforeInteractive">
+          {`(function(){try{var path=(location.pathname||"/").replace(/\\/$/,"")||"/";if(!/^\\/(fr|en|ar)$/.test(path))return;if(sessionStorage.getItem("nh-app-open"))return;if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;sessionStorage.setItem("nh-app-open","1");document.documentElement.setAttribute("data-app-open","play");}catch(e){}})();`}
+        </Script>
+        <Script id="nh-install" strategy="beforeInteractive">
+          {`(function(){window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__nhInstallPrompt=e;});if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(function(){});}})();`}
+        </Script>
         <Script id="nh-comfort" strategy="beforeInteractive">
           {`(function(){try{var raw=localStorage.getItem("nh-comfort");var p=raw?JSON.parse(raw):{};var root=document.documentElement;var theme=p.theme==="dark"||p.theme==="system"?p.theme:"light";var dark=theme==="dark"||(theme==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);root.classList.toggle("dark",dark);if(p.text==="125")root.setAttribute("data-text","125");if(p.arabic==="uthmani")root.setAttribute("data-arabic","uthmani");var save=navigator.connection&&navigator.connection.saveData;if(p.bandwidth==="low"||(p.bandwidth!=="full"&&save))root.setAttribute("data-bandwidth","low");}catch(e){}})();`}
         </Script>

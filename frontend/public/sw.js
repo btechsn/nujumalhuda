@@ -1,4 +1,4 @@
-const SHELL = "nh-shell-v1";
+const SHELL = "nh-shell-v2";
 const PAGES = "nh-pages-v1";
 const LESSONS = "nh-lessons-v1";
 const PRECACHE = ["/offline.html", "/manifest.json", "/brand/logo.jpeg"];
@@ -33,6 +33,19 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname === "/offline-lesson.json" || url.pathname.startsWith("/offline-media/")) {
     event.respondWith(
       caches.open(LESSONS).then((cache) => cache.match(event.request).then((hit) => hit || fetch(event.request))),
+    );
+    return;
+  }
+
+  if (url.pathname === "/manifest.json") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(SHELL).then((cache) => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match("/manifest.json")),
     );
     return;
   }

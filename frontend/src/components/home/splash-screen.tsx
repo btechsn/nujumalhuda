@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { AppOpen } from "@/components/home/app-open";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { serverApiFetch } from "@/lib/server-api";
 
@@ -74,7 +75,31 @@ export async function SplashScreen({ locale }: { locale: string }) {
   const fridayLabel = friday?.exact ? t("fridayTitle") : t("fridayLatest");
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-brand-950 text-white">
+    <>
+      <AppOpen />
+      <div className="nh-app-open" aria-hidden="true">
+        <span className="nh-app-open-glow" />
+        <div className="nh-app-open-mark">
+          <span className="nh-app-open-ring" />
+          <span className="nh-app-open-ring nh-app-open-ring-late" />
+          <span className="nh-app-open-disc">
+            <Image
+              src="/brand/logo.jpeg"
+              alt=""
+              width={1280}
+              height={725}
+              priority
+              className="absolute h-auto max-w-none"
+              style={{ width: "261.82%", left: "-76.62%", top: "-4.82%" }}
+            />
+          </span>
+        </div>
+        <p lang="ar" dir="rtl" className="nh-app-open-name font-arabic">
+          {t("arabicName")}
+        </p>
+        <span className="nh-app-open-line" />
+      </div>
+      <main className="nh-home relative min-h-dvh overflow-hidden bg-brand-950 text-white">
       <Image
         src="/brand/intro-lecon.jpg"
         alt=""
@@ -179,5 +204,6 @@ export async function SplashScreen({ locale }: { locale: string }) {
         ) : null}
       </div>
     </main>
+    </>
   );
 }

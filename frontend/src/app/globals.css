@@ -897,6 +897,156 @@
   animation: nh-ring 3.6s ease-in-out 1s infinite;
 }
 
+/* Ouverture : le logo occupe l'écran, puis l'accueil entre. */
+.nh-app-open {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-950);
+}
+
+html[data-app-open="play"] .nh-app-open,
+html[data-app-open="leave"] .nh-app-open {
+  display: flex;
+}
+
+html[data-app-open="play"] .nh-home :is(.nh-intro, .nh-fade, .nh-logo-in, .nh-ring) {
+  animation-play-state: paused;
+}
+
+.nh-app-open-glow {
+  position: absolute;
+  width: min(70vw, 22rem);
+  height: min(70vw, 22rem);
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-gold-300) 42%, transparent), transparent 68%);
+  animation: nh-open-glow 1.7s ease-out both;
+}
+
+.nh-app-open-mark {
+  position: relative;
+  width: clamp(8.75rem, 36vw, 13rem);
+  height: clamp(8.75rem, 36vw, 13rem);
+  animation: nh-open-mark 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.nh-app-open-ring {
+  position: absolute;
+  inset: -0.85rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-gold-300);
+  animation: nh-open-ring 1.55s ease-out both;
+}
+
+.nh-app-open-ring-late {
+  animation-delay: 0.32s;
+}
+
+.nh-app-open-disc {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--color-gold-300);
+  background: #fff;
+}
+
+.nh-app-open-name {
+  margin-top: 1.75rem;
+  color: var(--color-gold-300);
+  font-size: 1.65rem;
+  animation: nh-open-name 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+.nh-app-open-line {
+  width: 4.75rem;
+  height: 1px;
+  margin-top: 0.9rem;
+  background: var(--color-gold-300);
+  transform-origin: center;
+  animation: nh-open-line 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.85s both;
+}
+
+html[data-app-open="leave"] .nh-app-open {
+  animation: nh-app-open-leave 0.7s ease forwards;
+}
+
+@keyframes nh-open-mark {
+  0% {
+    opacity: 0;
+    transform: scale(0.58);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.07);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes nh-open-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  28% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes nh-open-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes nh-open-name {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes nh-open-line {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes nh-app-open-leave {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 @utility nh-glow {
   animation: nh-glow 8s ease-in-out infinite;
 }
@@ -964,8 +1114,17 @@
   .nh-glow,
   .nh-drift,
   .nh-live-dot,
-  .nh-live-frame {
+  .nh-live-frame,
+  .nh-app-open-glow,
+  .nh-app-open-mark,
+  .nh-app-open-ring,
+  .nh-app-open-name,
+  .nh-app-open-line {
     animation: none;
+  }
+
+  .nh-app-open {
+    display: none;
   }
 
   .nh-live-frame {
