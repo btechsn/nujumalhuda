@@ -11,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Core\Filament\Resources\UserResource\Pages;
-use Modules\Core\Filament\Resources\UserResource\RelationManagers\MembershipsRelationManager;
+use Modules\Core\Enums\MembershipStatus;
 use Modules\Core\Models\Organization;
 use Modules\Core\Models\Role;
 use Modules\Core\Models\User;
@@ -110,33 +110,50 @@ class UserResource extends Resource
                         ->dehydrated(false)
                         ->autocomplete('new-password'),
                 ]),
-            Forms\Components\Section::make('Rôle sur la plateforme')
-                ->description('Choisissez l’organisation et le rôle attribués à la création du compte.')
-                ->columns(2)
-                ->visibleOn('create')
+            Forms\Components\Section::make('Adhésions et rôles')
+                ->description('Consultez et modifiez les organisations et rôles attribués à cet utilisateur.')
                 ->schema([
-                    Forms\Components\Select::make('initial_organization_id')
-                        ->label('Organisation')
-                        ->options(fn (): array => Organization::query()
-                            ->orderBy('name')
-                            ->get()
-                            ->mapWithKeys(fn (Organization $organization): array => [
-                                $organization->id => $organization->name,
-                            ])
-                            ->all())
-                        ->searchable()
-                        ->required(),
-                    Forms\Components\Select::make('initial_role_id')
-                        ->label('Rôle')
-                        ->options(fn (): array => Role::query()
-                            ->orderBy('display_name')
-                            ->get()
-                            ->mapWithKeys(fn (Role $role): array => [
-                                $role->id => $role->display_name ?: $role->name,
-                            ])
-                            ->all())
-                        ->searchable()
-                        ->required(),
+                    Forms\Components\Repeater::make('memberships')
+                        ->label('Rôles attribués')
+                        ->relationship()
+                        ->columns(2)
+                        ->defaultItems(fn (string $operation): int => $operation === 'create' ? 1 : 0)
+                        ->minItems(fn (string $operation): int => $operation === 'create' ? 1 : 0)
+                        ->schema([
+                            Forms\Components\Select::make('organization_id')
+                                ->label('Organisation')
+                                ->options(fn (): array => Organization::query()
+                                    ->orderBy('name')
+                                    ->get()
+                                    ->mapWithKeys(fn (Organization $organization): array => [
+                                        $organization->id => $organization->name,
+                                    ])
+                                    ->all())
+                                ->searchable()
+                                ->required(),
+                            Forms\Components\Select::make('role_id')
+                                ->label('Rôle')
+                                ->options(fn (): array => Role::query()
+                                    ->orderBy('display_name')
+                                    ->get()
+                                    ->mapWithKeys(fn (Role $role): array => [
+                                        $role->id => $role->display_name ?: $role->name,
+                                    ])
+                                    ->all())
+                                ->searchable()
+                                ->required(),
+                            Forms\Components\Select::make('status')
+                                ->label('Statut')
+                                ->options(collect(MembershipStatus::cases())->mapWithKeys(
+                                    fn (MembershipStatus $status): array => [$status->value => $status->label()],
+                                ))
+                                ->default(MembershipStatus::ACTIVE->value)
+                                ->required(),
+                            Forms\Components\DateTimePicker::make('joined_at')
+                                ->label('Date d’adhésion')
+                                ->default(now())
+                                ->required(),
+                        ]),
                 ]),
         ]);
     }
@@ -212,11 +229,6 @@ class UserResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('Aucun utilisateur')
             ->emptyStateDescription('Les comptes créés sur la plateforme apparaîtront ici.');
-    }
-
-    public static function getRelations(): array
-    {
-        return [MembershipsRelationManager::class];
     }
 
     public static function getPages(): array
