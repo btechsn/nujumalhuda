@@ -60,6 +60,8 @@ function i18nText(field: Record<string, string> | string | undefined | null, loc
 
 type SectionId = "profile" | "lesson" | "alerts" | "children" | "progress" | "dahira" | "staff";
 
+type PaymentContacts = { wave?: string; orange_money?: string };
+
 export function DashboardBoard() {
   const locale = useLocale();
   const t = useTranslations("auth");
@@ -559,6 +561,18 @@ function formatDate(value: string, locale: string): string {
   }
 }
 
+function paymentAppUrl(provider: "wave" | "orange_money", isAppleMobile: boolean): string {
+  if (provider === "wave") {
+    return isAppleMobile
+      ? "https://apps.apple.com/fr/app/wave-mobile-money/id1523884528"
+      : "https://play.google.com/store/apps/details?id=com.wave.personal";
+  }
+
+  return isAppleMobile
+    ? "https://apps.apple.com/us/app/orange-money-senegal/id1447224280"
+    : "https://play.google.com/store/apps/details?id=com.orange.mobile.orangemoney.clone";
+}
+
 function DahiraGroupCard({
   groupId,
   groupName,
@@ -570,7 +584,20 @@ function DahiraGroupCard({
   t: ReturnType<typeof useTranslations>;
   locale: string;
 }) {
-  const { schedules, meetings, treasury, isTreasurer, loading, payingId, payError, pay } = useDahiraGroup(groupId);
+  const { schedules, meetings, treasury, isTreasurer, canRecordPayments, loading, payingId, payError, pay } = useDahiraGroup(groupId);
+  const [paymentContacts, setPaymentContacts] = useState<PaymentContacts>({});
+  const [isAppleMobile, setIsAppleMobile] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    setIsAppleMobile(/iPhone|iPad|iPod/i.test(navigator.userAgent));
+    api.getPublicSettings().then((settings: any) => {
+      if (!ignore) setPaymentContacts(settings?.payment_contacts ?? {});
+    }).catch(() => {
+      if (!ignore) setPaymentContacts({});
+    });
+    return () => { ignore = true; };
+  }, []);
 
   return (
     <div className="rounded-2xl bg-[#f8f9fa] p-5 ring-1 ring-black/5">
@@ -629,7 +656,10 @@ function DahiraGroupCard({
                     t={t}
                     locale={locale}
                     paying={payingId === schedule.id}
-                    onPay={(method) => pay(schedule.id, method)}
+                    canRecordPayments={canRecordPayments}
+                    paymentContacts={paymentContacts}
+                    isAppleMobile={isAppleMobile}
+                    onRecord={(data) => pay(schedule.id, data)}
                   />
                 ))}
               </ul>
@@ -672,15 +702,25 @@ function ScheduleRow({
   t,
   locale,
   paying,
-  onPay,
+  canRecordPayments,
+  paymentContacts,
+  isAppleMobile,
+  onRecord,
 }: {
   schedule: DahiraScheduleItem;
   t: ReturnType<typeof useTranslations>;
   locale: string;
   paying: boolean;
-  onPay: (method: DahiraPaymentMethod) => void;
+  canRecordPayments: boolean;
+  paymentContacts: PaymentContacts;
+  isAppleMobile: boolean;
+  onRecord: (data: { method: DahiraPaymentMethod; paid_on: string; note?: string }) => void;
 }) {
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [method, setMethod] = useState<DahiraPaymentMethod>("cash");
+  const [paidOn, setPaidOn] = useState(() => new Date().toISOString().slice(0, 10));
+  const [note, setNote] = useState("");
+  const [copiedPaymentNumber, setCopiedPaymentNumber] = useState(false);
   const canPay = schedule.status === "due" || schedule.status === "overdue";
 
   return (
@@ -689,6 +729,11 @@ function ScheduleRow({
         <div>
           <p className="text-sm font-semibold text-content">{formatXof(schedule.amount_minor, locale)}</p>
           <p className="mt-0.5 text-xs text-content-secondary">{t("dahiraDueOn", { date: formatDate(schedule.due_on, locale) })}</p>
+          {canRecordPayments && schedule.membership?.user ? (
+            <p className="mt-1 text-xs font-semibold text-brand-800">
+              {schedule.membership.user.first_name} {schedule.membership.user.last_name}
+            </p>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -699,36 +744,81 @@ function ScheduleRow({
           >
             {scheduleStatusLabel(schedule.status, t)}
           </span>
-          {canPay ? (
+          {canPay && canRecordPayments ? (
             <button
               type="button"
-              onClick={() => setPickerOpen((v) => !v)}
+              onClick={() => setFormOpen((v) => !v)}
               disabled={paying}
               className="inline-flex h-8 items-center justify-center rounded-full bg-brand-800 px-3.5 text-[11px] font-semibold uppercase tracking-wide text-white hover:bg-brand-900 disabled:opacity-60"
             >
-              {paying ? t("dahiraPaying") : t("dahiraPay")}
+              {paying ? t("dahiraPaying") : t("dahiraRecordPayment")}
             </button>
           ) : null}
         </div>
       </div>
-      {pickerOpen && canPay ? (
-        <div className="mt-3 flex flex-wrap gap-2 border-t border-black/5 pt-3">
-          <span className="w-full text-[11px] font-semibold uppercase tracking-wide text-content-secondary">
-            {t("dahiraChooseMethod")}
-          </span>
-          {(["wave", "orange_money", "bank_transfer", "cash"] as DahiraPaymentMethod[]).map((method) => (
-            <button
-              key={method}
-              type="button"
-              onClick={() => {
-                setPickerOpen(false);
-                onPay(method);
-              }}
-              className="inline-flex h-9 items-center justify-center rounded-full bg-[#f3f4f6] px-3.5 text-xs font-semibold text-content ring-1 ring-black/5 hover:bg-gold-100/60"
-            >
-              {t(`dahiraMethod${method === "orange_money" ? "OrangeMoney" : method === "bank_transfer" ? "BankTransfer" : method === "cash" ? "Cash" : "Wave"}`)}
-            </button>
-          ))}
+      {formOpen && canPay && canRecordPayments ? (
+        <form
+          className="mt-3 grid gap-3 border-t border-black/5 pt-3 sm:grid-cols-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onRecord({ method, paid_on: paidOn, note: note.trim() || undefined });
+            setFormOpen(false);
+          }}
+        >
+          <label className="text-xs font-semibold text-content-secondary">
+            {t("dahiraMethodLabel")}
+            <select value={method} onChange={(event) => setMethod(event.target.value as DahiraPaymentMethod)} className="mt-1 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-sm text-content">
+              <option value="cash">{t("dahiraMethodCash")}</option>
+              <option value="bank_transfer">{t("dahiraMethodBankTransfer")}</option>
+              <option value="wave">{t("dahiraMethodWave")}</option>
+              <option value="orange_money">{t("dahiraMethodOrangeMoney")}</option>
+            </select>
+          </label>
+          <label className="text-xs font-semibold text-content-secondary">
+            {t("dahiraPaidOn")}
+            <input type="date" max={new Date().toISOString().slice(0, 10)} required value={paidOn} onChange={(event) => setPaidOn(event.target.value)} className="mt-1 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-sm text-content" />
+          </label>
+          <label className="text-xs font-semibold text-content-secondary sm:col-span-2">
+            {t("dahiraPaymentNote")}
+            <input value={note} onChange={(event) => setNote(event.target.value)} maxLength={500} className="mt-1 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-sm text-content" />
+          </label>
+          <button type="submit" disabled={paying} className="inline-flex h-10 items-center justify-center rounded-full bg-gold-300 px-4 text-xs font-bold text-brand-950 disabled:opacity-60 sm:col-span-2">
+            {t("dahiraConfirmReceived")}
+          </button>
+        </form>
+      ) : null}
+      {canPay && !canRecordPayments ? (
+        <div className="mt-3 border-t border-black/5 pt-3">
+          <p className="text-xs text-content-secondary">{t("dahiraOfflinePayment")}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(["wave", "orange_money"] as const).map((provider) => {
+              const phone = paymentContacts[provider];
+              if (!phone) return null;
+              return (
+                <a
+                  key={provider}
+                  href={paymentAppUrl(provider, isAppleMobile)}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => {
+                    if (navigator.clipboard?.writeText) {
+                      void navigator.clipboard.writeText(phone).then(() => setCopiedPaymentNumber(true)).catch(() => {});
+                    }
+                  }}
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#f3f4f6] px-4 text-xs font-semibold text-brand-900 ring-1 ring-black/5 hover:bg-gold-100/60"
+                >
+                  {t("dahiraOpenPaymentApp", {
+                    method: t(provider === "wave" ? "dahiraMethodWave" : "dahiraMethodOrangeMoney"),
+                    phone,
+                  })}
+                </a>
+              );
+            })}
+          </div>
+          {copiedPaymentNumber ? <p className="mt-2 text-xs font-semibold text-brand-800">{t("dahiraPaymentNumberCopied")}</p> : null}
+          {!paymentContacts.wave && !paymentContacts.orange_money ? (
+            <p className="mt-2 text-xs text-content-secondary">{t("dahiraPaymentNumbersUnavailable")}</p>
+          ) : null}
         </div>
       ) : null}
     </li>

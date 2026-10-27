@@ -35,6 +35,10 @@ export default function DirectDetailPage() {
 
   const thumb = stream.thumbnail_url || "/brand/slide-live.jpg";
   const embed = stream.embed_url;
+  const platform = stream.external_platform;
+  const openLabel = platform
+    ? t("detail.openOnPlatform", { platform: t(`platforms.${platform}`) })
+    : null;
 
   return (
     <article className="bg-white">
@@ -68,8 +72,23 @@ export default function DirectDetailPage() {
 
           {!embed ? (
             <p className="mt-6 rounded-2xl bg-gold-300/20 p-4 text-sm text-brand-900">
-              {stream.status === "scheduled" ? t("detail.scheduledHint") : t("detail.youtubeMissing")}
+              {stream.external_url && platform
+                ? t("socialNoEmbed")
+                : stream.status === "scheduled"
+                  ? t("detail.scheduledHint")
+                  : t("detail.linkMissing")}
             </p>
+          ) : null}
+
+          {stream.external_url && platform && openLabel ? (
+            <a
+              href={stream.external_url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 inline-flex rounded-full bg-brand-700 px-5 py-2.5 text-xs font-semibold uppercase text-white hover:bg-brand-800"
+            >
+              {openLabel}
+            </a>
           ) : null}
 
           {stream.recording?.slug ? (

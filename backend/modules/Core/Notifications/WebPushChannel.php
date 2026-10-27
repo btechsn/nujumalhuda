@@ -46,6 +46,9 @@ class WebPushChannel implements NotificationChannelContract
             $origin = $this->origin($subscription->endpoint);
             $jwt = $origin ? $this->jwt($origin, $privateKey) : null;
             if (!$jwt) {
+                Log::warning('Push non envoyé : signature VAPID invalide.', [
+                    'host' => parse_url($subscription->endpoint, PHP_URL_HOST),
+                ]);
                 continue;
             }
 
@@ -58,6 +61,9 @@ class WebPushChannel implements NotificationChannelContract
                 ? WebPushCipher::encrypt($payload, (string) $subscription->public_key, (string) $subscription->auth_token)
                 : null;
             if ($body === null) {
+                Log::warning('Push non envoyé : chiffrement du message impossible.', [
+                    'host' => parse_url($subscription->endpoint, PHP_URL_HOST),
+                ]);
                 continue;
             }
 
@@ -75,6 +81,11 @@ class WebPushChannel implements NotificationChannelContract
             if ($response->successful() || $response->status() === 201) {
                 $subscription->forceFill(['last_used_at' => now()])->save();
                 $delivered = true;
+            } else {
+                Log::warning('Push refusé par le fournisseur.', [
+                    'host' => parse_url($subscription->endpoint, PHP_URL_HOST),
+                    'status' => $response->status(),
+                ]);
             }
         }
 
@@ -95,8 +106,14 @@ class WebPushChannel implements NotificationChannelContract
         if (str_contains($type, 'prayer')) {
             return 'prayers';
         }
+        if (str_contains($type, 'hadith')) {
+            return 'hadith';
+        }
         if (str_contains($type, 'live')) {
             return 'live';
+        }
+        if (str_contains($type, 'contribution') || str_contains($type, 'dues')) {
+            return 'contributions';
         }
 
         return 'general';

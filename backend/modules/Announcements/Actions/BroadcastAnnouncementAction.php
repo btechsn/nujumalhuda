@@ -6,6 +6,7 @@ namespace Modules\Announcements\Actions;
 
 use Modules\Announcements\Events\AnnouncementBroadcast;
 use Modules\Announcements\Models\Announcement;
+use Modules\Announcements\Services\AnnouncementPushNotifier;
 
 class BroadcastAnnouncementAction
 {
@@ -20,5 +21,7 @@ class BroadcastAnnouncementAction
         } catch (\Throwable $exception) {
             report($exception);
         }
+
+        app(AnnouncementPushNotifier::class)->notify($announcement);
     }
 }

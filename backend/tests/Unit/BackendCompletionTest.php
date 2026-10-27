@@ -7,6 +7,8 @@ use Modules\Core\Support\PhoneNumber;
 use Modules\Core\Support\SimplePdf;
 use Modules\Core\Support\WaveSignature;
 use Modules\Mosque\Support\HijriDate;
+use Modules\Mosque\Models\PrayerTime;
+use Modules\Live\Models\LiveStream;
 use PHPUnit\Framework\TestCase;
 
 class BackendCompletionTest extends TestCase
@@ -48,6 +50,32 @@ class BackendCompletionTest extends TestCase
         $this->assertSame([2026, 9, 28], [$back['year'], $back['month'], $back['day']]);
         $this->assertGreaterThanOrEqual(1, $hijri['month']);
         $this->assertLessThanOrEqual(12, $hijri['month']);
+    }
+
+    public function test_effective_prayer_time_uses_manual_override_and_exposes_display_time(): void
+    {
+        $prayer = new PrayerTime([
+            'calculated_time' => '13:05:00',
+            'manual_time' => '13:15:00',
+            'is_overridden' => true,
+        ]);
+
+        $this->assertSame('13:15', $prayer->getEffectiveTime());
+        $this->assertSame('13:15', $prayer->display_time);
+
+        $prayer->is_overridden = false;
+
+        $this->assertSame('13:05', $prayer->getEffectiveTime());
+    }
+
+    public function test_live_links_are_limited_to_supported_https_social_platforms(): void
+    {
+        $this->assertSame('youtube', LiveStream::platformForUrl('https://youtu.be/abc123'));
+        $this->assertSame('facebook', LiveStream::platformForUrl('https://www.facebook.com/example/videos/123'));
+        $this->assertSame('instagram', LiveStream::platformForUrl('https://www.instagram.com/live/abc/'));
+        $this->assertSame('tiktok', LiveStream::platformForUrl('https://www.tiktok.com/@nujum/live'));
+        $this->assertNull(LiveStream::platformForUrl('https://youtube.com.example.org/live/abc'));
+        $this->assertNull(LiveStream::platformForUrl('http://www.youtube.com/live/abc'));
     }
 
     public function test_web_push_encrypts_a_payload(): void

@@ -3,6 +3,7 @@
 namespace Modules\Live\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Live\Rules\SupportedLivePlatformUrl;
 
 class StreamStoreRequest extends FormRequest
 {
@@ -29,6 +30,7 @@ class StreamStoreRequest extends FormRequest
             'enable_reactions' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'thumbnail_url' => 'nullable|url',
+            'external_url' => ['nullable', 'url', 'max:255', new SupportedLivePlatformUrl()],
             'metadata' => 'nullable|array',
         ];
     }

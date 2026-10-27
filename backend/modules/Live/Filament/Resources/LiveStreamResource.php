@@ -4,12 +4,14 @@ namespace Modules\Live\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Modules\Live\Filament\Resources\LiveStreamResource\Pages;
 use Modules\Live\Models\LiveStream;
+use Modules\Live\Rules\SupportedLivePlatformUrl;
 
 class LiveStreamResource extends Resource
 {
@@ -55,7 +57,7 @@ class LiveStreamResource extends Resource
                             ->label('Statut')
                             ->options(self::statusOptions())
                             ->default('scheduled')
-                            ->helperText('Passez sur En direct au début. Le site passe tout seul sur Terminée quand YouTube coupe le direct. Vous pouvez aussi l’arrêter avec le bouton Terminer.'),
+                            ->helperText('Passez sur En direct au début, puis terminez la séance après le direct. YouTube peut être clôturé automatiquement.'),
 
                         Forms\Components\DateTimePicker::make('scheduled_at')
                             ->label('Début prévu')
@@ -63,11 +65,13 @@ class LiveStreamResource extends Resource
                             ->timezone('Africa/Dakar'),
 
                         Forms\Components\TextInput::make('external_url')
-                            ->label('Lien du direct YouTube')
+                            ->label('Lien du direct')
                             ->url()
                             ->maxLength(255)
+                            ->rules([new SupportedLivePlatformUrl()])
+                            ->required(fn (Get $get): bool => $get('status') === 'live')
                             ->columnSpanFull()
-                            ->helperText('Collez le lien YouTube. C’est cette vidéo que le site affiche. Aucun serveur de diffusion n’est nécessaire.'),
+                            ->helperText('Collez un lien HTTPS YouTube, Instagram, TikTok ou Facebook. La vidéo est intégrée si la plateforme l’autorise, sinon un bouton ouvre le direct sur la plateforme.'),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Titre affiché')

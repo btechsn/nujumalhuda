@@ -71,7 +71,7 @@ class DahiraNotifier
             ->get();
 
         foreach ($schedules as $schedule) {
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $schedule->membership->user_id,
                 'type' => 'dahira.contribution_due',
                 'channel' => NotificationChannel::IN_APP,
@@ -79,19 +79,11 @@ class DahiraNotifier
                 'message' => 'Une cotisation de ' . number_format($schedule->amount_minor, 0, ',', ' ')
                     . ' XOF est due le ' . $schedule->due_on->format('d/m/Y') . '.',
                 'data' => ['schedule_id' => $schedule->id],
+                'action_url' => '/fr/compte/tableau-de-bord',
                 'sent_at' => now(),
             ]);
 
-            $sms = Notification::create([
-                'user_id' => $schedule->membership->user_id,
-                'type' => 'dahira.contribution_due',
-                'channel' => NotificationChannel::SMS,
-                'title' => 'Cotisation',
-                'message' => 'Nujum Al-Huda — cotisation due le ' . $schedule->due_on->format('d/m') . '.',
-                'data' => ['schedule_id' => $schedule->id, 'prepared' => true, 'sent' => false],
-                'sent_at' => null,
-            ]);
-            app(NotificationDispatcher::class)->deliver($sms);
+            app(NotificationDispatcher::class)->deliver($notification, NotificationChannel::PUSH);
 
             $schedule->update(['reminded_at' => now()]);
         }

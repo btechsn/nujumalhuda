@@ -14,7 +14,7 @@ use Modules\Core\Models\NotificationPreference;
 class NotificationPreferenceController extends Controller
 {
     /** @var list<string> */
-    private const CATEGORIES = ['announcements', 'prayers', 'live'];
+    private const CATEGORIES = ['announcements', 'prayers', 'hadith', 'live', 'contributions'];
 
     public function index(Request $request): JsonResponse
     {
@@ -39,7 +39,7 @@ class NotificationPreferenceController extends Controller
     public function update(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'category' => 'required|in:announcements,prayers,live',
+            'category' => 'required|in:announcements,prayers,hadith,live,contributions',
             'enabled' => 'required|boolean',
         ]);
 

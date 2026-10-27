@@ -2,12 +2,10 @@
 
 namespace Modules\Dahira\Services;
 
-use Modules\Core\Data\PaymentData;
 use Modules\Core\Enums\PaymentMethod;
 use Modules\Core\Enums\PaymentStatus;
 use Modules\Core\Models\Payment;
 use Modules\Core\Models\User;
-use Modules\Core\Payments\PaymentGatewayManager;
 use Modules\Dahira\Models\Contribution;
 use Modules\Dahira\Models\ContributionSchedule;
 use Modules\Dahira\Models\TreasuryEntry;
@@ -18,11 +16,11 @@ class ContributionRecorder
         ContributionSchedule $schedule,
         User $recorder,
         string $method = 'cash',
-        ?string $note = null
+        ?string $note = null,
+        ?string $paidOn = null,
     ): Contribution {
         $schedule->load('plan.group', 'membership');
         $paymentMethod = PaymentMethod::from($method);
-        $completed = !$paymentMethod->requiresGateway();
 
         $contribution = Contribution::create([
             'dahira_group_id' => $schedule->plan->dahira_group_id,
@@ -31,7 +29,7 @@ class ContributionRecorder
             'recorded_by' => $recorder->id,
             'amount_minor' => $schedule->amount_minor,
             'currency' => 'XOF',
-            'paid_on' => now()->toDateString(),
+            'paid_on' => $paidOn ?? now()->toDateString(),
             'note' => $note,
         ]);
 
@@ -41,42 +39,14 @@ class ContributionRecorder
             'user_id' => $schedule->membership->user_id,
             'organization_id' => $schedule->plan->group->organization_id,
             'method' => $paymentMethod,
-            'status' => $completed ? PaymentStatus::COMPLETED : PaymentStatus::PENDING,
+            'status' => PaymentStatus::COMPLETED,
             'currency' => 'XOF',
             'amount_minor' => $schedule->amount_minor,
-            'completed_at' => $completed ? now() : null,
+            'completed_at' => now(),
             'metadata' => ['source' => 'dahira_contribution'],
         ]);
 
         $contribution->update(['payment_id' => $payment->id]);
-
-        if ($paymentMethod->requiresGateway()) {
-            $result = app(PaymentGatewayManager::class)->for($paymentMethod)->initiate(PaymentData::fromPayment($payment));
-            if (!($result['ok'] ?? false)) {
-                $payment->markAsFailed($result['error'] ?? 'gateway');
-                // `fresh()` recharge un tout nouveau modèle depuis la base :
-                // l'attribut dynamique posé sur `$contribution` ci-dessus
-                // serait perdu si on ne le reportait pas sur l'instance
-                // fraîche (même logique que la branche `checkout_url`
-                // ci-dessous, pour ne pas faire disparaître le motif
-                // d'échec côté appelant).
-                $fresh = $contribution->fresh('payment');
-                $fresh->setAttribute('gateway_error', $result['error'] ?? 'gateway_unavailable');
-
-                return $fresh;
-            }
-
-            $payment->update([
-                'gateway_transaction_id' => $result['transaction_id'],
-                'gateway_response' => $result['raw'] ?? null,
-                'metadata' => array_merge($payment->metadata ?? [], ['checkout_url' => $result['checkout_url']]),
-            ]);
-            $schedule->update(['status' => 'processing']);
-            $fresh = $contribution->fresh('payment');
-            $fresh->setAttribute('checkout_url', $result['checkout_url']);
-
-            return $fresh;
-        }
 
         $schedule->update(['status' => 'paid']);
 

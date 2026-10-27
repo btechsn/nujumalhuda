@@ -299,6 +299,7 @@ export interface LiveStream {
   is_featured?: boolean;
   thumbnail_url?: string | null;
   external_url?: string | null;
+  external_platform?: 'youtube' | 'facebook' | 'tiktok' | 'instagram' | null;
   embed_url?: string | null;
   stream_urls?: { whep?: string; hls?: string };
   recording?: { id: string; slug: string; status: string } | null;

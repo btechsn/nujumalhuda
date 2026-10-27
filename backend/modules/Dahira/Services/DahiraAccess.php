@@ -12,6 +12,8 @@ class DahiraAccess
 
     public const TREASURER_ROLES = ['dahira_muqaddam', 'dahira_treasurer'];
 
+    public const PAYMENT_RECORDER_ROLES = ['dahira_muqaddam', 'dahira_treasurer', 'dahira_secretary'];
+
     public function membership(User $user, DahiraGroup $group): ?Membership
     {
         return Membership::query()
@@ -41,5 +43,12 @@ class DahiraAccess
         $membership = $this->membership($user, $group);
 
         return $membership && in_array($membership->role?->name, self::TREASURER_ROLES, true);
+    }
+
+    public function canRecordPayments(User $user, DahiraGroup $group): bool
+    {
+        $membership = $this->membership($user, $group);
+
+        return $membership && in_array($membership->role?->name, self::PAYMENT_RECORDER_ROLES, true);
     }
 }

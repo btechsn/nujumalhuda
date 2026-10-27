@@ -7,12 +7,13 @@ namespace Modules\Announcements\Providers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\Announcements\Events\AnnouncementBroadcast;
 use Modules\Announcements\Events\AnnouncementCreated;
+use Modules\Announcements\Listeners\NotifyAnnouncementAudience;
 
 class AnnouncementsEventServiceProvider extends ServiceProvider
 {
     protected $listen = [
         AnnouncementCreated::class => [
-            // Listeners pour nouvelle annonce
+            NotifyAnnouncementAudience::class,
         ],
     ];
 

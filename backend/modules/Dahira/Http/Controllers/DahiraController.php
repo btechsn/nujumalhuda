@@ -76,27 +76,29 @@ class DahiraController extends Controller
     {
         $group = DahiraGroup::findOrFail($id);
         $membership = $access->membership($request->user(), $group);
-        if (!$membership) {
+        if (!$membership || !$membership->isActive()) {
             abort(403);
         }
 
         $query = ContributionSchedule::query()
+            ->with(['membership.user:id,first_name,last_name', 'plan'])
             ->whereHas('plan', fn ($q) => $q->where('dahira_group_id', $group->id));
 
-        if (!$access->isTreasurer($request->user(), $group)) {
+        if (!$access->canRecordPayments($request->user(), $group)) {
             $query->where('membership_id', $membership->id);
         }
 
-        return $query->orderBy('due_on')->get();
+        return response()->json([
+            'schedules' => $query->orderBy('due_on')->get(),
+            'can_record_payments' => $access->canRecordPayments($request->user(), $group),
+        ]);
     }
 
     public function pay(Request $request, string $scheduleId, ContributionRecorder $recorder, DahiraAccess $access)
     {
         $schedule = ContributionSchedule::with('plan.group', 'membership')->findOrFail($scheduleId);
         $group = $schedule->plan->group;
-        $mine = $schedule->membership->user_id === $request->user()->id;
-
-        if (!$mine && !$access->isTreasurer($request->user(), $group)) {
+        if (!$access->canRecordPayments($request->user(), $group)) {
             abort(403);
         }
 
@@ -105,24 +107,24 @@ class DahiraController extends Controller
         }
 
         $data = $request->validate([
-            'method' => 'nullable|in:cash,wave,orange_money,bank_transfer',
+            'method' => 'required|in:cash,bank_transfer,wave,orange_money',
             'note' => 'nullable|string|max:500',
+            'paid_on' => 'nullable|date|before_or_equal:today',
         ]);
 
         $contribution = $recorder->record(
             $schedule,
             $request->user(),
-            $data['method'] ?? 'cash',
-            $data['note'] ?? null
+            $data['method'],
+            $data['note'] ?? null,
+            $data['paid_on'] ?? null,
         );
 
         return response()->json([
             'contribution_id' => $contribution->id,
             'payment_status' => $contribution->payment->status->value,
             'schedule_status' => $schedule->fresh()->status,
-            'checkout_url' => $contribution->checkout_url,
-            'gateway_error' => $contribution->gateway_error,
-        ], $contribution->gateway_error ? 502 : 201);
+        ], 201);
     }
 
     public function treasury(Request $request, string $id, DahiraAccess $access)

@@ -174,6 +174,18 @@ class ApiClient {
     return this.put('/notifications/preferences', { category, enabled });
   }
 
+  async getNotifications() {
+    return this.get('/notifications?per_page=20');
+  }
+
+  async getPublicSettings() {
+    return this.get('/settings/public');
+  }
+
+  async markNotificationRead(id: string) {
+    return this.post(`/notifications/${id}/read`, {});
+  }
+
   async subscribePush(data: {
     endpoint: string;
     public_key: string;
@@ -208,7 +220,7 @@ class ApiClient {
 
   async payDahiraSchedule(
     scheduleId: string,
-    data: { method?: 'cash' | 'wave' | 'orange_money' | 'bank_transfer'; note?: string } = {},
+    data: { method: 'cash' | 'bank_transfer' | 'wave' | 'orange_money'; paid_on?: string; note?: string },
   ) {
     return this.post(`/dahira/schedules/${scheduleId}/pay`, data);
   }

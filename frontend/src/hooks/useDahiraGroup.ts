@@ -11,6 +11,7 @@ export interface DahiraScheduleItem {
   due_on: string;
   amount_minor: number;
   status: "due" | "overdue" | "processing" | "paid" | string;
+  membership?: { user?: { first_name: string; last_name: string } | null };
 }
 
 export interface DahiraMeetingItem {
@@ -36,13 +37,14 @@ export interface DahiraTreasury {
   entries: DahiraTreasuryEntry[];
 }
 
-export type DahiraPaymentMethod = "cash" | "wave" | "orange_money" | "bank_transfer";
+export type DahiraPaymentMethod = "cash" | "bank_transfer" | "wave" | "orange_money";
 
 interface DahiraGroupState {
   schedules: DahiraScheduleItem[];
   meetings: DahiraMeetingItem[];
   treasury: DahiraTreasury | null;
   isTreasurer: boolean;
+  canRecordPayments: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -59,6 +61,7 @@ export function useDahiraGroup(groupId: string | null) {
     meetings: [],
     treasury: null,
     isTreasurer: false,
+    canRecordPayments: false,
     loading: !!groupId,
     error: null,
   });
@@ -77,10 +80,11 @@ export function useDahiraGroup(groupId: string | null) {
       ]);
 
       setState({
-        schedules: (schedulesRes as any) ?? [],
+        schedules: (schedulesRes as any)?.schedules ?? [],
         meetings: (meetingsRes as any) ?? [],
         treasury: treasuryRes ? (treasuryRes as any) : null,
         isTreasurer: !!treasuryRes,
+        canRecordPayments: Boolean((schedulesRes as any)?.can_record_payments),
         loading: false,
         error: null,
       });
@@ -94,21 +98,16 @@ export function useDahiraGroup(groupId: string | null) {
   }, [load]);
 
   const pay = useCallback(
-    async (scheduleId: string, method: DahiraPaymentMethod) => {
+    async (scheduleId: string, data: { method: DahiraPaymentMethod; paid_on?: string; note?: string }) => {
       setPayingId(scheduleId);
       setPayError(null);
       try {
-        const result = (await api.payDahiraSchedule(scheduleId, { method })) as any;
+        const result = (await api.payDahiraSchedule(scheduleId, data)) as any;
 
         if (result?.gateway_error) {
           setPayError(result.gateway_error);
           setPayingId(null);
           return null;
-        }
-
-        if (result?.checkout_url) {
-          window.location.href = result.checkout_url;
-          return result;
         }
 
         await load();

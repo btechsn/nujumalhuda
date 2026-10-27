@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Modules\Announcements\Providers;
 
 use Filament\Panel;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
+use Modules\Announcements\Console\Commands\NotifyPublishedAnnouncementsCommand;
 
 class AnnouncementsServiceProvider extends ServiceProvider
 {
@@ -28,5 +30,14 @@ class AnnouncementsServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         $this->app->register(AnnouncementsEventServiceProvider::class);
+
+        $this->commands([NotifyPublishedAnnouncementsCommand::class]);
+
+        $this->app->booted(function (): void {
+            $this->app->make(Schedule::class)
+                ->command('announcements:notify-published')
+                ->everyMinute()
+                ->withoutOverlapping();
+        });
     }
 }

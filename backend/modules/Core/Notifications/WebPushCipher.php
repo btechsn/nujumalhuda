@@ -24,10 +24,22 @@ final class WebPushCipher
             return null;
         }
 
-        $local = openssl_pkey_new([
+        $keyOptions = [
             'curve_name' => 'prime256v1',
             'private_key_type' => OPENSSL_KEYTYPE_EC,
-        ]);
+        ];
+
+        $opensslConfig = getenv('OPENSSL_CONF');
+        if (!is_string($opensslConfig) || !is_file($opensslConfig)) {
+            $bundledConfig = dirname(PHP_BINARY) . DIRECTORY_SEPARATOR . 'extras'
+                . DIRECTORY_SEPARATOR . 'ssl' . DIRECTORY_SEPARATOR . 'openssl.cnf';
+            $opensslConfig = is_file($bundledConfig) ? $bundledConfig : null;
+        }
+        if ($opensslConfig !== null) {
+            $keyOptions['config'] = $opensslConfig;
+        }
+
+        $local = openssl_pkey_new($keyOptions);
         if ($local === false) {
             return null;
         }

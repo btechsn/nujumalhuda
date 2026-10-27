@@ -37,6 +37,7 @@ class LiveStreamResource extends JsonResource
             'is_featured' => $this->is_featured,
             'thumbnail_url' => $this->publicThumbnailUrl(),
             'external_url' => $this->external_url,
+            'external_platform' => $this->getExternalPlatform(),
             'embed_url' => $this->getEmbedUrl(),
             'creator' => $this->when($this->creator, function () {
                 return [

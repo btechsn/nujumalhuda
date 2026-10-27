@@ -221,6 +221,41 @@ class LiveStream extends Model
         return filled($base) ? $base.'/'.$this->publish_key : '';
     }
 
+    public static function platformForUrl(?string $url): ?string
+    {
+        if (!is_string($url) || trim($url) === '') {
+            return null;
+        }
+
+        $parts = parse_url(trim($url));
+        if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https') {
+            return null;
+        }
+
+        $host = strtolower(rtrim((string) ($parts['host'] ?? ''), '.'));
+        $domains = [
+            'youtube' => ['youtube.com', 'youtu.be'],
+            'facebook' => ['facebook.com', 'fb.watch'],
+            'instagram' => ['instagram.com'],
+            'tiktok' => ['tiktok.com'],
+        ];
+
+        foreach ($domains as $platform => $allowedDomains) {
+            foreach ($allowedDomains as $domain) {
+                if ($host === $domain || str_ends_with($host, '.'.$domain)) {
+                    return $platform;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getExternalPlatform(): ?string
+    {
+        return self::platformForUrl($this->external_url);
+    }
+
     /**
      * Adresse lisible dans un iframe quand la séance passe par YouTube ou Facebook.
      */
@@ -232,17 +267,21 @@ class LiveStream extends Model
             return null;
         }
 
-        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $platform = self::platformForUrl($url);
+        if ($platform === null) {
+            return null;
+        }
+
         $path = (string) parse_url($url, PHP_URL_PATH);
         parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
 
-        if (str_contains($host, 'youtu.be')) {
+        if ($platform === 'youtube' && str_ends_with(strtolower((string) parse_url($url, PHP_URL_HOST)), 'youtu.be')) {
             $id = trim($path, '/');
 
             return $id === '' ? null : "https://www.youtube.com/embed/{$id}?autoplay=1";
         }
 
-        if (str_contains($host, 'youtube.com')) {
+        if ($platform === 'youtube') {
             if (str_contains($path, '/embed/')) {
                 return $url;
             }
@@ -255,10 +294,14 @@ class LiveStream extends Model
                 return 'https://www.youtube.com/embed/'.trim(substr($path, 6), '/').'?autoplay=1';
             }
 
+            if (str_starts_with($path, '/shorts/')) {
+                return 'https://www.youtube.com/embed/'.trim(substr($path, 8), '/').'?autoplay=1';
+            }
+
             return null;
         }
 
-        if (str_contains($host, 'facebook.com') || str_contains($host, 'fb.watch')) {
+        if ($platform === 'facebook') {
             return 'https://www.facebook.com/plugins/video.php?href='.urlencode($url).'&autoplay=1';
         }
 

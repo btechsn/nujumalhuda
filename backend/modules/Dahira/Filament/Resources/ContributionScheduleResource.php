@@ -82,11 +82,35 @@ class ContributionScheduleResource extends Resource
                 }),
         ])->actions([
             Tables\Actions\Action::make('cash')
-                ->label('Encaisser')
-                ->visible(fn (ContributionSchedule $record) => $record->status !== 'paid')
+                ->label('Enregistrer le paiement reçu')
+                ->visible(fn (ContributionSchedule $record) => !in_array($record->status, ['paid', 'processing'], true))
                 ->requiresConfirmation()
-                ->action(function (ContributionSchedule $record) {
-                    app(ContributionRecorder::class)->record($record, auth()->user(), 'cash');
+                ->form([
+                    Forms\Components\Select::make('method')
+                        ->label('Paiement reçu par')
+                        ->options([
+                            'cash' => 'Espèces',
+                            'bank_transfer' => 'Virement bancaire',
+                            'wave' => 'Wave',
+                            'orange_money' => 'Orange Money',
+                        ])
+                        ->default('cash')
+                        ->required(),
+                    Forms\Components\DatePicker::make('paid_on')
+                        ->label('Date de réception')
+                        ->default(now())
+                        ->maxDate(now())
+                        ->required(),
+                    Forms\Components\Textarea::make('note')->label('Note')->maxLength(500),
+                ])
+                ->action(function (ContributionSchedule $record, array $data) {
+                    app(ContributionRecorder::class)->record(
+                        $record,
+                        auth()->user(),
+                        $data['method'],
+                        $data['note'] ?? null,
+                        $data['paid_on'],
+                    );
                     Notification::make()->title('Cotisation encaissée')->success()->send();
                 }),
             Tables\Actions\EditAction::make(),

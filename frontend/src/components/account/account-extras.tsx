@@ -7,9 +7,18 @@ import { api } from "@/lib/api";
 import { readEditorial } from "@/lib/editorial";
 import { materialSource, readCachedLesson, storeLesson, type CachedLesson, type CachedMaterial } from "@/lib/lesson-cache";
 
-const CATEGORIES = ["announcements", "prayers", "live"] as const;
+const CATEGORIES = ["announcements", "prayers", "hadith", "live", "contributions"] as const;
 
 type Category = (typeof CATEGORIES)[number];
+
+type AccountNotification = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
 
 function urlBase64ToUint8Array(value: string): Uint8Array {
   const padding = "=".repeat((4 - (value.length % 4)) % 4);
@@ -23,11 +32,14 @@ export function AlertSection() {
   const [prefs, setPrefs] = useState<Record<Category, boolean>>({
     announcements: false,
     prayers: false,
+    hadith: false,
     live: false,
+    contributions: false,
   });
   const [ready, setReady] = useState(false);
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [notifications, setNotifications] = useState<AccountNotification[]>([]);
 
   useEffect(() => {
     let ignore = false;
@@ -39,7 +51,7 @@ export function AlertSection() {
     ])
       .then(([preferences, settings]) => {
         if (ignore) return;
-        const next = { announcements: false, prayers: false, live: false };
+        const next = { announcements: false, prayers: false, hadith: false, live: false, contributions: false };
         const rows = preferences.data?.preferences ?? [];
         for (const row of rows) {
           if (row.category in next) next[row.category as Category] = Boolean(row.enabled);
@@ -55,6 +67,33 @@ export function AlertSection() {
       ignore = true;
     };
   }, []);
+
+  useEffect(() => {
+    let ignore = false;
+    api.getNotifications().then((response) => {
+      if (ignore) return;
+      const payload = response.data as any;
+      const rows = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
+      setNotifications(rows.filter((item: AccountNotification) =>
+        item.type === "dahira.contribution_due" ||
+        item.type.startsWith("announcement.") ||
+        item.type.startsWith("prayer.") ||
+        item.type === "hadith.daily",
+      ));
+    }).catch(() => {
+      if (!ignore) setNotifications([]);
+    });
+    return () => { ignore = true; };
+  }, []);
+
+  async function markRead(id: string) {
+    try {
+      await api.markNotificationRead(id);
+      setNotifications((current) => current.map((item) => item.id === id ? { ...item, is_read: true } : item));
+    } catch {
+      setMessage(t("notificationReadError"));
+    }
+  }
 
   async function toggle(category: Category) {
     setMessage("");
@@ -111,7 +150,28 @@ export function AlertSection() {
 
   return (
     <div>
-      <h2 className="font-sans text-xl font-extrabold text-content">{t("push")}</h2>
+      <h2 className="font-sans text-xl font-extrabold text-content">{t("notificationsInbox")}</h2>
+      {notifications.length ? (
+        <ul className="mt-4 space-y-3">
+          {notifications.map((notification) => (
+            <li key={notification.id} className={`rounded-2xl p-4 ring-1 ring-black/5 ${notification.is_read ? "bg-[#f8f9fa]" : "bg-gold-100/50"}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold text-content">{notification.title}</p>
+                  <p className="mt-1 text-sm text-content-secondary">{notification.message}</p>
+                  <p className="mt-2 text-xs text-content-secondary">{new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(notification.created_at))}</p>
+                </div>
+                {!notification.is_read ? (
+                  <button type="button" onClick={() => void markRead(notification.id)} className="shrink-0 text-xs font-semibold text-brand-800 underline">{t("markRead")}</button>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 rounded-xl bg-[#f8f9fa] p-4 text-sm text-content-secondary">{t("noContributionNotifications")}</p>
+      )}
+      <h2 className="mt-8 font-sans text-xl font-extrabold text-content">{t("push")}</h2>
       <p className="mt-2 text-sm text-content-secondary">{t("alertsLede")}</p>
       <ul className="mt-6 space-y-3">
         {CATEGORIES.map((category) => (

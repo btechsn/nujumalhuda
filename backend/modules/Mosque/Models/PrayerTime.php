@@ -53,7 +53,17 @@ class PrayerTime extends Model
      */
     public function getEffectiveTime(): ?string
     {
-        return $this->manual_time ?? $this->calculated_time;
+        $time = $this->is_overridden
+            ? ($this->getAttributes()['manual_time'] ?? null)
+            : null;
+        $time ??= $this->getAttributes()['calculated_time'] ?? null;
+
+        return filled($time) ? substr((string) $time, 0, 5) : null;
+    }
+
+    public function getDisplayTimeAttribute(): ?string
+    {
+        return $this->getEffectiveTime();
     }
 
     /**

@@ -80,10 +80,12 @@ final class SiteSettings
             'wave.key' => self::field('Clé API', 'wave', secret: true),
             'wave.secret' => self::field('Secret', 'wave', secret: true),
             'wave.webhook_secret' => self::field('Secret du webhook', 'wave', secret: true, span: 'full'),
+            'wave.payment_phone' => self::field('Numéro Wave pour les cotisations', 'wave', public: true),
 
             'orange_money.merchant_key' => self::field('Clé marchand', 'orange_money', secret: true, span: 'full'),
             'orange_money.client_id' => self::field('Client ID', 'orange_money', secret: true),
             'orange_money.client_secret' => self::field('Client secret', 'orange_money', secret: true),
+            'orange_money.payment_phone' => self::field('Numéro Orange Money pour les cotisations', 'orange_money', public: true),
         ];
     }
 
@@ -119,11 +121,11 @@ final class SiteSettings
             ],
             'wave' => [
                 'title' => 'Paiement Wave',
-                'description' => 'Clés de l’API Wave pour les dons et les paiements.',
+                'description' => 'Numéro de réception des cotisations et clés API pour les paiements intégrés.',
             ],
             'orange_money' => [
                 'title' => 'Paiement Orange Money',
-                'description' => 'Clés marchand Orange Money.',
+                'description' => 'Numéro de réception des cotisations et clés marchand Orange Money.',
             ],
         ];
     }
@@ -231,6 +233,10 @@ final class SiteSettings
             'address' => (string) self::value('site.address', '28M Cité des Magistrats, Sud Foire'),
             'city' => (string) self::value('site.city', 'Dakar'),
             'phone' => (string) self::value('site.phone', '+221 77 123 45 67'),
+            'payment_contacts' => [
+                'wave' => (string) self::value('wave.payment_phone', ''),
+                'orange_money' => (string) self::value('orange_money.payment_phone', ''),
+            ],
             'email' => (string) self::value('site.email', 'contact@nujumalhuda.com'),
             'latitude' => $latitude,
             'longitude' => $longitude,

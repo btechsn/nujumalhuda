@@ -20,38 +20,40 @@ class NotificationDispatcher
     ) {
     }
 
-    public function deliver(Notification $notification): bool
+    public function deliver(Notification $notification, ?Channel $channel = null): bool
     {
         $user = User::query()->find($notification->user_id);
         if (!$user) {
             return false;
         }
 
+        $channel ??= $notification->channel;
+
         $data = new \Modules\Core\Data\NotificationData(
             user_id: $user->id,
             type: $notification->type,
-            channel: $notification->channel,
+            channel: $channel,
             title: $notification->title,
             message: $notification->message,
             data: $notification->data,
             action_url: $notification->action_url,
         );
 
-        $sent = match ($notification->channel) {
+        $sent = match ($channel) {
             Channel::SMS => $this->sms->send($user, $data),
             Channel::EMAIL => $this->mail->send($user, $data),
             Channel::PUSH => $this->push->send($user, $data),
             Channel::IN_APP => true,
         };
 
-        if ($sent && $notification->sent_at === null && $notification->channel !== Channel::IN_APP) {
+        if ($sent && $notification->sent_at === null && $channel !== Channel::IN_APP) {
             $notification->update([
                 'sent_at' => now(),
                 'data' => array_merge($notification->data ?? [], ['sent' => true]),
             ]);
         }
 
-        if (!$sent && $notification->channel === Channel::SMS) {
+        if (!$sent && $channel === Channel::SMS) {
             $notification->update([
                 'data' => array_merge($notification->data ?? [], [
                     'sent' => false,

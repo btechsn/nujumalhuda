@@ -85,7 +85,7 @@ export function LiveBoard() {
   }, [liveData, data]);
 
   const liveNow = useMemo(
-    () => liveData.filter((item) => Boolean(item.embed_url)),
+    () => liveData.filter((item) => Boolean(item.external_url && item.external_platform)),
     [liveData],
   );
   const hasFilters = Boolean(type || search);
