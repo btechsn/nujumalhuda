@@ -12,6 +12,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Core\Filament\Resources\UserResource\Pages;
 use Modules\Core\Filament\Resources\UserResource\RelationManagers\MembershipsRelationManager;
+use Modules\Core\Models\Organization;
+use Modules\Core\Models\Role;
 use Modules\Core\Models\User;
 
 class UserResource extends Resource
@@ -107,6 +109,34 @@ class UserResource extends Resource
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->dehydrated(false)
                         ->autocomplete('new-password'),
+                ]),
+            Forms\Components\Section::make('Rôle sur la plateforme')
+                ->description('Choisissez l’organisation et le rôle attribués à la création du compte.')
+                ->columns(2)
+                ->visibleOn('create')
+                ->schema([
+                    Forms\Components\Select::make('initial_organization_id')
+                        ->label('Organisation')
+                        ->options(fn (): array => Organization::query()
+                            ->orderBy('name')
+                            ->get()
+                            ->mapWithKeys(fn (Organization $organization): array => [
+                                $organization->id => $organization->name,
+                            ])
+                            ->all())
+                        ->searchable()
+                        ->required(),
+                    Forms\Components\Select::make('initial_role_id')
+                        ->label('Rôle')
+                        ->options(fn (): array => Role::query()
+                            ->orderBy('display_name')
+                            ->get()
+                            ->mapWithKeys(fn (Role $role): array => [
+                                $role->id => $role->display_name ?: $role->name,
+                            ])
+                            ->all())
+                        ->searchable()
+                        ->required(),
                 ]),
         ]);
     }
