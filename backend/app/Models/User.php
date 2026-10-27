@@ -11,7 +11,7 @@ class User extends \Modules\Core\Models\User implements FilamentUser
 {
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasAnyRole([
+        return $this->disabled_at === null && $this->hasAnyRole([
             'admin',
             'director',
             'secretary',

@@ -62,6 +62,7 @@ class User extends Authenticatable implements HasAvatar, HasName
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
+            'disabled_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

@@ -176,6 +176,7 @@ final class AdminPanelProvider extends PanelProvider
              * structure.
              */
             ->navigationGroups([
+                NavigationGroup::make('Administration')->icon('heroicon-o-cog-8-tooth'),
                 NavigationGroup::make('Éducation')->icon('heroicon-o-academic-cap'),
                 NavigationGroup::make('Suivi pédagogique')->icon('heroicon-o-bookmark'),
                 NavigationGroup::make('Zawiya')->icon('heroicon-o-building-library'),

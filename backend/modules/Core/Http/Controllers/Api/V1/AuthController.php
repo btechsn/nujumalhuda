@@ -59,6 +59,7 @@ class AuthController extends Controller
     {
         $phones = PhoneNumber::storedForms($request->phone);
         $user = User::query()
+            ->whereNull('disabled_at')
             ->where(function ($query) use ($request, $phones): void {
                 if ($request->filled('email')) {
                     $query->orWhere('email', $request->email);
