@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Modules\Core\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Core\Events\AssistantKnowledgeCollecting;
 use Modules\Core\Events\MembershipCreated;
 use Modules\Core\Events\PaymentRecorded;
 use Modules\Core\Events\UserRegistered;
+use Modules\Core\Listeners\CollectSiteAssistantKnowledge;
 use Modules\Core\Listeners\SendWelcomeNotification;
 
 class CoreEventServiceProvider extends ServiceProvider
@@ -20,6 +22,10 @@ class CoreEventServiceProvider extends ServiceProvider
     protected $listen = [
         UserRegistered::class => [
             SendWelcomeNotification::class,
+        ],
+
+        AssistantKnowledgeCollecting::class => [
+            CollectSiteAssistantKnowledge::class,
         ],
         
         MembershipCreated::class => [

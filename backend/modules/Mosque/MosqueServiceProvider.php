@@ -6,8 +6,10 @@ use Filament\Panel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Events\AssistantKnowledgeCollecting;
 use Modules\Core\Events\PublicSearchRunning;
 use Modules\Mosque\Console\Commands\NotifyPrayerTimesCommand;
+use Modules\Mosque\Listeners\CollectMosqueAssistantKnowledge;
 use Modules\Mosque\Listeners\SearchPublishedKhutbas;
 use Modules\Mosque\Services\HijriCalendarService;
 use Modules\Mosque\Services\PrayerTimeService;
@@ -22,6 +24,7 @@ class MosqueServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
         Event::listen(PublicSearchRunning::class, SearchPublishedKhutbas::class);
+        Event::listen(AssistantKnowledgeCollecting::class, CollectMosqueAssistantKnowledge::class);
         
         // Register observers
         \Modules\Mosque\Models\PrayerTime::observe(\Modules\Mosque\Observers\PrayerTimeObserver::class);

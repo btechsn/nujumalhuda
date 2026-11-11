@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use Modules\Core\Http\Controllers\Api\V1\AssistantController;
 use Modules\Core\Http\Controllers\Api\V1\AuthController;
 use Modules\Core\Http\Controllers\Api\V1\MediaController;
 use Modules\Core\Http\Controllers\Api\V1\NotificationController;
@@ -34,6 +35,7 @@ Route::prefix('api/v1/auth')->name('auth.')->group(function () {
 Route::prefix('api/v1')->group(function () {
     Route::get('settings/public', PublicSettingController::class);
     Route::get('search', SearchController::class)->middleware('throttle:30,1');
+    Route::post('assistant/chat', AssistantController::class)->middleware('throttle:20,1');
     Route::post('payments/wave/webhook', [PaymentWebhookController::class, 'wave']);
     Route::post('payments/orange-money/webhook', [PaymentWebhookController::class, 'orangeMoney']);
 });

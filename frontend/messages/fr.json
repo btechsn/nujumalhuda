@@ -985,8 +985,9 @@
   "aiSupport": {
     "title": "Babacar",
     "subtitle": "Assistant Nujum Al-Huda",
-    "welcome": "Bonjour. Posez votre question sur les programmes, les horaires ou le centre. L'assistant sera branché prochainement.",
-    "placeholderReply": "Merci pour votre message. Babacar sera branché dès que la clé API sera configurée.",
+    "welcome": "Bonjour. Posez votre question sur les programmes, les horaires, les enseignants ou le centre. Je réponds uniquement avec les informations publiées sur le site.",
+    "thinking": "Je consulte le site…",
+    "error": "Je n’ai pas pu répondre pour le moment. Réessayez dans un instant.",
     "inputPlaceholder": "Écrivez votre message…",
     "send": "Envoyer",
     "close": "Fermer"

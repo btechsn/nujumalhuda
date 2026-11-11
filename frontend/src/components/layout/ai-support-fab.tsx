@@ -1,23 +1,27 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+
+import { fetchApiJson } from "@/lib/api-fetch";
 
 type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   text: string;
+  sources?: Array<{ title: string; url: string | null }>;
 };
 
 /**
- * Bouton flottant Support IA — front uniquement pour l'instant.
- * Le branchement API se fera plus tard via une clé.
+ * Assistant Babacar : répond à partir des infos publiées sur le site.
  */
 export function AiSupportFab() {
   const t = useTranslations("aiSupport");
+  const locale = useLocale();
   const panelId = useId();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [pending, setPending] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -32,26 +36,53 @@ export function AiSupportFab() {
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, open]);
+  }, [messages, open, pending]);
 
-  const send = (event: FormEvent) => {
+  const send = async (event: FormEvent) => {
     event.preventDefault();
     const text = input.trim();
-    if (!text) return;
+    if (!text || pending) return;
 
     const userMessage: ChatMessage = {
       id: `u-${Date.now()}`,
       role: "user",
       text,
     };
-    const assistantMessage: ChatMessage = {
-      id: `a-${Date.now()}`,
-      role: "assistant",
-      text: t("placeholderReply"),
-    };
+    const history = [...messages, userMessage].slice(-8).map((message) => ({
+      role: message.role,
+      text: message.text,
+    }));
 
-    setMessages((current) => [...current, userMessage, assistantMessage]);
+    setMessages((current) => [...current, userMessage]);
     setInput("");
+    setPending(true);
+
+    const body = await fetchApiJson("/assistant/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        locale,
+        history: history.slice(0, -1),
+      }),
+    });
+
+    const data =
+      body && typeof body === "object" && "data" in body
+        ? (body as { data?: { reply?: string; sources?: ChatMessage["sources"] } }).data
+        : null;
+    const reply = typeof data?.reply === "string" && data.reply.trim() !== "" ? data.reply.trim() : t("error");
+
+    setMessages((current) => [
+      ...current,
+      {
+        id: `a-${Date.now()}`,
+        role: "assistant",
+        text: reply,
+        sources: Array.isArray(data?.sources) ? data.sources : undefined,
+      },
+    ]);
+    setPending(false);
   };
 
   return (
@@ -93,22 +124,42 @@ export function AiSupportFab() {
                       : "me-8 rounded-xl bg-white px-3 py-2 text-sm text-content shadow-sm"
                   }
                 >
-                  {message.text}
+                  <p className="whitespace-pre-wrap">{message.text}</p>
+                  {message.role === "assistant" && message.sources && message.sources.length > 0 ? (
+                    <ul className="mt-2 space-y-1 border-t border-line/70 pt-2 text-xs text-content-secondary">
+                      {message.sources.map((source) =>
+                        source.url ? (
+                          <li key={`${message.id}-${source.url}`}>
+                            <a href={source.url} className="underline decoration-[#E67E22]/50 underline-offset-2">
+                              {source.title}
+                            </a>
+                          </li>
+                        ) : null,
+                      )}
+                    </ul>
+                  ) : null}
                 </div>
               ))
             )}
+            {pending ? (
+              <p className="me-8 rounded-xl bg-white px-3 py-2 text-sm text-content-secondary shadow-sm">
+                {t("thinking")}
+              </p>
+            ) : null}
           </div>
 
-          <form onSubmit={send} className="flex gap-2 border-t border-line bg-white p-3">
+          <form onSubmit={(event) => void send(event)} className="flex gap-2 border-t border-line bg-white p-3">
             <input
               value={input}
               onChange={(event) => setInput(event.target.value)}
               placeholder={t("inputPlaceholder")}
-              className="min-w-0 flex-1 rounded-full border border-line bg-white px-3 py-2 text-sm outline-none ring-[#E67E22]/25 focus:ring-2"
+              disabled={pending}
+              className="min-w-0 flex-1 rounded-full border border-line bg-white px-3 py-2 text-sm outline-none ring-[#E67E22]/25 focus:ring-2 disabled:opacity-60"
             />
             <button
               type="submit"
-              className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E67E22] text-white hover:brightness-105"
+              disabled={pending || input.trim() === ""}
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E67E22] text-white hover:brightness-105 disabled:opacity-50"
               aria-label={t("send")}
             >
               <SendIcon />
